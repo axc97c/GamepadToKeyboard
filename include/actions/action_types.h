@@ -32,29 +32,29 @@ enum class StickId : uint8_t {
 };
 
 struct ButtonMapping {
-    uint8_t genericButton;       // Generic button number
-    int keyCode;                 // Keyboard key code to press
-    bool currentlyPressed;       // Track state
+    uint8_t genericButton;
+    int keyCode;
+    bool currentlyPressed;
 };
 
 // Analog stick configuration
 struct StickConfig {
-    StickBehavior behavior;      // What this stick does
-    float sensitivity;           // Movement sensitivity (for mouse/scroll)
-    int deadzone;                // Deadzone threshold
-    int activationThreshold;     // Threshold for button emulation
+    StickBehavior behavior = StickBehavior::DISABLED;
+    float sensitivity = 0.015f;
+    int deadzone = 16;
+    int activationThreshold = 64;
     
     // For button emulation and custom keys
-    int keyUp;                   // Key for up/positive Y
-    int keyDown;                 // Key for down/negative Y
-    int keyLeft;                 // Key for left/negative X
-    int keyRight;                // Key for right/positive X
+    int keyUp = KEY_UP;
+    int keyDown = KEY_DOWN;
+    int keyLeft = KEY_LEFT;
+    int keyRight = KEY_RIGHT;
     
     // State tracking for button emulation
-    bool upPressed;
-    bool downPressed;
-    bool leftPressed;
-    bool rightPressed;
+    bool upPressed = false;
+    bool downPressed = false;
+    bool leftPressed = false;
+    bool rightPressed = false;
 };
 
 struct RunActionParams

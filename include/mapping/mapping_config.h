@@ -20,11 +20,11 @@ class MappingConfig {
     static StickBehavior parseStickBehavior(const char* behaviorStr);
     static const char* stickBehaviorToString(StickBehavior behavior);
 
-    static void loadMappings(JsonDocument doc, ButtonMapping* mappings, int& numMappings, int maxMappings);
-    static void loadStickConfig(JsonDocument doc, StickConfig *leftStick, StickConfig *rightStick);
+    static void loadMappings(JsonDocument& doc, ButtonMapping* mappings, int& numMappings, int maxMappings);
+    static void loadStickConfig(JsonDocument& doc, StickConfig *leftStick, StickConfig *rightStick);
 
-    static bool saveMappings(JsonDocument doc, ButtonMapping* mappings, int numMappings); 
-    static bool saveStickConfig(JsonDocument doc, StickConfig* leftStick, StickConfig* rightStick);
+    static bool saveMappings(JsonDocument& doc, ButtonMapping* mappings, int numMappings); 
+    static bool saveStickConfig(JsonDocument& doc, StickConfig* leftStick, StickConfig* rightStick);
     
     static void parseStickConfig(StickConfig *leftStick, ArduinoJson::V742PB22::JsonObject &left);
 };

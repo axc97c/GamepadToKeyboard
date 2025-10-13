@@ -39,7 +39,7 @@ bool MappingConfig::loadConfig(const char* filename, ButtonMapping* mappings, in
     return true;
 }
 
-void MappingConfig::loadMappings(JsonDocument doc, ButtonMapping* mappings, int& numMappings, int maxMappings) {
+void MappingConfig::loadMappings(JsonDocument& doc, ButtonMapping* mappings, int& numMappings, int maxMappings) {
 
     JsonArray mappingsArray = doc["mappings"].as<JsonArray>();
     numMappings = 0;
@@ -75,7 +75,7 @@ void MappingConfig::loadMappings(JsonDocument doc, ButtonMapping* mappings, int&
     Serial.println(" mappings");
 }
 
-void MappingConfig::loadStickConfig(JsonDocument doc, StickConfig* leftStick, StickConfig* rightStick) {
+void MappingConfig::loadStickConfig(JsonDocument& doc, StickConfig* leftStick, StickConfig* rightStick) {
 
     // Load left stick config
     if (doc["leftStick"].is<JsonObject>()) {
@@ -150,7 +150,7 @@ bool MappingConfig::saveConfig(const char* filename, ButtonMapping* mappings, in
     return true;
 }
 
-bool MappingConfig::saveMappings(JsonDocument doc, ButtonMapping* mappings, int numMappings) {
+bool MappingConfig::saveMappings(JsonDocument& doc, ButtonMapping* mappings, int numMappings) {
     JsonArray mappingsArray = doc["mappings"].to<JsonArray>();
     
     for (int i = 0; i < numMappings; i++) {
@@ -166,7 +166,7 @@ bool MappingConfig::saveMappings(JsonDocument doc, ButtonMapping* mappings, int 
     return true;
 }
 
-bool MappingConfig::saveStickConfig(JsonDocument doc, StickConfig* leftStick, StickConfig* rightStick) {
+bool MappingConfig::saveStickConfig(JsonDocument& doc, StickConfig* leftStick, StickConfig* rightStick) {
     // Update stick configs
     JsonObject left = doc["leftStick"].to<JsonObject>();
     left["behavior"] = stickBehaviorToString(leftStick->behavior);
