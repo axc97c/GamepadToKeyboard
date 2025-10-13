@@ -1,39 +1,58 @@
 #ifndef RUN_ACTION_H
 #define RUN_ACTION_H
 
-#include "action.h"
-#include "action_types.h"
-
+#include "actions/action.h"
+#include "actions/action_types.h"
+#include "mapping/joystick_mappings.h"
 
 class RunAction : public Action {
   private:
     RunActionParams params;
-     
-    // Button mappings array
-    static const int MAX_MAPPINGS = 128;
+    
+    static const int MAX_MAPPINGS = 32;
     ButtonMapping mappings[MAX_MAPPINGS];
     int numMappings;
     
-    float mouseSensitivity;
-    int mouseDeadzone;
-    int axisCenterValue;
-    unsigned long lastMouseUpdate;
-    unsigned long mouseUpdateInterval;
+    // Controller info
+    JoystickController::joytype_t controllerType;
+        
+    // Stick configurations
+    StickConfig leftStick;
+    StickConfig rightStick;
+        
+    // Mouse/scroll update timing
+    unsigned long lastStickUpdate;
+    unsigned long stickUpdateInterval;
 
+    // D-pad axis tracking (for PS4/PS5)
+    int lastDPadAxisValue;
+    
     void initializeMappings();
     void initializeDefaultMappings();
-    void processButtonMapping(uint8_t buttonNum, bool isPressed);
-    void processMouseMovement();
-    int applyDeadzone(int value, int deadzone);
+    void initializeDefaultStickConfigs();
 
+    void processButtonMappings();
+    void processDPadAxisMappings();
+    void processAnalogStick(StickConfig& stick, int xAxis, int yAxis);
+    
+    void processMouseMovement(StickConfig& stick, int xValue, int yValue);
+    void processButtonEmulation(StickConfig& stick, int xValue, int yValue);
+    void processScrollWheel(StickConfig& stick, int yValue);
+    void processWASDKeys(StickConfig& stick, int xValue, int yValue);
+    void processArrowKeys(StickConfig& stick, int xValue, int yValue);
+    void processCustomKeys(StickConfig& stick, int xValue, int yValue);
+
+    int applyDeadzone(int value, int centerValue, int deadzone);
+    const char* getGenericButtonName(uint8_t genericButton);
+    
   public:
     RunAction(DeviceManager* dev, ActionHandler* hdlr, RunActionParams p);
     
     void init() override;
     void loop() override;
-    ActionType getType() override { return ActionType::RUN; }
+    ActionType getType() override;
     
-    RunActionParams& getParams() { return params; }
+    RunActionParams& getParams();
 };
 
 #endif

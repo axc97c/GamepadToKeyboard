@@ -5,7 +5,7 @@
 #include "devices.h"
 #include "actions/action_handler.h"
 #include "actions/run_action.h"
-#include "mapping_config.h"
+#include "mapping/mapping_config.h"
 
 USBHost usbh;
 USBHub hub(usbh);
