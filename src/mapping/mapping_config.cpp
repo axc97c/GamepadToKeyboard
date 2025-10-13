@@ -78,7 +78,7 @@ void MappingConfig::loadMappings(JsonDocument doc, ButtonMapping* mappings, int&
 void MappingConfig::loadStickConfig(JsonDocument doc, StickConfig* leftStick, StickConfig* rightStick) {
 
     // Load left stick config
-    if (doc.containsKey("leftStick")) {
+    if (doc["leftStick"].is<JsonObject>()) {
         JsonObject left = doc["leftStick"];
         parseStickConfig(leftStick, left);
 
@@ -87,7 +87,7 @@ void MappingConfig::loadStickConfig(JsonDocument doc, StickConfig* leftStick, St
     }
     
     // Load right stick config
-    if (doc.containsKey("rightStick")) {
+    if (doc["rightStick"].is<JsonObject>()) {
         JsonObject right = doc["rightStick"];   
         parseStickConfig(rightStick, right);
 
@@ -98,20 +98,20 @@ void MappingConfig::loadStickConfig(JsonDocument doc, StickConfig* leftStick, St
     Serial.println("Stick configuration loaded");
 }
 
-void MappingConfig::parseStickConfig(StickConfig *leftStick, ArduinoJson::V742PB22::JsonObject &left)
+void MappingConfig::parseStickConfig(StickConfig *stickConfig, ArduinoJson::V742PB22::JsonObject &jsonObject)
 {
-    leftStick->behavior = parseStickBehavior(left["behavior"]);
-    leftStick->sensitivity = left["sensitivity"] | 0.15f;
-    leftStick->deadzone = left["deadzone"] | 16;
-    leftStick->activationThreshold = left["activationThreshold"] | 64;
+    stickConfig->behavior = parseStickBehavior(jsonObject["behavior"]);
+    stickConfig->sensitivity = jsonObject["sensitivity"] | 0.15f;
+    stickConfig->deadzone = jsonObject["deadzone"] | 16;
+    stickConfig->activationThreshold = jsonObject["activationThreshold"] | 64;
 
-    if (left.containsKey("keys"))
+    if (jsonObject["keys"].is<JsonObject>())
     {
-        JsonObject keys = left["keys"];
-        leftStick->keyUp = KeyboardMapping::parseKeyCode(keys["up"]);
-        leftStick->keyDown = KeyboardMapping::parseKeyCode(keys["down"]);
-        leftStick->keyLeft = KeyboardMapping::parseKeyCode(keys["left"]);
-        leftStick->keyRight = KeyboardMapping::parseKeyCode(keys["right"]);
+        JsonObject keys = jsonObject["keys"];
+        stickConfig->keyUp = KeyboardMapping::parseKeyCode(keys["up"]);
+        stickConfig->keyDown = KeyboardMapping::parseKeyCode(keys["down"]);
+        stickConfig->keyLeft = KeyboardMapping::parseKeyCode(keys["left"]);
+        stickConfig->keyRight = KeyboardMapping::parseKeyCode(keys["right"]);
     }
 }
 
