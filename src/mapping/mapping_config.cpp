@@ -98,23 +98,6 @@ void MappingConfig::loadStickConfig(JsonDocument& doc, StickConfig* leftStick, S
     Serial.println("Stick configuration loaded");
 }
 
-void MappingConfig::parseStickConfig(StickConfig *stickConfig, ArduinoJson::V742PB22::JsonObject &jsonObject)
-{
-    stickConfig->behavior = parseStickBehavior(jsonObject["behavior"]);
-    stickConfig->sensitivity = jsonObject["sensitivity"] | 0.15f;
-    stickConfig->deadzone = jsonObject["deadzone"] | 16;
-    stickConfig->activationThreshold = jsonObject["activationThreshold"] | 64;
-
-    if (jsonObject["keys"].is<JsonObject>())
-    {
-        JsonObject keys = jsonObject["keys"];
-        stickConfig->keyUp = KeyboardMapping::parseKeyCode(keys["up"]);
-        stickConfig->keyDown = KeyboardMapping::parseKeyCode(keys["down"]);
-        stickConfig->keyLeft = KeyboardMapping::parseKeyCode(keys["left"]);
-        stickConfig->keyRight = KeyboardMapping::parseKeyCode(keys["right"]);
-    }
-}
-
 bool MappingConfig::saveConfig(const char* filename, ButtonMapping* mappings, int& numMappings, StickConfig* leftStick, StickConfig* rightStick)
 {
     if (SD.exists(filename)) {
@@ -200,6 +183,24 @@ bool MappingConfig::saveStickConfig(JsonDocument& doc, StickConfig* leftStick, S
   
     Serial.println("Stick configuration saved");
     return true;
+}
+
+
+void MappingConfig::parseStickConfig(StickConfig *stickConfig, ArduinoJson::V742PB22::JsonObject &jsonObject)
+{
+    stickConfig->behavior = parseStickBehavior(jsonObject["behavior"]);
+    stickConfig->sensitivity = jsonObject["sensitivity"] | 0.15f;
+    stickConfig->deadzone = jsonObject["deadzone"] | 16;
+    stickConfig->activationThreshold = jsonObject["activationThreshold"] | 64;
+
+    if (jsonObject["keys"].is<JsonObject>())
+    {
+        JsonObject keys = jsonObject["keys"];
+        stickConfig->keyUp = KeyboardMapping::parseKeyCode(keys["up"]);
+        stickConfig->keyDown = KeyboardMapping::parseKeyCode(keys["down"]);
+        stickConfig->keyLeft = KeyboardMapping::parseKeyCode(keys["left"]);
+        stickConfig->keyRight = KeyboardMapping::parseKeyCode(keys["right"]);
+    }
 }
 
 StickBehavior MappingConfig::parseStickBehavior(const char* behaviorStr) {
