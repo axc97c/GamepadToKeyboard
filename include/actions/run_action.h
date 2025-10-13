@@ -14,13 +14,20 @@ class RunAction : public Action {
     ButtonMapping mappings[MAX_MAPPINGS];
     int numMappings;
     
+    float mouseSensitivity;
+    int mouseDeadzone;
+    int axisCenterValue;
+    unsigned long lastMouseUpdate;
+    unsigned long mouseUpdateInterval;
+
     void initializeMappings();
     void initializeDefaultMappings();
     void processButtonMapping(uint8_t buttonNum, bool isPressed);
+    void processMouseMovement();
+    int applyDeadzone(int value, int deadzone);
 
   public:
-    RunAction(DeviceManager* dev, ActionHandler* hdlr, RunActionParams p)
-      : Action(dev, hdlr), params(p) {}
+    RunAction(DeviceManager* dev, ActionHandler* hdlr, RunActionParams p);
     
     void init() override;
     void loop() override;

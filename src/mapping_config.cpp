@@ -83,8 +83,8 @@ bool MappingConfig::loadMappings(const char* filename, ButtonMapping* mappings, 
     
     for (JsonObject mapping : mappingsArray) {
         if (numMappings >= maxMappings) {
-        Serial.println("Warning: Too many mappings, truncating");
-        break;
+            Serial.println("Warning: Too many mappings, truncating");
+            break;
         }
         
         const char* buttonStr = mapping["button"];
@@ -94,16 +94,16 @@ bool MappingConfig::loadMappings(const char* filename, ButtonMapping* mappings, 
         int keyCode = parseKeyCode(keyStr);
         
         if (buttonNum != -1 && keyCode != -1) {
-        mappings[numMappings].joystickButton = buttonNum;
-        mappings[numMappings].keyCode = keyCode;
-        mappings[numMappings].currentlyPressed = false;
-        
-        Serial.print("  Loaded: ");
-        Serial.print(buttonStr);
-        Serial.print(" -> ");
-        Serial.println(keyStr);
-        
-        numMappings++;
+            mappings[numMappings].joystickButton = buttonNum;
+            mappings[numMappings].keyCode = keyCode;
+            mappings[numMappings].currentlyPressed = false;
+            
+            Serial.print("  Loaded: ");
+            Serial.print(buttonStr);
+            Serial.print(" -> ");
+            Serial.println(keyStr);
+            
+            numMappings++;
         }
     }
     

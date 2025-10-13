@@ -5,6 +5,7 @@
 
 // Xbox 360 Controller Button Mappings
 namespace Xbox360 {
+    // Buttons
     const uint8_t LB = 0;
     const uint8_t RB = 1;
     const uint8_t XBOX_BUTTON = 2;
@@ -21,6 +22,14 @@ namespace Xbox360 {
     const uint8_t BACK = 13;
     const uint8_t LEFT_STICK = 14;
     const uint8_t RIGHT_STICK = 15;
+ 
+    // Analog Axes
+    const uint8_t AXIS_LEFT_X = 0;
+    const uint8_t AXIS_LEFT_Y = 1;
+    const uint8_t AXIS_RIGHT_X = 2;
+    const uint8_t AXIS_RIGHT_Y = 3;
+    const uint8_t AXIS_LEFT_TRIGGER = 6;
+    const uint8_t AXIS_RIGHT_TRIGGER = 5;
 }
 
 #endif
