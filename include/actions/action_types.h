@@ -64,7 +64,7 @@ struct StickConfig
 
 struct RunActionParams
 {
-    uint8_t profileId;
+    const char *filename;
 };
 
 struct MenuActionParams

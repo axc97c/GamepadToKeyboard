@@ -8,7 +8,7 @@
 
 class MenuAction : public Action
 {
-private:
+protected:
     MenuActionParams params;
 
     static const int MAX_ITEMS = 20;
@@ -20,6 +20,7 @@ private:
     int selectedIndex;
     int scrollOffset;
 
+    // Protected methods for derived classes
     void moveUp();
     void moveDown();
     void updateScrollOffset();
@@ -27,11 +28,17 @@ private:
 
 public:
     MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
+    virtual ~MenuAction() {}
 
     // Action lifecycle methods
     void init() override;
     void loop() override;
     ActionType getType() override;
+
+    // Pure virtual methods that derived classes must implement
+    virtual void onInit() = 0;
+    virtual void onConfirm() = 0;
+    virtual void onCancel() = 0;
 
     // Public methods to configure menu
     void setMenu(String title, String items[], int itemCount);

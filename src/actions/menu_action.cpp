@@ -12,29 +12,16 @@ MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams
 
 void MenuAction::init()
 {
-    // Initialize default menu
-    menuTitle = "Main Menu";
-    String defaultItems[] = {
-        "Option 1",
-        "Option 2",
-        "Option 3",
-        "Option 4",
-        "Option 5",
-        "Option 6",
-        "Option 7",
-        "Option 8",
-        "Option 9",
-        "Option 10"};
-        
-    setMenu(menuTitle, defaultItems, 10);
-
-    Serial.println("MenuAction setup complete");
-
+    Serial.println("MenuAction base init");
+    
+    // Call derived class initialization
+    onInit();
+    
     selectedIndex = 0;
     scrollOffset = 0;
-
+    
     displayMenu();
-
+    
     Serial.println("MenuAction initialized");
     Serial.print("Selected: ");
     Serial.println(menuItems[selectedIndex]);
@@ -57,15 +44,16 @@ void MenuAction::loop()
         break;
 
     case INPUT_CONFIRM:
-        // Handle selection confirmation
+        // Handle selection confirmation - delegate to derived class
         Serial.print("Confirmed: ");
         Serial.println(menuItems[selectedIndex]);
-        // TODO: Add callback or action handler here
+        onConfirm();
         break;
 
     case INPUT_CANCEL:
         Serial.println("Cancel pressed");
-        // TODO: Add back/cancel action here
+        // Delegate to derived class
+        onCancel();
         break;
 
     case INPUT_NONE:

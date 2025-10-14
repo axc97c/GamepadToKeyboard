@@ -32,13 +32,13 @@ void RunAction::init()
     }
 
     // Try to load button mappings
-    if (!MappingConfig::loadConfig("/config.json", mappings, numMappings, MAX_MAPPINGS, &leftStick, &rightStick))
+    if (!MappingConfig::loadConfig(params.filename, mappings, numMappings, MAX_MAPPINGS, &leftStick, &rightStick))
     {
         Serial.println("Failed to load button mappings, using defaults");
         initializeDefaultMappings();
         initializeDefaultStickConfigs();
 
-        MappingConfig::saveConfig("/config.json", mappings, numMappings, &leftStick, &rightStick);
+        MappingConfig::saveConfig(params.filename, mappings, numMappings, &leftStick, &rightStick);
     }
 
     Serial.println("RunAction initialization complete");

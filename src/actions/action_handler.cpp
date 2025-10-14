@@ -1,7 +1,7 @@
 #include "actions/action_handler.h"
 #include "actions/action.h"
 #include "actions/run_action.h"
-#include "actions/menu_action.h"
+#include "actions/example_menu_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -16,8 +16,7 @@ ActionHandler::~ActionHandler()
 
 void ActionHandler::setup()
 {
-    // activateRun({0});
-    activateMenu({0});
+    activateRun({"/Default.json"});
 }
 
 void ActionHandler::loop()
@@ -45,10 +44,10 @@ void ActionHandler::activateRun(RunActionParams params)
 void ActionHandler::activateMenu(MenuActionParams params)
 {
     clearAction();
-    currentAction = new MenuAction(devices, this, params);
+    currentAction = new ExampleMenuAction(devices, this, params);
     Serial.println((unsigned long)currentAction, HEX);
     actionInitialized = false;
-    Serial.println("Action: Run mode activated");
+    Serial.println("Action: Example Menu activated");
 }
 
 ActionType ActionHandler::getCurrentActionType()
