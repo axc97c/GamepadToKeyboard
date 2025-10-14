@@ -53,7 +53,7 @@ void MappingConfig::loadMappings(JsonDocument& doc, ButtonMapping* mappings, int
         const char* buttonStr = mapping["button"];
         const char* keyStr = mapping["key"];
         
-        int genericButton = ControllerMapper::parseGenericButtonName(buttonStr);
+        int genericButton = JoystickMapping::parseGenericButtonName(buttonStr);
         int keyCode = KeyboardMapping::parseKeyCode(keyStr);
         
         if (genericButton != -1 && keyCode != -1) {
@@ -138,7 +138,7 @@ bool MappingConfig::saveMappings(JsonDocument& doc, ButtonMapping* mappings, int
     
     for (int i = 0; i < numMappings; i++) {
         JsonObject mapping = mappingsArray.add<JsonObject>();
-        mapping["button"] = ControllerMapper::getGenericButtonName(mappings[i].genericButton);
+        mapping["button"] = JoystickMapping::getGenericButtonName(mappings[i].genericButton);
         mapping["key"] = KeyboardMapping::keyCodeToString(mappings[i].keyCode);
     }
     
@@ -184,7 +184,6 @@ bool MappingConfig::saveStickConfig(JsonDocument& doc, StickConfig* leftStick, S
     Serial.println("Stick configuration saved");
     return true;
 }
-
 
 void MappingConfig::parseStickConfig(StickConfig *stickConfig, ArduinoJson::V742PB22::JsonObject &jsonObject)
 {

@@ -59,10 +59,10 @@ void RunAction::loop() {
         processDPadAxisMappings();
         
         // Process analog sticks
-        int leftXAxis = ControllerMapper::mapAxisToGeneric(controllerType, GenericController::AXIS_LEFT_X);
-        int leftYAxis = ControllerMapper::mapAxisToGeneric(controllerType, GenericController::AXIS_LEFT_Y);
-        int rightXAxis = ControllerMapper::mapAxisToGeneric(controllerType, GenericController::AXIS_RIGHT_X);
-        int rightYAxis = ControllerMapper::mapAxisToGeneric(controllerType, GenericController::AXIS_RIGHT_Y);
+        int leftXAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_LEFT_X);
+        int leftYAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_LEFT_Y);
+        int rightXAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_RIGHT_X);
+        int rightYAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_RIGHT_Y);
         
         if (leftXAxis != -1 && leftYAxis != -1) {
             processAnalogStick(leftStick, leftXAxis, leftYAxis);
@@ -83,7 +83,7 @@ void RunAction::processButtonMappings() {
         
         // Skip D-pad buttons if controller uses D-pad axis
         uint8_t dpadAxis;
-        if (ControllerMapper::usesDPadAxis(controllerType, dpadAxis)) {
+        if (JoystickMapping::usesDPadAxis(controllerType, dpadAxis)) {
             if (genericButton >= GenericController::BTN_DPAD_UP && 
                 genericButton <= GenericController::BTN_DPAD_RIGHT) {
                 continue; // Handle these in processDPadAxisMappings
@@ -95,7 +95,7 @@ void RunAction::processButtonMappings() {
         
         // Check all physical buttons to find which maps to this generic button
         for (uint8_t physicalBtn = 0; physicalBtn < 32; physicalBtn++) {
-            int mappedGeneric = ControllerMapper::mapButtonToGeneric(controllerType, physicalBtn);
+            int mappedGeneric = JoystickMapping::mapButtonToGeneric(controllerType, physicalBtn);
             if (mappedGeneric == genericButton) {
                 isPressed = (buttons & (1 << physicalBtn)) != 0;
                 break;
@@ -126,7 +126,7 @@ void RunAction::processButtonMappings() {
 
 void RunAction::processDPadAxisMappings() {
     uint8_t dpadAxis;
-    if (!ControllerMapper::usesDPadAxis(controllerType, dpadAxis)) {
+    if (!JoystickMapping::usesDPadAxis(controllerType, dpadAxis)) {
         return; // Controller doesn't use D-pad axis
     }
     
@@ -150,7 +150,7 @@ void RunAction::processDPadAxisMappings() {
         }
         
         // Check if current axis value corresponds to this D-pad button
-        int mappedButton = ControllerMapper::mapDPadValueToButton(controllerType, axisValue);
+        int mappedButton = JoystickMapping::mapDPadValueToButton(controllerType, axisValue);
         bool isPressed = (mappedButton == genericButton);
         
         // Detect state change
@@ -205,11 +205,7 @@ void RunAction::processAnalogStick(StickConfig& stick, int xAxis, int yAxis) {
         case StickBehavior::ARROW_KEYS:
             processArrowKeys(stick, xValue, yValue);
             break;
-            
-        case StickBehavior::CUSTOM_KEYS:
-            processCustomKeys(stick, xValue, yValue);
-            break;
-            
+
         default:
             break;
     }
@@ -326,10 +322,6 @@ void RunAction::processArrowKeys(StickConfig& stick, int xValue, int yValue) {
     processButtonEmulation(stick, xValue, yValue);
 }
 
-void RunAction::processCustomKeys(StickConfig& stick, int xValue, int yValue) {
-    processButtonEmulation(stick, xValue, yValue);
-}
-
 int RunAction::applyDeadzone(int value, int centerValue, int deadzone) {
     int centered = value - centerValue;
     
@@ -377,39 +369,14 @@ void RunAction::initializeDefaultMappings() {
 }
 
 void RunAction::initializeDefaultStickConfigs() {
-    // Right stick - Mouse movement
     rightStick.behavior = StickBehavior::MOUSE_MOVEMENT;
-    rightStick.sensitivity = 0.15f;
-    rightStick.deadzone = 16;
-    // rightStick.activationThreshold = 64;
-    // rightStick.keyUp = 'w';
-    // rightStick.keyDown = 's';
-    // rightStick.keyLeft = 'a';
-    // rightStick.keyRight = 'd';
-    // rightStick.upPressed = false;
-    // rightStick.downPressed = false;
-    // rightStick.leftPressed = false;
-    // rightStick.rightPressed = false;
-    
-    // Left stick - Arrow keys
     leftStick.behavior = StickBehavior::ARROW_KEYS;
-    leftStick.sensitivity = 0.15f;
-    leftStick.deadzone = 16;
-    leftStick.activationThreshold = 64;
-    leftStick.keyUp = KEY_UP;
-    leftStick.keyDown = KEY_DOWN;
-    leftStick.keyLeft = KEY_LEFT;
-    leftStick.keyRight = KEY_RIGHT;
-    leftStick.upPressed = false;
-    leftStick.downPressed = false;
-    leftStick.leftPressed = false;
-    leftStick.rightPressed = false;
     
     Serial.println("Default stick configurations initialized");
 }
 
 const char* RunAction::getGenericButtonName(uint8_t genericButton) {
-    return ControllerMapper::getGenericButtonName(genericButton);
+    return JoystickMapping::getGenericButtonName(genericButton);
 }
 
 ActionType RunAction::getType() {

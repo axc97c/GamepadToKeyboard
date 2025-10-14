@@ -59,17 +59,17 @@ void onPress(int key) {
     Serial.println(key);
     
     // Get modifiers
-    // uint8_t mods = keyboard.getModifiers();
+    uint8_t mods = keyboard.getModifiers();
     
-    // // Press modifiers first
-    // if (mods & 0x01) Keyboard.press(KEY_LEFT_CTRL);
-    // if (mods & 0x02) Keyboard.press(KEY_LEFT_SHIFT);
-    // if (mods & 0x04) Keyboard.press(KEY_LEFT_ALT);
-    // if (mods & 0x08) Keyboard.press(KEY_LEFT_GUI);
-    // if (mods & 0x10) Keyboard.press(KEY_RIGHT_CTRL);
-    // if (mods & 0x20) Keyboard.press(KEY_RIGHT_SHIFT);
-    // if (mods & 0x40) Keyboard.press(KEY_RIGHT_ALT);
-    // if (mods & 0x80) Keyboard.press(KEY_RIGHT_GUI);
+    // Press modifiers first
+    if (mods & 0x01) Keyboard.press(KEY_LEFT_CTRL);
+    if (mods & 0x02) Keyboard.press(KEY_LEFT_SHIFT);
+    if (mods & 0x04) Keyboard.press(KEY_LEFT_ALT);
+    if (mods & 0x08) Keyboard.press(KEY_LEFT_GUI);
+    if (mods & 0x10) Keyboard.press(KEY_RIGHT_CTRL);
+    if (mods & 0x20) Keyboard.press(KEY_RIGHT_SHIFT);
+    if (mods & 0x40) Keyboard.press(KEY_RIGHT_ALT);
+    if (mods & 0x80) Keyboard.press(KEY_RIGHT_GUI);
 
     Keyboard.press(key);
 }
@@ -81,16 +81,16 @@ void onRelease(int key) {
     Keyboard.release(key);
     
     // Get current modifiers and release any that are no longer pressed
-    // uint8_t mods = keyboard.getModifiers();
+    uint8_t mods = keyboard.getModifiers();
     
-    // if (!(mods & 0x01)) Keyboard.release(KEY_LEFT_CTRL);
-    // if (!(mods & 0x02)) Keyboard.release(KEY_LEFT_SHIFT);
-    // if (!(mods & 0x04)) Keyboard.release(KEY_LEFT_ALT);
-    // if (!(mods & 0x08)) Keyboard.release(KEY_LEFT_GUI);
-    // if (!(mods & 0x10)) Keyboard.release(KEY_RIGHT_CTRL);
-    // if (!(mods & 0x20)) Keyboard.release(KEY_RIGHT_SHIFT);
-    // if (!(mods & 0x40)) Keyboard.release(KEY_RIGHT_ALT);
-    // if (!(mods & 0x80)) Keyboard.release(KEY_RIGHT_GUI);
+    if (!(mods & 0x01)) Keyboard.release(KEY_LEFT_CTRL);
+    if (!(mods & 0x02)) Keyboard.release(KEY_LEFT_SHIFT);
+    if (!(mods & 0x04)) Keyboard.release(KEY_LEFT_ALT);
+    if (!(mods & 0x08)) Keyboard.release(KEY_LEFT_GUI);
+    if (!(mods & 0x10)) Keyboard.release(KEY_RIGHT_CTRL);
+    if (!(mods & 0x20)) Keyboard.release(KEY_RIGHT_SHIFT);
+    if (!(mods & 0x40)) Keyboard.release(KEY_RIGHT_ALT);
+    if (!(mods & 0x80)) Keyboard.release(KEY_RIGHT_GUI);
 }
 
 void printKeyboardInfo() {

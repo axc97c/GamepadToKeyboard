@@ -1,6 +1,6 @@
 #include "mapping/joystick_mappings.h"
 
-int ControllerMapper::mapButtonToGeneric(JoystickController::joytype_t type, uint8_t controllerButton) {
+int JoystickMapping::mapButtonToGeneric(JoystickController::joytype_t type, uint8_t controllerButton) {
     switch(type) {
         case JoystickController::XBOX360:
         case JoystickController::XBOXONE:
@@ -53,7 +53,7 @@ int ControllerMapper::mapButtonToGeneric(JoystickController::joytype_t type, uin
     }
 }
 
-int ControllerMapper::mapAxisToGeneric(JoystickController::joytype_t type, uint8_t controllerAxis) {
+int JoystickMapping::mapAxisToGeneric(JoystickController::joytype_t type, uint8_t controllerAxis) {
     switch(type) {
         case JoystickController::PS4:
         case JoystickController::PS3:
@@ -80,7 +80,7 @@ int ControllerMapper::mapAxisToGeneric(JoystickController::joytype_t type, uint8
     }
 }
 
-bool ControllerMapper::usesDPadAxis(JoystickController::joytype_t type, uint8_t& axisNumber) {
+bool JoystickMapping::usesDPadAxis(JoystickController::joytype_t type, uint8_t& axisNumber) {
     switch(type) {
         case JoystickController::PS4:
         case JoystickController::PS3:
@@ -92,7 +92,7 @@ bool ControllerMapper::usesDPadAxis(JoystickController::joytype_t type, uint8_t&
     }
 }
 
-int ControllerMapper::mapDPadValueToButton(JoystickController::joytype_t type, uint8_t axisValue) {
+int JoystickMapping::mapDPadValueToButton(JoystickController::joytype_t type, uint8_t axisValue) {
     switch(type) {
         case JoystickController::PS4:
         case JoystickController::PS3:
@@ -109,7 +109,7 @@ int ControllerMapper::mapDPadValueToButton(JoystickController::joytype_t type, u
     }
 }
 
-const char* ControllerMapper::getGenericButtonName(uint8_t genericButton) {
+const char* JoystickMapping::getGenericButtonName(uint8_t genericButton) {
     switch(genericButton) {
         case GenericController::BTN_SOUTH: return "BTN_SOUTH";
         case GenericController::BTN_EAST: return "BTN_EAST";
@@ -133,7 +133,7 @@ const char* ControllerMapper::getGenericButtonName(uint8_t genericButton) {
     }
 }
 
-int ControllerMapper::parseGenericButtonName(const char* buttonName) {
+int JoystickMapping::parseGenericButtonName(const char* buttonName) {
     if (strcmp(buttonName, "BTN_SOUTH") == 0) return GenericController::BTN_SOUTH;
     if (strcmp(buttonName, "BTN_EAST") == 0) return GenericController::BTN_EAST;
     if (strcmp(buttonName, "BTN_WEST") == 0) return GenericController::BTN_WEST;

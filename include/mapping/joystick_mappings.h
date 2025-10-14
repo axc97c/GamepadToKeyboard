@@ -46,7 +46,7 @@ namespace GenericController {
 }
 
 // Mapper class to translate controller-specific buttons to generic buttons
-class ControllerMapper {
+class JoystickMapping {
   public:
     // Map controller-specific button to generic button
     static int mapButtonToGeneric(JoystickController::joytype_t type, uint8_t controllerButton);

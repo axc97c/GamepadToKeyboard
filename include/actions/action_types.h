@@ -21,8 +21,7 @@ enum class StickBehavior : uint8_t {
     BUTTON_EMULATION,   // Acts as 4 buttons (up/down/left/right)
     SCROLL_WHEEL,       // Y axis controls scroll wheel
     WASD_KEYS,          // Emulates WASD keys
-    ARROW_KEYS,         // Emulates arrow keys
-    CUSTOM_KEYS         // User-defined keys for each direction
+    ARROW_KEYS         // Emulates arrow keys
 };
 
 // Analog stick identifier
