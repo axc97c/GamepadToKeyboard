@@ -25,6 +25,7 @@ private:
     unsigned long lastStickUpdate;
     unsigned long stickUpdateInterval;
     unsigned long backlightOnTime;
+    static const unsigned long BACKLIGHT_TIMEOUT_MS = 15000;
 
     // D-pad axis tracking (for PS4/PS5)
     int lastDPadAxisValue;
@@ -45,6 +46,8 @@ private:
 
     int applyDeadzone(int value, int centerValue, int deadzone);
     const char *getGenericButtonName(uint8_t genericButton);
+
+    void DisplayLoadedFile();
 
 public:
     RunAction(DeviceManager *dev, ActionHandler *hdlr, RunActionParams p);

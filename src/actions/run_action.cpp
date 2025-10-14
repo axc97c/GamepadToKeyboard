@@ -1,5 +1,6 @@
 #include "actions/run_action.h"
 #include "mapping/mapping_config.h"
+#include "actions/action_handler.h"
 #include "devices.h"
 #include <Keyboard.h>
 #include <Mouse.h>
@@ -20,16 +21,7 @@ void RunAction::init()
 {
     Serial.println("RunAction: Initialized");
 
-    // Display loading message on LCD
-    LiquidCrystal_I2C *lcd = devices->getLCD();
-    lcd->clear();
-    lcd->backlight();
-    lcd->setCursor(0, 1);
-    lcd->print("Running file:");
-    lcd->setCursor(2, 2);
-    lcd->print(params.filename);
-    backlightOnTime = millis();
-    Serial.println("Backlight on");
+    DisplayLoadedFile();
 
     // Detect controller type
     JoystickController *joy = devices->getJoystick();
@@ -58,7 +50,7 @@ void RunAction::loop()
     if (backlightOnTime > 0)
     {
         unsigned long currentTime = millis();
-        if (currentTime > backlightOnTime + 10000)
+        if (currentTime > backlightOnTime + BACKLIGHT_TIMEOUT_MS)
         {
             Serial.println("Backlight off");
             devices->getLCD()->noBacklight();
@@ -77,6 +69,24 @@ void RunAction::loop()
             controllerType = currentType;
             Serial.print("Controller type changed to: ");
             Serial.println(controllerType);
+        }
+
+        // Check for menu button press (Xbox/PS button)
+        uint32_t buttons = joy->getButtons();
+        for (uint8_t physicalBtn = 0; physicalBtn < 32; physicalBtn++)
+        {
+            int mappedGeneric = JoystickMapping::mapButtonToGeneric(controllerType, physicalBtn);
+            if (mappedGeneric == GenericController::BTN_MENU)
+            {
+                bool isPressed = (buttons & (1 << physicalBtn)) != 0;
+                if (isPressed)
+                {
+                    Serial.println("Menu button pressed - switching to menu action");
+                    handler->activateMenu({0});
+                    return;
+                }
+                break;
+            }
         }
 
         // Process button mappings
@@ -465,4 +475,35 @@ ActionType RunAction::getType()
 RunActionParams &RunAction::getParams()
 {
     return params;
+}
+
+void RunAction::DisplayLoadedFile()
+{
+    // Display loading message on LCD
+    LiquidCrystal_I2C *lcd = devices->getLCD();
+    lcd->clear();
+    lcd->backlight();
+    lcd->setCursor(0, 1);
+    lcd->print("Running file:");
+    lcd->setCursor(2, 2);
+    
+    // Extract filename without path or extension
+    String fullPath = String(params.filename);
+    int lastSlash = fullPath.lastIndexOf('/');
+    int lastDot = fullPath.lastIndexOf('.');
+    
+    String displayName;
+    if (lastSlash >= 0) {
+        // Remove path
+        displayName = fullPath.substring(lastSlash + 1);
+    } else {
+        displayName = fullPath;
+    }
+    
+    if (lastDot > lastSlash) {
+        // Remove extension
+        displayName = displayName.substring(0, lastDot - (lastSlash + 1));
+    }
+    
+    lcd->print(displayName);
 }

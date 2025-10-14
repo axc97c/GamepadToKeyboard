@@ -20,12 +20,18 @@ protected:
     int selectedIndex;
     int scrollOffset;
 
+    // Timeout tracking
+    unsigned long lastInputTime;
+    static const unsigned long TIMEOUT_MS = 10000; // 10 seconds
+
     // Protected methods for derived classes
     void moveUp();
     void moveDown();
     void updateScrollOffset();
     void displayMenu();
-
+    void resetTimeout();
+    bool checkTimeout();
+    
 public:
     MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
     virtual ~MenuAction() {}

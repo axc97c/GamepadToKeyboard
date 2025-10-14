@@ -35,6 +35,10 @@ void ActionHandler::loop()
 void ActionHandler::activateRun(RunActionParams params)
 {
     clearAction();
+
+    strncpy(lastRunFilename, params.filename, sizeof(lastRunFilename) - 1);
+    lastRunFilename[sizeof(lastRunFilename) - 1] = '\0';
+
     currentAction = new RunAction(devices, this, params);
     Serial.println((unsigned long)currentAction, HEX);
     actionInitialized = false;

@@ -13,7 +13,7 @@ private:
     DeviceManager *devices;
     Action *currentAction;
     bool actionInitialized;
-
+    char lastRunFilename[64];
 public:
     ActionHandler(DeviceManager *dev);
     ~ActionHandler();
@@ -21,13 +21,13 @@ public:
     // Activate a specific action with parameters
     void activateRun(RunActionParams params);
     void activateMenu(MenuActionParams params);
-    // void activateMenuDisplay(MenuDisplayParams params);
-    // void activateKeyMappingConfig(KeyMappingConfigParams params);
 
     // Get current action (returns nullptr if none active)
     Action *getCurrentAction() { return currentAction; }
     ActionType getCurrentActionType();
 
+    const char *getLastRunFilename() { return lastRunFilename; }
+    
     void setup();
     void loop();
     void clearAction();

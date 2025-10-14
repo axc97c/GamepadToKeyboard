@@ -1,4 +1,6 @@
 #include "actions/menu_action.h"
+#include "actions/action_handler.h"
+#include "actions/run_action.h"
 #include "devices.h"
 
 MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
@@ -19,7 +21,8 @@ void MenuAction::init()
     
     selectedIndex = 0;
     scrollOffset = 0;
-    
+    lastInputTime = millis();
+
     displayMenu();
     
     Serial.println("MenuAction initialized");
@@ -29,8 +32,25 @@ void MenuAction::init()
 
 void MenuAction::loop()
 {
+    // Check for timeout
+    if (checkTimeout())
+    {
+        Serial.println("Menu timeout - returning to run action");
+        
+        // Get the last run action filename from handler
+        const char *filename = handler->getLastRunFilename();
+        
+        handler->activateRun({filename});
+        return;
+    }
+
     // Get input event from the input handler
     InputEvent event = devices->getInput()->getEvent();
+
+    if (event != INPUT_NONE)
+    {
+        resetTimeout();
+    }
 
     // Handle the event
     switch (event)
@@ -175,4 +195,15 @@ void MenuAction::refresh()
 ActionType MenuAction::getType()
 {
     return ActionType::MENU;
+}
+
+void MenuAction::resetTimeout()
+{
+    lastInputTime = millis();
+}
+
+bool MenuAction::checkTimeout()
+{
+    unsigned long currentTime = millis();
+    return (currentTime - lastInputTime >= TIMEOUT_MS);
 }
