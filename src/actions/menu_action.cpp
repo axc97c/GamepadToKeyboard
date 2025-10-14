@@ -22,6 +22,7 @@ void MenuAction::init()
     selectedIndex = 0;
     scrollOffset = 0;
     lastInputTime = millis();
+    devices->getLCD()->backlight();
 
     displayMenu();
     

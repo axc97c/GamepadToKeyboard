@@ -22,7 +22,7 @@ protected:
 
     // Timeout tracking
     unsigned long lastInputTime;
-    static const unsigned long TIMEOUT_MS = 10000; // 10 seconds
+    static const unsigned long TIMEOUT_MS = 30000;
 
     // Protected methods for derived classes
     void moveUp();
@@ -31,7 +31,7 @@ protected:
     void displayMenu();
     void resetTimeout();
     bool checkTimeout();
-    
+
 public:
     MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
     virtual ~MenuAction() {}

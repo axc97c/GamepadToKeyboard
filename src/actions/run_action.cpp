@@ -506,4 +506,6 @@ void RunAction::DisplayLoadedFile()
     }
     
     lcd->print(displayName);
+
+    backlightOnTime = millis();
 }
