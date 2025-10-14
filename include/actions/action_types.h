@@ -45,7 +45,7 @@ struct ButtonMapping
 struct StickConfig
 {
     StickBehavior behavior = StickBehavior::DISABLED;
-    float sensitivity = 0.015f;
+    float sensitivity = 0.15f;
     int deadzone = 16;
     int activationThreshold = 64;
 
