@@ -5,37 +5,38 @@
 #include <USBHost_t36.h>
 
 // Generic button definitions (based on Xbox layout)
-namespace GenericController {
+namespace GenericController
+{
     // Face buttons (right side, diamond layout)
-    const uint8_t BTN_SOUTH = 0;     // A / Cross (bottom)
-    const uint8_t BTN_EAST = 1;      // B / Circle (right)
-    const uint8_t BTN_WEST = 2;      // X / Square (left)
-    const uint8_t BTN_NORTH = 3;     // Y / Triangle (top)
-    
+    const uint8_t BTN_SOUTH = 0; // A / Cross (bottom)
+    const uint8_t BTN_EAST = 1;  // B / Circle (right)
+    const uint8_t BTN_WEST = 2;  // X / Square (left)
+    const uint8_t BTN_NORTH = 3; // Y / Triangle (top)
+
     // Shoulder buttons
-    const uint8_t BTN_L1 = 4;        // LB / L1
-    const uint8_t BTN_R1 = 5;        // RB / R1
-    const uint8_t BTN_L2 = 6;        // LT button / L2
-    const uint8_t BTN_R2 = 7;        // RT button / R2
-    
+    const uint8_t BTN_L1 = 4; // LB / L1
+    const uint8_t BTN_R1 = 5; // RB / R1
+    const uint8_t BTN_L2 = 6; // LT button / L2
+    const uint8_t BTN_R2 = 7; // RT button / R2
+
     // Center buttons
-    const uint8_t BTN_SELECT = 8;    // Back / Share
-    const uint8_t BTN_START = 9;     // Start / Options
-    const uint8_t BTN_MENU = 10;     // Xbox / PS button
-    
+    const uint8_t BTN_SELECT = 8; // Back / Share
+    const uint8_t BTN_START = 9;  // Start / Options
+    const uint8_t BTN_MENU = 10;  // Xbox / PS button
+
     // Stick clicks
-    const uint8_t BTN_L3 = 11;       // Left stick click
-    const uint8_t BTN_R3 = 12;       // Right stick click
-    
+    const uint8_t BTN_L3 = 11; // Left stick click
+    const uint8_t BTN_R3 = 12; // Right stick click
+
     // D-Pad buttons
     const uint8_t BTN_DPAD_UP = 13;
     const uint8_t BTN_DPAD_DOWN = 14;
     const uint8_t BTN_DPAD_LEFT = 15;
     const uint8_t BTN_DPAD_RIGHT = 16;
-    
+
     // Special
     const uint8_t BTN_TOUCHPAD = 17; // PS4 touchpad
-    
+
     // Analog Axes
     const uint8_t AXIS_LEFT_X = 0;
     const uint8_t AXIS_LEFT_Y = 1;
@@ -46,29 +47,34 @@ namespace GenericController {
 }
 
 // Mapper class to translate controller-specific buttons to generic buttons
-class JoystickMapping {
-  public:
+class JoystickMapping
+{
+public:
     // Map controller-specific button to generic button
     static int mapButtonToGeneric(JoystickController::joytype_t type, uint8_t controllerButton);
-    
+
     // Map controller-specific axis to generic axis
     static int mapAxisToGeneric(JoystickController::joytype_t type, uint8_t controllerAxis);
-    
+
+    // Map generic button to controller-specific button (reverse mapping)
+    static int mapGenericToButton(JoystickController::joytype_t type, uint8_t genericButton);
+
     // Check if controller uses D-pad as axis and get the axis number
-    static bool usesDPadAxis(JoystickController::joytype_t type, uint8_t& axisNumber);
-    
+    static bool usesDPadAxis(JoystickController::joytype_t type, uint8_t &axisNumber);
+
     // Map D-pad axis value to generic D-pad button
     static int mapDPadValueToButton(JoystickController::joytype_t type, uint8_t axisValue);
-    
+
     // Get button name for generic button
-    static const char* getGenericButtonName(uint8_t genericButton);
-    
+    static const char *getGenericButtonName(uint8_t genericButton);
+
     // Parse button name to generic button
-    static int parseGenericButtonName(const char* buttonName);
+    static int parseGenericButtonName(const char *buttonName);
 };
 
 // Xbox 360 physical button mapping
-namespace Xbox360Physical {
+namespace Xbox360Physical
+{
     const uint8_t A = 4;
     const uint8_t B = 5;
     const uint8_t X = 6;
@@ -87,7 +93,8 @@ namespace Xbox360Physical {
 }
 
 // PS4 physical button mapping
-namespace PS4Physical {
+namespace PS4Physical
+{
     const uint8_t CROSS = 1;
     const uint8_t CIRCLE = 2;
     const uint8_t SQUARE = 0;
@@ -102,7 +109,7 @@ namespace PS4Physical {
     const uint8_t L3 = 10;
     const uint8_t R3 = 11;
     const uint8_t TOUCHPAD = 13;
-    
+
     // D-Pad as axis
     const uint8_t DPAD_AXIS = 9;
     const uint8_t DPAD_UP_VALUE = 0;

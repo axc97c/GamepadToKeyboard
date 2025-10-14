@@ -1,17 +1,26 @@
 #include "devices.h"
+#include "input.h"
 
-DeviceManager::DeviceManager() 
-  : host(nullptr), hub(nullptr), keyboard(nullptr), 
-    mouse(nullptr), joystick(nullptr) {
+DeviceManager::DeviceManager()
+    : host(nullptr), hub(nullptr), keyboard(nullptr),
+      mouse(nullptr), joystick(nullptr)
+{
 }
 
-DeviceManager::~DeviceManager() {
+DeviceManager::~DeviceManager()
+{
 }
 
-void DeviceManager::setup() {
+void DeviceManager::setup()
+{
+    lcd->init();
+    lcd->backlight();
+    input = new Input(joystick);
+    input->setup();
     host->begin();
 }
 
-void DeviceManager::loop() {
+void DeviceManager::loop()
+{
     host->Task();
 }

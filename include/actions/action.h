@@ -7,18 +7,20 @@
 class DeviceManager;
 class ActionHandler;
 
-class Action {
-  protected:
-    DeviceManager* devices;
-    ActionHandler* handler;
-    
-  public:
-    Action(DeviceManager* dev, ActionHandler* hdlr) 
-      : devices(dev), handler(hdlr) {
-      }
-    
+class Action
+{
+protected:
+    DeviceManager *devices;
+    ActionHandler *handler;
+
+public:
+    Action(DeviceManager *dev, ActionHandler *hdlr)
+        : devices(dev), handler(hdlr)
+    {
+    }
+
     virtual ~Action() {}
-    
+
     // Must be implemented by each action
     virtual void init() = 0;
     virtual void loop() = 0;

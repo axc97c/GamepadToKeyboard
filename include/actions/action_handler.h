@@ -7,25 +7,27 @@
 class DeviceManager;
 class Action;
 
-class ActionHandler {
-  private:
-    DeviceManager* devices;
-    Action* currentAction;
+class ActionHandler
+{
+private:
+    DeviceManager *devices;
+    Action *currentAction;
     bool actionInitialized;
-    
-  public:
-    ActionHandler(DeviceManager* dev);
+
+public:
+    ActionHandler(DeviceManager *dev);
     ~ActionHandler();
-    
+
     // Activate a specific action with parameters
     void activateRun(RunActionParams params);
-    //void activateMenuDisplay(MenuDisplayParams params);
-    //void activateKeyMappingConfig(KeyMappingConfigParams params);
-    
+    void activateMenu(MenuActionParams params);
+    // void activateMenuDisplay(MenuDisplayParams params);
+    // void activateKeyMappingConfig(KeyMappingConfigParams params);
+
     // Get current action (returns nullptr if none active)
-    Action* getCurrentAction() { return currentAction; }
+    Action *getCurrentAction() { return currentAction; }
     ActionType getCurrentActionType();
-    
+
     void setup();
     void loop();
     void clearAction();
