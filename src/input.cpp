@@ -5,8 +5,6 @@ Input::Input(JoystickController *controller)
     joystick = controller;
     lastButtons = 0;
     lastDPadValue = 0xFF;
-    dPadUsesAxis = false;
-    dPadAxisNumber = 0;
 
     // Initialize button state arrays
     for (int i = 0; i < 32; i++)
@@ -18,22 +16,10 @@ Input::Input(JoystickController *controller)
 
 void Input::setup()
 {
-    // Determine if this controller uses D-pad as axis
-    if (joystick->joystickType() != JoystickController::UNKNOWN)
-    {
-        dPadUsesAxis = JoystickMapping::usesDPadAxis(joystick->joystickType(), dPadAxisNumber);
-    }
-    else
-    {
-        Serial.println("Unknown joystick type");
-    }
+    // Don't check controller type here - joystick may not be connected yet
+    // We'll check dynamically in isDPadPressed()
 
     Serial.println("Input setup complete");
-    if (dPadUsesAxis)
-    {
-        Serial.print("Controller uses D-pad axis: ");
-        Serial.println(dPadAxisNumber);
-    }
 }
 
 void Input::update()
@@ -81,16 +67,18 @@ bool Input::isDPadPressed(uint8_t dpadButton)
     if (!joystick->available())
         return false;
 
-    if (dPadUsesAxis)
+    JoystickController::joytype_t type = joystick->joystickType();
+    uint8_t axisNumber;
+
+    // Check if this controller type uses D-pad as axis
+    if (JoystickMapping::usesDPadAxis(type, axisNumber))
     {
         // Read D-pad from axis
         uint64_t axisMask = joystick->axisMask();
-        if (axisMask & (1 << dPadAxisNumber))
+        if (axisMask & (1 << axisNumber))
         {
-            int axisValue = joystick->getAxis(dPadAxisNumber);
-            int mappedButton = JoystickMapping::mapDPadValueToButton(
-                joystick->joystickType(),
-                axisValue);
+            int axisValue = joystick->getAxis(axisNumber);
+            int mappedButton = JoystickMapping::mapDPadValueToButton(type, axisValue);
             return mappedButton == dpadButton;
         }
     }
@@ -105,7 +93,20 @@ bool Input::isDPadPressed(uint8_t dpadButton)
 
 InputEvent Input::checkButton(uint8_t genericButton, InputEvent event)
 {
-    if (!isButtonPressed(genericButton))
+    bool pressed = false;
+
+    // Check if this is a D-pad button
+    if (genericButton >= GenericController::BTN_DPAD_UP &&
+        genericButton <= GenericController::BTN_DPAD_RIGHT)
+    {
+        pressed = isDPadPressed(genericButton);
+    }
+    else
+    {
+        pressed = isButtonPressed(genericButton);
+    }
+
+    if (!pressed)
     {
         // Button released
         buttonPressTime[genericButton] = 0;

@@ -15,9 +15,10 @@ void DeviceManager::setup()
 {
     lcd->init();
     lcd->backlight();
+    host->begin();
+
     input = new Input(joystick);
     input->setup();
-    host->begin();
 }
 
 void DeviceManager::loop()

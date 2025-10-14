@@ -28,8 +28,6 @@ private:
     // Button state tracking
     uint32_t lastButtons;
     uint8_t lastDPadValue;
-    bool dPadUsesAxis;
-    uint8_t dPadAxisNumber;
 
     // Timing for debounce and repeat
     unsigned long buttonPressTime[32]; // Track press time for each button
