@@ -36,16 +36,11 @@ void MainMenuAction::onConfirm()
     // Handle each menu option
     if (selectedIdx == 0)
     {
-        // Load config selected
-        Serial.println("Load config selected");
         handler->activateLoadConfigMenu({0});
     }
     else if (selectedIdx == 1)
     {
-        // Edit config selected
-        Serial.println("Edit config selected");
-        // TODO: Switch to config editor
-        // handler->activateConfigEdit({0});
+        handler->activateEditConfigMenu({0});
     }
 }
 

@@ -5,6 +5,7 @@
 #include <Keyboard.h>
 #include <Mouse.h>
 #include <USBHost_t36.h>
+#include "utils.h"
 
 RunAction::RunAction(DeviceManager *dev, ActionHandler *hdlr, RunActionParams p)
     : Action(dev, hdlr),
@@ -482,28 +483,14 @@ void RunAction::DisplayLoadedFile()
     LiquidCrystal_I2C *lcd = devices->getLCD();
     lcd->clear();
     lcd->backlight();
-    lcd->setCursor(0, 1);
+    lcd->setCursor(3, 1);
     lcd->print("Running file:");
-    lcd->setCursor(2, 2);
     
-    // Extract filename without path or extension
-    String fullPath = String(params.filename);
-    int lastSlash = fullPath.lastIndexOf('/');
-    int lastDot = fullPath.lastIndexOf('.');
-    
-    String displayName;
-    if (lastSlash >= 0) {
-        // Remove path
-        displayName = fullPath.substring(lastSlash + 1);
-    } else {
-        displayName = fullPath;
-    }
-    
-    if (lastDot > lastSlash) {
-        // Remove extension
-        displayName = displayName.substring(0, lastDot - (lastSlash + 1));
-    }
-    
+    String displayName = Utils::trimFilename(params.filename);
+
+    int filenameLen = displayName.length();
+    int filenamePos = (20 - filenameLen) / 2; // Center on 20 character display
+    lcd->setCursor(filenamePos, 2);
     lcd->print(displayName);
 
     backlightOnTime = millis();

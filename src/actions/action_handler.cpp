@@ -4,6 +4,7 @@
 #include "actions/example_menu_action.h"
 #include "actions/main_menu_action.h"
 #include "actions/load_config_menu_action.h"
+#include "actions/edit_config_menu_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -72,6 +73,15 @@ void ActionHandler::activateLoadConfigMenu(MenuActionParams params)
     Serial.println((unsigned long)currentAction, HEX);
     actionInitialized = false;
     Serial.println("Action: Load Config Menu activated");
+}
+
+void ActionHandler::activateEditConfigMenu(MenuActionParams params)
+{
+    clearAction();
+    currentAction = new EditConfigMenuAction(devices, this, params);
+    Serial.println((unsigned long)currentAction, HEX);
+    actionInitialized = false;
+    Serial.println("Action: Edit Config Menu activated");
 }
 
 ActionType ActionHandler::getCurrentActionType()

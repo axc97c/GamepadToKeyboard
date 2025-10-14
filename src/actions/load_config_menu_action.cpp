@@ -1,6 +1,7 @@
 #include "actions/load_config_menu_action.h"
 #include "actions/action_handler.h"
 #include "devices.h"
+#include "utils.h"
 #include <SD.h>
 
 LoadConfigMenuAction::LoadConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
@@ -81,29 +82,14 @@ void LoadConfigMenuAction::scanConfigFiles()
     String displayNames[MAX_CONFIG_FILES];
     for (int i = 0; i < fileCount; i++)
     {
-        String fullPath = configFiles[i];
-        
-        // Remove leading slash
-        int startPos = 1; // Skip the leading '/'
-        
-        // Find the last dot for extension
-        int lastDot = fullPath.lastIndexOf('.');
-        
-        // Extract filename without path or extension
-        if (lastDot > 0)
-        {
-            displayNames[i] = fullPath.substring(startPos, lastDot);
-        }
-        else
-        {
-            displayNames[i] = fullPath.substring(startPos);
-        }
+        displayNames[i] = Utils::trimFilename(configFiles[i]);
         
         Serial.print("Display name: ");
         Serial.print(displayNames[i]);
         Serial.print(" -> ");
         Serial.println(configFiles[i]);
     }
+    
     
     // Set up the menu with display names
     setMenu(menuTitle, displayNames, fileCount);
