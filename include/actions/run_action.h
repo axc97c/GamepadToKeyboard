@@ -24,6 +24,7 @@ private:
     // Mouse/scroll update timing
     unsigned long lastStickUpdate;
     unsigned long stickUpdateInterval;
+    unsigned long backlightOnTime;
 
     // D-pad axis tracking (for PS4/PS5)
     int lastDPadAxisValue;

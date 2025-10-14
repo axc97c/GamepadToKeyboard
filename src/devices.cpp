@@ -19,6 +19,8 @@ void DeviceManager::setup()
 
     input = new Input(joystick);
     input->setup();
+
+    Mouse.begin();
 }
 
 void DeviceManager::loop()

@@ -20,7 +20,16 @@ void RunAction::init()
 {
     Serial.println("RunAction: Initialized");
 
-    Mouse.begin();
+    // Display loading message on LCD
+    LiquidCrystal_I2C *lcd = devices->getLCD();
+    lcd->clear();
+    lcd->backlight();
+    lcd->setCursor(0, 1);
+    lcd->print("Running file:");
+    lcd->setCursor(2, 2);
+    lcd->print(params.filename);
+    backlightOnTime = millis();
+    Serial.println("Backlight on");
 
     // Detect controller type
     JoystickController *joy = devices->getJoystick();
@@ -46,6 +55,17 @@ void RunAction::init()
 
 void RunAction::loop()
 {
+    if (backlightOnTime > 0)
+    {
+        unsigned long currentTime = millis();
+        if (currentTime > backlightOnTime + 10000)
+        {
+            Serial.println("Backlight off");
+            devices->getLCD()->noBacklight();
+            backlightOnTime = 0;
+        }
+    }
+
     JoystickController *joy = devices->getJoystick();
 
     if (joy && *joy)
