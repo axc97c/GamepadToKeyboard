@@ -2,6 +2,8 @@
 #include "actions/action.h"
 #include "actions/run_action.h"
 #include "actions/example_menu_action.h"
+#include "actions/main_menu_action.h"
+#include "actions/load_config_menu_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -52,6 +54,24 @@ void ActionHandler::activateMenu(MenuActionParams params)
     Serial.println((unsigned long)currentAction, HEX);
     actionInitialized = false;
     Serial.println("Action: Example Menu activated");
+}
+
+void ActionHandler::activateMainMenu(MenuActionParams params)
+{
+    clearAction();
+    currentAction = new MainMenuAction(devices, this, params);
+    Serial.println((unsigned long)currentAction, HEX);
+    actionInitialized = false;
+    Serial.println("Action: Main Menu activated");
+}
+
+void ActionHandler::activateLoadConfigMenu(MenuActionParams params)
+{
+    clearAction();
+    currentAction = new LoadConfigMenuAction(devices, this, params);
+    Serial.println((unsigned long)currentAction, HEX);
+    actionInitialized = false;
+    Serial.println("Action: Load Config Menu activated");
 }
 
 ActionType ActionHandler::getCurrentActionType()

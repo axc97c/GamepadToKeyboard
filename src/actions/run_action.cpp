@@ -81,8 +81,7 @@ void RunAction::loop()
                 bool isPressed = (buttons & (1 << physicalBtn)) != 0;
                 if (isPressed)
                 {
-                    Serial.println("Menu button pressed - switching to menu action");
-                    handler->activateMenu({0});
+                    handler->activateMainMenu({0});
                     return;
                 }
                 break;
