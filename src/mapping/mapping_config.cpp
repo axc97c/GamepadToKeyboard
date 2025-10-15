@@ -2,6 +2,17 @@
 #include "mapping/joystick_mappings.h"
 #include "mapping/keyboard_mapping.h"
 
+const MappingConfig::StickBehaviorMapping MappingConfig::stickBehaviorMap[] = {
+    {StickBehavior::DISABLED, "DISABLED"},
+    {StickBehavior::MOUSE_MOVEMENT, "MOUSE_MOVEMENT"},
+    {StickBehavior::BUTTON_EMULATION, "BUTTON_EMULATION"},
+    {StickBehavior::SCROLL_WHEEL, "SCROLL_WHEEL"},
+    {StickBehavior::WASD_KEYS, "WASD_KEYS"},
+    {StickBehavior::ARROW_KEYS, "ARROW_KEYS"}
+};
+
+const int MappingConfig::stickBehaviorMapSize = sizeof(MappingConfig::stickBehaviorMap) / sizeof(MappingConfig::stickBehaviorMap[0]);
+
 void MappingConfig::initSD()
 {
     if (!SD.begin(CHIPSELECT_PIN))
@@ -231,18 +242,13 @@ void MappingConfig::parseStickConfig(StickConfig *stickConfig, ArduinoJson::V742
 
 StickBehavior MappingConfig::parseStickBehavior(const char *behaviorStr)
 {
-    if (strcmp(behaviorStr, "DISABLED") == 0)
-        return StickBehavior::DISABLED;
-    if (strcmp(behaviorStr, "MOUSE_MOVEMENT") == 0)
-        return StickBehavior::MOUSE_MOVEMENT;
-    if (strcmp(behaviorStr, "BUTTON_EMULATION") == 0)
-        return StickBehavior::BUTTON_EMULATION;
-    if (strcmp(behaviorStr, "SCROLL_WHEEL") == 0)
-        return StickBehavior::SCROLL_WHEEL;
-    if (strcmp(behaviorStr, "WASD_KEYS") == 0)
-        return StickBehavior::WASD_KEYS;
-    if (strcmp(behaviorStr, "ARROW_KEYS") == 0)
-        return StickBehavior::ARROW_KEYS;
+    for (int i = 0; i < stickBehaviorMapSize; i++)
+    {
+        if (strcmp(behaviorStr, stickBehaviorMap[i].name) == 0)
+        {
+            return stickBehaviorMap[i].behavior;
+        }
+    }
 
     Serial.print("Warning: Unknown stick behavior: ");
     Serial.println(behaviorStr);
@@ -251,22 +257,13 @@ StickBehavior MappingConfig::parseStickBehavior(const char *behaviorStr)
 
 const char *MappingConfig::stickBehaviorToString(StickBehavior behavior)
 {
-    switch (behavior)
+    for (int i = 0; i < stickBehaviorMapSize; i++)
     {
-    case StickBehavior::DISABLED:
-        return "DISABLED";
-    case StickBehavior::MOUSE_MOVEMENT:
-        return "MOUSE_MOVEMENT";
-    case StickBehavior::BUTTON_EMULATION:
-        return "BUTTON_EMULATION";
-    case StickBehavior::SCROLL_WHEEL:
-        return "SCROLL_WHEEL";
-    case StickBehavior::WASD_KEYS:
-        return "WASD_KEYS";
-    case StickBehavior::ARROW_KEYS:
-        return "ARROW_KEYS";
-
-    default:
-        return "DISABLED";
+        if (stickBehaviorMap[i].behavior == behavior)
+        {
+            return stickBehaviorMap[i].name;
+        }
     }
+
+    return "Disabled";
 }

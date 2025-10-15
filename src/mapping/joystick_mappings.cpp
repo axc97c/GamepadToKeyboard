@@ -1,5 +1,26 @@
 #include "mapping/joystick_mappings.h"
 
+const char* ButtonNames[18] = {
+    "A",
+    "B",
+    "X",
+    "Y",
+    "L1",
+    "R1",
+    "L2",
+    "R2",
+    "Select",
+    "Start",
+    "Menu",
+    "L3",
+    "R3",
+    "Up",
+    "Down",
+    "Left",
+    "Right",
+    "Touchpad"
+};
+
 int JoystickMapping::mapButtonToGeneric(JoystickController::joytype_t type, uint8_t controllerButton)
 {
     switch (type)
@@ -237,27 +258,6 @@ int JoystickMapping::mapDPadValueToButton(JoystickController::joytype_t type, ui
         return -1;
     }
 }
-
-const char* ButtonNames[18] = {
-    "A",
-    "B",
-    "X",
-    "Y",
-    "L1",
-    "R1",
-    "L2",
-    "R2",
-    "Select",
-    "Start",
-    "Menu",
-    "L3",
-    "R3",
-    "Up",
-    "Down",
-    "Left",
-    "Right",
-    "Touchpad"
-};
 
 const char *JoystickMapping::getGenericButtonName(uint8_t genericButton)
 {
