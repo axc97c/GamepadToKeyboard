@@ -21,14 +21,14 @@ void RunAction::init()
 {
     Serial.println("RunAction: Initialized");
 
-    // // Set up keyboard passthrough event handlers
+    // Set up keyboard passthrough event handlers
     // KeyboardController *kbd = devices->getKeyboard();
     // if (kbd)
     // {
-    //     // kbd->attachPress(onKeyPress);
-    //     // kbd->attachRelease(onKeyRelease);
-    //     // kbd->attachExtrasPress(onExtrasPress);
-    //     // kbd->attachExtrasRelease(onExtrasRelease);
+    //     kbd->attachPress(onKeyPress);
+    //     kbd->attachRelease(onKeyRelease);
+    //     kbd->attachExtrasPress(onExtrasPress);
+    //     kbd->attachExtrasRelease(onExtrasRelease);
     //     Serial.println("Keyboard passthrough handlers attached");
     // }
 

@@ -25,6 +25,14 @@ void BindKeyAction::init()
         return;
     }
 
+    // Reset keyboard input state to clear any pending keys from callbacks
+    KeyboardInput* keyboardInput = devices->getKeyboardInput();
+    if (keyboardInput != nullptr)
+    {
+        keyboardInput->reset();
+        Serial.println("BindKeyAction: Keyboard input state reset");
+    }
+
     // Display initial prompt
     updateDisplay();
     displayInitialized = true;
@@ -47,7 +55,7 @@ void BindKeyAction::loop()
             applyKeyBinding(keyCode);
 
             // Return to previous action (edit config menu)
-            handler->popAction();
+            handler->popToRunAction();
         }
     }
 

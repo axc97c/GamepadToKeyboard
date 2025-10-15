@@ -23,6 +23,7 @@ void DeviceManager::setup()
     gamepadInput->setup();
 
     keyboardInput = new KeyboardInput(keyboard);
+    keyboardInput->setup();
 
     Mouse.begin();
 }

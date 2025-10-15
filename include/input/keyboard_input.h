@@ -9,10 +9,13 @@ class KeyboardInput
 private:
     KeyboardController *keyboard;
 
-    // Track last key press to avoid double-reading
-    int lastKeyCode;
-    unsigned long lastKeyTime;
-    const unsigned long keyDebounceDelay = 200; // ms
+    // Track pending key press from callback
+    static int pendingKeyCode;
+    static unsigned long pendingKeyTime;
+
+    // Callback handlers (must be static)
+    static void onKeyPress(int unicode);
+    static void onKeyRelease(int unicode);
 
 public:
     KeyboardInput(KeyboardController *kbd);

@@ -1,19 +1,48 @@
 #include "input/keyboard_input.h"
 
+// Static member initialization
+int KeyboardInput::pendingKeyCode = 0;
+unsigned long KeyboardInput::pendingKeyTime = 0;
+
 KeyboardInput::KeyboardInput(KeyboardController *kbd)
-    : keyboard(kbd), lastKeyCode(0), lastKeyTime(0)
+    : keyboard(kbd)
 {
 }
 
 void KeyboardInput::setup()
 {
     reset();
+
+    // Attach callback handlers if keyboard is available
+    if (keyboard != nullptr)
+    {
+        keyboard->attachPress(onKeyPress);
+        keyboard->attachRelease(onKeyRelease);
+        Serial.println("KeyboardInput: Callback handlers attached");
+    }
 }
 
 void KeyboardInput::reset()
 {
-    lastKeyCode = 0;
-    lastKeyTime = 0;
+    pendingKeyCode = 0;
+    pendingKeyTime = 0;
+}
+
+void KeyboardInput::onKeyPress(int unicode)
+{
+    // Store the key press
+    pendingKeyCode = unicode;
+    pendingKeyTime = millis();
+
+    Serial.print("KeyboardInput: Key press callback - code: ");
+    Serial.println(unicode);
+}
+
+void KeyboardInput::onKeyRelease(int unicode)
+{
+    // Don't need to do anything on release for now
+    Serial.print("KeyboardInput: Key release callback - code: ");
+    Serial.println(unicode);
 }
 
 int KeyboardInput::getKeyPress()
@@ -23,30 +52,18 @@ int KeyboardInput::getKeyPress()
         return 0;
     }
 
-    // Get the current key code from the keyboard controller
-    int currentKeyCode = keyboard->getKey();
-
-    // If no key is pressed, reset state
-    if (currentKeyCode == 0)
+    // Check if there's a pending key press from the callback
+    if (pendingKeyCode != 0)
     {
-        lastKeyCode = 0;
-        return 0;
+        int keyCode = pendingKeyCode;
+        pendingKeyCode = 0; // Clear it so it's only returned once
+
+        Serial.print("KeyboardInput: Returning key press: ");
+        Serial.println(keyCode);
+
+        return keyCode;
     }
 
-    // Check if this is a new key press (different from last key or enough time has passed)
-    unsigned long currentTime = millis();
-    if (currentKeyCode != lastKeyCode || (currentTime - lastKeyTime) > keyDebounceDelay)
-    {
-        lastKeyCode = currentKeyCode;
-        lastKeyTime = currentTime;
-
-        Serial.print("KeyboardInput: Key press detected - code: ");
-        Serial.println(currentKeyCode);
-
-        return currentKeyCode;
-    }
-
-    // Same key still pressed within debounce period
     return 0;
 }
 
