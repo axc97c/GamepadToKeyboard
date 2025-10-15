@@ -25,10 +25,10 @@ void RunAction::init()
     KeyboardController *kbd = devices->getKeyboard();
     if (kbd)
     {
-        kbd->attachPress(onKeyPress);
-        kbd->attachRelease(onKeyRelease);
-        kbd->attachExtrasPress(onExtrasPress);
-        kbd->attachExtrasRelease(onExtrasRelease);
+        // kbd->attachPress(onKeyPress);
+        // kbd->attachRelease(onKeyRelease);
+        // kbd->attachExtrasPress(onExtrasPress);
+        // kbd->attachExtrasRelease(onExtrasRelease);
         Serial.println("Keyboard passthrough handlers attached");
     }
 

@@ -40,7 +40,7 @@ int KeyboardInput::getKeyPress()
         lastKeyCode = currentKeyCode;
         lastKeyTime = currentTime;
 
-        Serial.print("KeyboardInput: Key pressed - code: ");
+        Serial.print("KeyboardInput: Key press detected - code: ");
         Serial.println(currentKeyCode);
 
         return currentKeyCode;
@@ -52,5 +52,5 @@ int KeyboardInput::getKeyPress()
 
 bool KeyboardInput::isAvailable()
 {
-    return keyboard != nullptr;
+    return keyboard != nullptr && keyboard->idVendor() != 0;
 }
