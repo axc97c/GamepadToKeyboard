@@ -90,4 +90,7 @@ struct MenuActionParams
     uint8_t menuId;
 };
 
+// Global joystick mapping configuration instance
+extern JoystickMappingConfig mappingConfig;
+
 #endif

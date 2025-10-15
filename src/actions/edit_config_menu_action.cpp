@@ -7,7 +7,7 @@
 #include "utils.h"
 
 EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
-    : MenuAction(dev, hdlr, p), config()
+    : MenuAction(dev, hdlr, p)
 {
 }
 
@@ -15,13 +15,13 @@ void EditConfigMenuAction::onInit()
 {
     Serial.println("EditConfigMenuAction: Loading current config...");
 
-    // Get the current config filename from the handler and store in config
+    // Get the current config filename from the handler and store in mappingConfig
     const char *filename = handler->getLastRunFilename();
-    strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
-    config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
+    strncpy(mappingConfig.filename, filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
+    mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
 
     Serial.print("Editing config file: ");
-    Serial.println(config.filename);
+    Serial.println(mappingConfig.filename);
 
     // Load the current config
     loadCurrentConfig();
@@ -31,8 +31,8 @@ void EditConfigMenuAction::onInit()
 
 void EditConfigMenuAction::loadCurrentConfig()
 {
-    // Load mappings from the config file (filename already in config)
-    if (!MappingConfig::loadConfig(config.filename, config))
+    // Load mappings from the config file (filename already in mappingConfig)
+    if (!MappingConfig::loadConfig(mappingConfig.filename, mappingConfig))
     {
         Serial.println("Failed to load config file for editing");
         String errorItem[] = {"Error loading config"};
@@ -42,7 +42,7 @@ void EditConfigMenuAction::loadCurrentConfig()
     }
 
     Serial.print("Loaded ");
-    Serial.print(config.numMappings);
+    Serial.print(mappingConfig.numMappings);
     Serial.println(" mappings for editing");
 
     // Build the menu items
@@ -51,13 +51,13 @@ void EditConfigMenuAction::loadCurrentConfig()
 
 void EditConfigMenuAction::buildMenuItems()
 {
-    String displayName = Utils::trimFilename(config.filename);
+    String displayName = Utils::trimFilename(mappingConfig.filename);
 
     menuTitle = "Edit " + displayName;
 
     // Create menu items - one per button mapping
     String items[JoystickMappingConfig::MAX_MAPPINGS];
-    for (int i = 0; i < config.numMappings; i++)
+    for (int i = 0; i < mappingConfig.numMappings; i++)
     {
         items[i] = getButtonKeyPair(i);
 
@@ -67,21 +67,21 @@ void EditConfigMenuAction::buildMenuItems()
         Serial.println(items[i]);
     }
 
-    setMenu(menuTitle, items, config.numMappings);
+    setMenu(menuTitle, items, mappingConfig.numMappings);
 }
 
 String EditConfigMenuAction::getButtonKeyPair(int index)
 {
-    if (index < 0 || index >= config.numMappings)
+    if (index < 0 || index >= mappingConfig.numMappings)
     {
         return "Invalid";
     }
 
     // Get button name
-    const char *buttonName = JoystickMapping::getGenericButtonName(config.mappings[index].genericButton);
+    const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[index].genericButton);
 
     // Get key name
-    const char *keyName = KeyboardMapping::keyCodeToString(config.mappings[index].keyCode);
+    const char *keyName = KeyboardMapping::keyCodeToString(mappingConfig.mappings[index].keyCode);
 
     // Format: "BTN_SOUTH -> s"
     // We need to shorten button names to fit on 20 char display
@@ -119,12 +119,12 @@ void EditConfigMenuAction::onConfirm()
     
     // TODO: Implement key remapping functionality
     // For now, just log which mapping was selected
-    if (selectedIdx >= 0 && selectedIdx < config.numMappings)
+    if (selectedIdx >= 0 && selectedIdx < mappingConfig.numMappings)
     {
         Serial.print("Selected mapping: ");
-        Serial.print(JoystickMapping::getGenericButtonName(config.mappings[selectedIdx].genericButton));
+        Serial.print(JoystickMapping::getGenericButtonName(mappingConfig.mappings[selectedIdx].genericButton));
         Serial.print(" -> ");
-        Serial.println(KeyboardMapping::keyCodeToString(config.mappings[selectedIdx].keyCode));
+        Serial.println(KeyboardMapping::keyCodeToString(mappingConfig.mappings[selectedIdx].keyCode));
 
         // Future: Open a key selection menu to change this mapping
     }

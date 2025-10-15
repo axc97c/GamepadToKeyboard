@@ -10,7 +10,6 @@
 RunAction::RunAction(DeviceManager *dev, ActionHandler *hdlr, RunActionParams p)
     : Action(dev, hdlr),
       params(p),
-      config(),
       controllerType(JoystickController::UNKNOWN),
       lastStickUpdate(0),
       stickUpdateInterval(1000 / 60),
@@ -23,8 +22,8 @@ void RunAction::init()
     Serial.println("RunAction: Initialized");
 
     // Store filename in config for display and later use
-    strncpy(config.filename, params.filename, config.MAX_FILENAME_LENGTH - 1);
-    config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
+    strncpy(mappingConfig.filename, params.filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
+    mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
 
     DisplayLoadedFile();
 
@@ -38,13 +37,13 @@ void RunAction::init()
     }
 
     // Try to load button mappings (loadConfig will reaffirm the filename)
-    if (!MappingConfig::loadConfig(params.filename, config))
+    if (!MappingConfig::loadConfig(params.filename, mappingConfig))
     {
         Serial.println("Failed to load button mappings, using defaults");
         initializeDefaultMappings();
         initializeDefaultStickConfigs();
 
-        MappingConfig::saveConfig(params.filename, config);
+        MappingConfig::saveConfig(params.filename, mappingConfig);
     }
 
     Serial.println("RunAction initialization complete");
@@ -107,12 +106,12 @@ void RunAction::loop()
 
         if (leftXAxis != -1 && leftYAxis != -1)
         {
-            processAnalogStick(config.leftStick, leftXAxis, leftYAxis);
+            processAnalogStick(mappingConfig.leftStick, leftXAxis, leftYAxis);
         }
 
         if (rightXAxis != -1 && rightYAxis != -1)
         {
-            processAnalogStick(config.rightStick, rightXAxis, rightYAxis);
+            processAnalogStick(mappingConfig.rightStick, rightXAxis, rightYAxis);
         }
     }
 }
@@ -122,9 +121,9 @@ void RunAction::processButtonMappings()
     JoystickController *joy = devices->getJoystick();
     uint32_t buttons = joy->getButtons();
 
-    for (int i = 0; i < config.numMappings; i++)
+    for (int i = 0; i < mappingConfig.numMappings; i++)
     {
-        uint8_t genericButton = config.mappings[i].genericButton;
+        uint8_t genericButton = mappingConfig.mappings[i].genericButton;
 
         // Skip D-pad buttons if controller uses D-pad axis
         uint8_t dpadAxis;
@@ -152,18 +151,18 @@ void RunAction::processButtonMappings()
         }
 
         // Detect state change
-        if (isPressed != config.mappings[i].currentlyPressed)
+        if (isPressed != mappingConfig.mappings[i].currentlyPressed)
         {
-            config.mappings[i].currentlyPressed = isPressed;
+            mappingConfig.mappings[i].currentlyPressed = isPressed;
 
             if (isPressed)
             {
                 Serial.print("Button ");
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.print(" pressed -> Key ");
-                Serial.println(config.mappings[i].keyCode);
+                Serial.println(mappingConfig.mappings[i].keyCode);
 
-                Keyboard.press(config.mappings[i].keyCode);
+                Keyboard.press(mappingConfig.mappings[i].keyCode);
             }
             else
             {
@@ -171,7 +170,7 @@ void RunAction::processButtonMappings()
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.println(" released");
 
-                Keyboard.release(config.mappings[i].keyCode);
+                Keyboard.release(mappingConfig.mappings[i].keyCode);
             }
         }
     }
@@ -196,9 +195,9 @@ void RunAction::processDPadAxisMappings()
     lastDPadAxisValue = axisValue;
 
     // Check each D-pad mapping
-    for (int i = 0; i < config.numMappings; i++)
+    for (int i = 0; i < mappingConfig.numMappings; i++)
     {
-        uint8_t genericButton = config.mappings[i].genericButton;
+        uint8_t genericButton = mappingConfig.mappings[i].genericButton;
 
         // Only process D-pad buttons
         if (genericButton < GenericController::BTN_DPAD_UP ||
@@ -212,18 +211,18 @@ void RunAction::processDPadAxisMappings()
         bool isPressed = (mappedButton == genericButton);
 
         // Detect state change
-        if (isPressed != config.mappings[i].currentlyPressed)
+        if (isPressed != mappingConfig.mappings[i].currentlyPressed)
         {
-            config.mappings[i].currentlyPressed = isPressed;
+            mappingConfig.mappings[i].currentlyPressed = isPressed;
 
             if (isPressed)
             {
                 Serial.print("D-Pad ");
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.print(" pressed -> Key ");
-                Serial.println(config.mappings[i].keyCode);
+                Serial.println(mappingConfig.mappings[i].keyCode);
 
-                Keyboard.press(config.mappings[i].keyCode);
+                Keyboard.press(mappingConfig.mappings[i].keyCode);
             }
             else
             {
@@ -231,7 +230,7 @@ void RunAction::processDPadAxisMappings()
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.println(" released");
 
-                Keyboard.release(config.mappings[i].keyCode);
+                Keyboard.release(mappingConfig.mappings[i].keyCode);
             }
         }
     }
@@ -423,47 +422,47 @@ int RunAction::applyDeadzone(int value, int centerValue, int deadzone)
 
 void RunAction::initializeDefaultMappings()
 {
-    config.numMappings = 0;
+    mappingConfig.numMappings = 0;
 
     // Face buttons - WASdD
-    config.mappings[config.numMappings++] = {GenericController::BTN_SOUTH, 's', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_EAST, 'd', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_WEST, 'a', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_NORTH, 'w', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_SOUTH, 's', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_EAST, 'd', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_WEST, 'a', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_NORTH, 'w', false};
 
     // Shoulder buttons
-    config.mappings[config.numMappings++] = {GenericController::BTN_L1, 'q', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_R1, 'e', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_L2, 'i', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_R2, 'k', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_L1, 'q', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_R1, 'e', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_L2, 'i', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_R2, 'k', false};
 
     // Center buttons
-    config.mappings[config.numMappings++] = {GenericController::BTN_START, 'r', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_SELECT, 'f', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_MENU, 'y', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_START, 'r', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_SELECT, 'f', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_MENU, 'y', false};
 
     // Stick clicks
-    config.mappings[config.numMappings++] = {GenericController::BTN_L3, 't', false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_R3, 'g', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_L3, 't', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_R3, 'g', false};
 
     // D-Pad - Arrow keys
-    config.mappings[config.numMappings++] = {GenericController::BTN_DPAD_UP, KEY_UP, false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_DPAD_DOWN, KEY_DOWN, false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_DPAD_LEFT, KEY_LEFT, false};
-    config.mappings[config.numMappings++] = {GenericController::BTN_DPAD_RIGHT, KEY_RIGHT, false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_DPAD_UP, KEY_UP, false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_DPAD_DOWN, KEY_DOWN, false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_DPAD_LEFT, KEY_LEFT, false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_DPAD_RIGHT, KEY_RIGHT, false};
 
     // Special
-    config.mappings[config.numMappings++] = {GenericController::BTN_TOUCHPAD, 'h', false};
+    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_TOUCHPAD, 'h', false};
 
     Serial.print("Initialized ");
-    Serial.print(config.numMappings);
+    Serial.print(mappingConfig.numMappings);
     Serial.println(" default generic mappings");
 }
 
 void RunAction::initializeDefaultStickConfigs()
 {
-    config.rightStick.behavior = StickBehavior::MOUSE_MOVEMENT;
-    config.leftStick.behavior = StickBehavior::ARROW_KEYS;
+    mappingConfig.rightStick.behavior = StickBehavior::MOUSE_MOVEMENT;
+    mappingConfig.leftStick.behavior = StickBehavior::ARROW_KEYS;
 
     Serial.println("Default stick configurations initialized");
 }
@@ -492,7 +491,7 @@ void RunAction::DisplayLoadedFile()
     lcd->setCursor(3, 1);
     lcd->print("Running file:");
 
-    String displayName = Utils::trimFilename(config.filename);
+    String displayName = Utils::trimFilename(mappingConfig.filename);
 
     int filenameLen = displayName.length();
     int filenamePos = (20 - filenameLen) / 2; // Center on 20 character display

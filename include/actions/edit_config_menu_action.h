@@ -6,8 +6,6 @@
 class EditConfigMenuAction : public MenuAction
 {
 private:
-    JoystickMappingConfig config;
-    
     void loadCurrentConfig();
     void buildMenuItems();
     String getButtonKeyPair(int index);

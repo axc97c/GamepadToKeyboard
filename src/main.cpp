@@ -19,6 +19,9 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 DeviceManager devices;
 ActionHandler actionHandler(&devices);
 
+// Global joystick mapping configuration
+JoystickMappingConfig mappingConfig;
+
 void setup()
 {
     devices.host = &usbh;

@@ -10,9 +10,6 @@ class RunAction : public Action
 private:
     RunActionParams params;
 
-    // Joystick mapping configuration
-    JoystickMappingConfig config;
-
     // Controller info
     JoystickController::joytype_t controllerType;
 
