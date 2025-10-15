@@ -111,6 +111,21 @@ void MappingConfig::loadStickConfig(JsonDocument &doc, StickConfig *leftStick, S
 
 bool MappingConfig::saveConfig(const char *filename, ButtonMapping *mappings, int &numMappings, StickConfig *leftStick, StickConfig *rightStick)
 {
+    JsonDocument doc;
+
+    saveMappings(doc, mappings, numMappings);
+    saveStickConfig(doc, leftStick, rightStick);
+
+    // Serial.println("===========================================");
+    // Serial.print("Generated JSON for: ");
+    // Serial.println(filename);
+    // Serial.println("===========================================");
+    // serializeJsonPretty(doc, Serial);
+    // Serial.println();
+    // Serial.println("===========================================");
+
+    // return true;
+
     if (SD.exists(filename))
     {
         SD.remove(filename);
@@ -124,11 +139,6 @@ bool MappingConfig::saveConfig(const char *filename, ButtonMapping *mappings, in
         return false;
     }
 
-    JsonDocument doc;
-
-    saveMappings(doc, mappings, numMappings);
-    saveStickConfig(doc, leftStick, rightStick);
-
     // Write to file
     if (SD.exists(filename))
     {
@@ -141,7 +151,6 @@ bool MappingConfig::saveConfig(const char *filename, ButtonMapping *mappings, in
         Serial.println("Failed to save stick config");
         return false;
     }
-
     serializeJsonPretty(doc, file);
     file.close();
 

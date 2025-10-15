@@ -238,89 +238,47 @@ int JoystickMapping::mapDPadValueToButton(JoystickController::joytype_t type, ui
     }
 }
 
+const char* ButtonNames[18] = {
+    "A",
+    "B",
+    "X",
+    "Y",
+    "L1",
+    "R1",
+    "L2",
+    "R2",
+    "Select",
+    "Start",
+    "Menu",
+    "L3",
+    "R3",
+    "Up",
+    "Down",
+    "Left",
+    "Right",
+    "Touchpad"
+};
+
 const char *JoystickMapping::getGenericButtonName(uint8_t genericButton)
 {
-    switch (genericButton)
+    if (genericButton <= GenericController::BTN_TOUCHPAD)
     {
-    case GenericController::BTN_SOUTH:
-        return "BTN_SOUTH";
-    case GenericController::BTN_EAST:
-        return "BTN_EAST";
-    case GenericController::BTN_WEST:
-        return "BTN_WEST";
-    case GenericController::BTN_NORTH:
-        return "BTN_NORTH";
-    case GenericController::BTN_L1:
-        return "BTN_L1";
-    case GenericController::BTN_R1:
-        return "BTN_R1";
-    case GenericController::BTN_L2:
-        return "BTN_L2";
-    case GenericController::BTN_R2:
-        return "BTN_R2";
-    case GenericController::BTN_SELECT:
-        return "BTN_SELECT";
-    case GenericController::BTN_START:
-        return "BTN_START";
-    case GenericController::BTN_MENU:
-        return "BTN_MENU";
-    case GenericController::BTN_L3:
-        return "BTN_L3";
-    case GenericController::BTN_R3:
-        return "BTN_R3";
-    case GenericController::BTN_DPAD_UP:
-        return "BTN_DPAD_UP";
-    case GenericController::BTN_DPAD_DOWN:
-        return "BTN_DPAD_DOWN";
-    case GenericController::BTN_DPAD_LEFT:
-        return "BTN_DPAD_LEFT";
-    case GenericController::BTN_DPAD_RIGHT:
-        return "BTN_DPAD_RIGHT";
-    case GenericController::BTN_TOUCHPAD:
-        return "BTN_TOUCHPAD";
-    default:
-        return "BTN_UNKNOWN";
+        return ButtonNames[genericButton];
     }
+
+    return "Unknown";
 }
 
 int JoystickMapping::parseGenericButtonName(const char *buttonName)
 {
-    if (strcmp(buttonName, "BTN_SOUTH") == 0)
-        return GenericController::BTN_SOUTH;
-    if (strcmp(buttonName, "BTN_EAST") == 0)
-        return GenericController::BTN_EAST;
-    if (strcmp(buttonName, "BTN_WEST") == 0)
-        return GenericController::BTN_WEST;
-    if (strcmp(buttonName, "BTN_NORTH") == 0)
-        return GenericController::BTN_NORTH;
-    if (strcmp(buttonName, "BTN_L1") == 0)
-        return GenericController::BTN_L1;
-    if (strcmp(buttonName, "BTN_R1") == 0)
-        return GenericController::BTN_R1;
-    if (strcmp(buttonName, "BTN_L2") == 0)
-        return GenericController::BTN_L2;
-    if (strcmp(buttonName, "BTN_R2") == 0)
-        return GenericController::BTN_R2;
-    if (strcmp(buttonName, "BTN_SELECT") == 0)
-        return GenericController::BTN_SELECT;
-    if (strcmp(buttonName, "BTN_START") == 0)
-        return GenericController::BTN_START;
-    if (strcmp(buttonName, "BTN_MENU") == 0)
-        return GenericController::BTN_MENU;
-    if (strcmp(buttonName, "BTN_L3") == 0)
-        return GenericController::BTN_L3;
-    if (strcmp(buttonName, "BTN_R3") == 0)
-        return GenericController::BTN_R3;
-    if (strcmp(buttonName, "BTN_DPAD_UP") == 0)
-        return GenericController::BTN_DPAD_UP;
-    if (strcmp(buttonName, "BTN_DPAD_DOWN") == 0)
-        return GenericController::BTN_DPAD_DOWN;
-    if (strcmp(buttonName, "BTN_DPAD_LEFT") == 0)
-        return GenericController::BTN_DPAD_LEFT;
-    if (strcmp(buttonName, "BTN_DPAD_RIGHT") == 0)
-        return GenericController::BTN_DPAD_RIGHT;
-    if (strcmp(buttonName, "BTN_TOUCHPAD") == 0)
-        return GenericController::BTN_TOUCHPAD;
+    for (int i = 0 ; i <= GenericController::BTN_TOUCHPAD ; i++)
+    {
+        const char * name = ButtonNames[i];
+        if (stricmp(buttonName, "BTN_SOUTH") == 0)
+        {
+            return i;    
+        } 
+    }
 
     Serial.print("Warning: Unknown generic button name: ");
     Serial.println(buttonName);

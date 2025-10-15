@@ -421,32 +421,34 @@ void RunAction::initializeDefaultMappings()
 {
     numMappings = 0;
 
-    // Face buttons - WASD
-    mappings[numMappings++] = {GenericController::BTN_NORTH, 'w', false};
+    // Face buttons - WASdD
     mappings[numMappings++] = {GenericController::BTN_SOUTH, 's', false};
-    mappings[numMappings++] = {GenericController::BTN_WEST, 'a', false};
     mappings[numMappings++] = {GenericController::BTN_EAST, 'd', false};
+    mappings[numMappings++] = {GenericController::BTN_WEST, 'a', false};
+    mappings[numMappings++] = {GenericController::BTN_NORTH, 'w', false};
 
+    // Shoulder buttons
+    mappings[numMappings++] = {GenericController::BTN_L1, 'q', false};
+    mappings[numMappings++] = {GenericController::BTN_R1, 'e', false};
+    mappings[numMappings++] = {GenericController::BTN_L2, 'i', false};
+    mappings[numMappings++] = {GenericController::BTN_R2, 'k', false};
+ 
+    // Center buttons
+    mappings[numMappings++] = {GenericController::BTN_START, 'r', false};
+    mappings[numMappings++] = {GenericController::BTN_SELECT, 'f', false};
+    mappings[numMappings++] = {GenericController::BTN_MENU, 'y', false};
+
+    // Stick clicks
+    mappings[numMappings++] = {GenericController::BTN_L3, 't', false};
+    mappings[numMappings++] = {GenericController::BTN_R3, 'g', false};
+   
     // D-Pad - Arrow keys
     mappings[numMappings++] = {GenericController::BTN_DPAD_UP, KEY_UP, false};
     mappings[numMappings++] = {GenericController::BTN_DPAD_DOWN, KEY_DOWN, false};
     mappings[numMappings++] = {GenericController::BTN_DPAD_LEFT, KEY_LEFT, false};
     mappings[numMappings++] = {GenericController::BTN_DPAD_RIGHT, KEY_RIGHT, false};
 
-    // Shoulder buttons
-    mappings[numMappings++] = {GenericController::BTN_L1, 'q', false};
-    mappings[numMappings++] = {GenericController::BTN_R1, 'e', false};
-
-    // Start/Select
-    mappings[numMappings++] = {GenericController::BTN_START, 'r', false};
-    mappings[numMappings++] = {GenericController::BTN_SELECT, 'f', false};
-
-    // Stick clicks
-    mappings[numMappings++] = {GenericController::BTN_L3, 't', false};
-    mappings[numMappings++] = {GenericController::BTN_R3, 'g', false};
-
-    // Menu button
-    mappings[numMappings++] = {GenericController::BTN_MENU, 'y', false};
+    // Special
     mappings[numMappings++] = {GenericController::BTN_TOUCHPAD, 'h', false};
 
     Serial.print("Initialized ");

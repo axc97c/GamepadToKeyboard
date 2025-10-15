@@ -29,7 +29,7 @@ void setup()
     devices.lcd = &lcd;
 
     Serial.begin(115200);
-    while (!Serial && millis() < 30000)
+    while (!Serial && millis() < 3000)
     {
     }; // Probably dont want this long term
 
