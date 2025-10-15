@@ -1,25 +1,28 @@
 #include "mapping/joystick_mappings.h"
 
-const char* ButtonNames[18] = {
-    "A",
-    "B",
-    "X",
-    "Y",
-    "L1",
-    "R1",
-    "L2",
-    "R2",
-    "Select",
-    "Start",
-    "Menu",
-    "L3",
-    "R3",
-    "Up",
-    "Down",
-    "Left",
-    "Right",
-    "Touchpad"
+// Static button name mapping array
+const JoystickMapping::ButtonNameMapping JoystickMapping::buttonNameMap[] = {
+    {GenericController::BTN_SOUTH, "A"},
+    {GenericController::BTN_EAST, "B"},
+    {GenericController::BTN_WEST, "X"},
+    {GenericController::BTN_NORTH, "Y"},
+    {GenericController::BTN_L1, "L1"},
+    {GenericController::BTN_R1, "R1"},
+    {GenericController::BTN_L2, "L2"},
+    {GenericController::BTN_R2, "R2"},
+    {GenericController::BTN_SELECT, "Select"},
+    {GenericController::BTN_START, "Start"},
+    {GenericController::BTN_MENU, "Menu"},
+    {GenericController::BTN_L3, "L3"},
+    {GenericController::BTN_R3, "R3"},
+    {GenericController::BTN_DPAD_UP, "Up"},
+    {GenericController::BTN_DPAD_DOWN, "Down"},
+    {GenericController::BTN_DPAD_LEFT, "Left"},
+    {GenericController::BTN_DPAD_RIGHT, "Right"},
+    {GenericController::BTN_TOUCHPAD, "Touchpad"}
 };
+
+const int JoystickMapping::buttonNameMapSize = sizeof(JoystickMapping::buttonNameMap) / sizeof(JoystickMapping::buttonNameMap[0]);
 
 int JoystickMapping::mapButtonToGeneric(JoystickController::joytype_t type, uint8_t controllerButton)
 {
@@ -261,9 +264,12 @@ int JoystickMapping::mapDPadValueToButton(JoystickController::joytype_t type, ui
 
 const char *JoystickMapping::getGenericButtonName(uint8_t genericButton)
 {
-    if (genericButton <= GenericController::BTN_TOUCHPAD)
+    for (int i = 0; i < buttonNameMapSize; i++)
     {
-        return ButtonNames[genericButton];
+        if (buttonNameMap[i].button == genericButton)
+        {
+            return buttonNameMap[i].name;
+        }
     }
 
     return "Unknown";
@@ -271,13 +277,12 @@ const char *JoystickMapping::getGenericButtonName(uint8_t genericButton)
 
 int JoystickMapping::parseGenericButtonName(const char *buttonName)
 {
-    for (int i = 0 ; i <= GenericController::BTN_TOUCHPAD ; i++)
+    for (int i = 0; i < buttonNameMapSize; i++)
     {
-        const char * name = ButtonNames[i];
-        if (stricmp(buttonName, "BTN_SOUTH") == 0)
+        if (strcasecmp(buttonName, buttonNameMap[i].name) == 0)
         {
-            return i;    
-        } 
+            return buttonNameMap[i].button;
+        }
     }
 
     Serial.print("Warning: Unknown generic button name: ");
