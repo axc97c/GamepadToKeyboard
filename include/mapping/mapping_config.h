@@ -22,8 +22,8 @@ private:
     static const int stickBehaviorMapSize;
 
 public:
-    static bool loadConfig(const char *filename, ButtonMapping *mappings, int &numMappings, int maxMappings, StickConfig *leftStick, StickConfig *rightStick);
-    static bool saveConfig(const char *filename, ButtonMapping *mappings, int &numMappings, StickConfig *leftStick, StickConfig *rightStick);
+    static bool loadConfig(const char *filename, JoystickMappingConfig &config);
+    static bool saveConfig(const char *filename, JoystickMappingConfig &config);
 
     static void initSD();
 

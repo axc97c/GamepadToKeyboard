@@ -23,7 +23,7 @@ void MappingConfig::initSD()
     Serial.println("SD Card initialized successfully");
 }
 
-bool MappingConfig::loadConfig(const char *filename, ButtonMapping *mappings, int &numMappings, int maxMappings, StickConfig *leftStick, StickConfig *rightStick)
+bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &config)
 {
     File file = SD.open(filename, FILE_READ);
     if (!file)
@@ -48,8 +48,46 @@ bool MappingConfig::loadConfig(const char *filename, ButtonMapping *mappings, in
         return false;
     }
 
-    loadMappings(doc, mappings, numMappings, maxMappings);
-    loadStickConfig(doc, leftStick, rightStick);
+    loadMappings(doc, config.mappings, config.numMappings, config.MAX_MAPPINGS);
+    loadStickConfig(doc, &config.leftStick, &config.rightStick);
+
+    return true;
+}
+
+bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &config)
+{
+    JsonDocument doc;
+
+    saveMappings(doc, config.mappings, config.numMappings);
+    saveStickConfig(doc, &config.leftStick, &config.rightStick);
+
+    if (SD.exists(filename))
+    {
+        SD.remove(filename);
+    }
+
+    File file = SD.open(filename, FILE_WRITE);
+    if (!file)
+    {
+        Serial.print("Failed to create file: ");
+        Serial.println(filename);
+        return false;
+    }
+
+    // Write to file
+    if (SD.exists(filename))
+    {
+        SD.remove(filename);
+    }
+
+    file = SD.open(filename, FILE_WRITE);
+    if (!file)
+    {
+        Serial.println("Failed to save stick config");
+        return false;
+    }
+    serializeJsonPretty(doc, file);
+    file.close();
 
     return true;
 }
@@ -118,54 +156,6 @@ void MappingConfig::loadStickConfig(JsonDocument &doc, StickConfig *leftStick, S
     }
 
     Serial.println("Stick configuration loaded");
-}
-
-bool MappingConfig::saveConfig(const char *filename, ButtonMapping *mappings, int &numMappings, StickConfig *leftStick, StickConfig *rightStick)
-{
-    JsonDocument doc;
-
-    saveMappings(doc, mappings, numMappings);
-    saveStickConfig(doc, leftStick, rightStick);
-
-    // Serial.println("===========================================");
-    // Serial.print("Generated JSON for: ");
-    // Serial.println(filename);
-    // Serial.println("===========================================");
-    // serializeJsonPretty(doc, Serial);
-    // Serial.println();
-    // Serial.println("===========================================");
-
-    // return true;
-
-    if (SD.exists(filename))
-    {
-        SD.remove(filename);
-    }
-
-    File file = SD.open(filename, FILE_WRITE);
-    if (!file)
-    {
-        Serial.print("Failed to create file: ");
-        Serial.println(filename);
-        return false;
-    }
-
-    // Write to file
-    if (SD.exists(filename))
-    {
-        SD.remove(filename);
-    }
-
-    file = SD.open(filename, FILE_WRITE);
-    if (!file)
-    {
-        Serial.println("Failed to save stick config");
-        return false;
-    }
-    serializeJsonPretty(doc, file);
-    file.close();
-
-    return true;
 }
 
 bool MappingConfig::saveMappings(JsonDocument &doc, ButtonMapping *mappings, int numMappings)

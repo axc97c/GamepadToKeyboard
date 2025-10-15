@@ -10,16 +10,11 @@ class RunAction : public Action
 private:
     RunActionParams params;
 
-    static const int MAX_MAPPINGS = 32;
-    ButtonMapping mappings[MAX_MAPPINGS];
-    int numMappings;
+    // Joystick mapping configuration
+    JoystickMappingConfig config;
 
     // Controller info
     JoystickController::joytype_t controllerType;
-
-    // Stick configurations
-    StickConfig leftStick;
-    StickConfig rightStick;
 
     // Mouse/scroll update timing
     unsigned long lastStickUpdate;

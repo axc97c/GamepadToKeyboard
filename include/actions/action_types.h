@@ -62,6 +62,18 @@ struct StickConfig
     bool rightPressed = false;
 };
 
+// Complete joystick mapping configuration
+struct JoystickMappingConfig
+{
+    static const int MAX_MAPPINGS = 32;
+    ButtonMapping mappings[MAX_MAPPINGS];
+    int numMappings;
+    StickConfig leftStick;
+    StickConfig rightStick;
+
+    JoystickMappingConfig() : numMappings(0) {}
+};
+
 struct RunActionParams
 {
     const char *filename;

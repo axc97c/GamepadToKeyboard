@@ -6,13 +6,8 @@
 class EditConfigMenuAction : public MenuAction
 {
 private:
-    static const int MAX_MAPPINGS = 32;
-    ButtonMapping mappings[MAX_MAPPINGS];
-    int numMappings;
-    
-    StickConfig leftStick;
-    StickConfig rightStick;
-    
+    JoystickMappingConfig config;
+
     char configFilename[64];
     
     void loadCurrentConfig();
