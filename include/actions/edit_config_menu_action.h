@@ -7,8 +7,6 @@ class EditConfigMenuAction : public MenuAction
 {
 private:
     JoystickMappingConfig config;
-
-    char configFilename[64];
     
     void loadCurrentConfig();
     void buildMenuItems();

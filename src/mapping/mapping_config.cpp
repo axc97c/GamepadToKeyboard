@@ -25,6 +25,10 @@ void MappingConfig::initSD()
 
 bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &config)
 {
+    // Store the filename in the config
+    strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
+    config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
+
     File file = SD.open(filename, FILE_READ);
     if (!file)
     {
@@ -56,31 +60,41 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
 
 bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &config)
 {
+    // Update the filename in config if provided
+    if (filename != nullptr && filename[0] != '\0')
+    {
+        strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
+        config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
+    }
+
+    // Use the filename from config
+    const char *targetFile = config.filename;
+
     JsonDocument doc;
 
     saveMappings(doc, config.mappings, config.numMappings);
     saveStickConfig(doc, &config.leftStick, &config.rightStick);
 
-    if (SD.exists(filename))
+    if (SD.exists(targetFile))
     {
-        SD.remove(filename);
+        SD.remove(targetFile);
     }
 
-    File file = SD.open(filename, FILE_WRITE);
+    File file = SD.open(targetFile, FILE_WRITE);
     if (!file)
     {
         Serial.print("Failed to create file: ");
-        Serial.println(filename);
+        Serial.println(targetFile);
         return false;
     }
 
     // Write to file
-    if (SD.exists(filename))
+    if (SD.exists(targetFile))
     {
-        SD.remove(filename);
+        SD.remove(targetFile);
     }
 
-    file = SD.open(filename, FILE_WRITE);
+    file = SD.open(targetFile, FILE_WRITE);
     if (!file)
     {
         Serial.println("Failed to save stick config");

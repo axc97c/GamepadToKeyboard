@@ -14,25 +14,25 @@ EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hd
 void EditConfigMenuAction::onInit()
 {
     Serial.println("EditConfigMenuAction: Loading current config...");
-    
-    // Get the current config filename from the handler
+
+    // Get the current config filename from the handler and store in config
     const char *filename = handler->getLastRunFilename();
-    strncpy(configFilename, filename, sizeof(configFilename) - 1);
-    configFilename[sizeof(configFilename) - 1] = '\0';
-    
+    strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
+    config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
+
     Serial.print("Editing config file: ");
-    Serial.println(configFilename);
-    
+    Serial.println(config.filename);
+
     // Load the current config
     loadCurrentConfig();
-    
+
     Serial.println("EditConfigMenuAction setup complete");
 }
 
 void EditConfigMenuAction::loadCurrentConfig()
 {
-    // Load mappings from the config file
-    if (!MappingConfig::loadConfig(configFilename, config))
+    // Load mappings from the config file (filename already in config)
+    if (!MappingConfig::loadConfig(config.filename, config))
     {
         Serial.println("Failed to load config file for editing");
         String errorItem[] = {"Error loading config"};
@@ -51,7 +51,7 @@ void EditConfigMenuAction::loadCurrentConfig()
 
 void EditConfigMenuAction::buildMenuItems()
 {
-    String displayName = Utils::trimFilename(configFilename);
+    String displayName = Utils::trimFilename(config.filename);
 
     menuTitle = "Edit " + displayName;
 

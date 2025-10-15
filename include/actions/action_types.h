@@ -66,12 +66,18 @@ struct StickConfig
 struct JoystickMappingConfig
 {
     static const int MAX_MAPPINGS = 32;
+    static const int MAX_FILENAME_LENGTH = 64;
+
+    char filename[MAX_FILENAME_LENGTH];
     ButtonMapping mappings[MAX_MAPPINGS];
     int numMappings;
     StickConfig leftStick;
     StickConfig rightStick;
 
-    JoystickMappingConfig() : numMappings(0) {}
+    JoystickMappingConfig() : numMappings(0)
+    {
+        filename[0] = '\0';
+    }
 };
 
 struct RunActionParams

@@ -22,6 +22,10 @@ void RunAction::init()
 {
     Serial.println("RunAction: Initialized");
 
+    // Store filename in config for display and later use
+    strncpy(config.filename, params.filename, config.MAX_FILENAME_LENGTH - 1);
+    config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
+
     DisplayLoadedFile();
 
     // Detect controller type
@@ -33,7 +37,7 @@ void RunAction::init()
         Serial.println(controllerType);
     }
 
-    // Try to load button mappings
+    // Try to load button mappings (loadConfig will reaffirm the filename)
     if (!MappingConfig::loadConfig(params.filename, config))
     {
         Serial.println("Failed to load button mappings, using defaults");
@@ -487,8 +491,8 @@ void RunAction::DisplayLoadedFile()
     lcd->backlight();
     lcd->setCursor(3, 1);
     lcd->print("Running file:");
-    
-    String displayName = Utils::trimFilename(params.filename);
+
+    String displayName = Utils::trimFilename(config.filename);
 
     int filenameLen = displayName.length();
     int filenamePos = (20 - filenameLen) / 2; // Center on 20 character display
