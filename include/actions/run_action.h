@@ -22,6 +22,12 @@ private:
     // D-pad axis tracking (for PS4/PS5)
     int lastDPadAxisValue;
 
+    // Keyboard passthrough event handlers
+    static void onKeyPress(int unicode);
+    static void onKeyRelease(int unicode);
+    static void onExtrasPress(uint32_t top, uint16_t key);
+    static void onExtrasRelease(uint32_t top, uint16_t key);
+
     void initializeMappings();
     void initializeDefaultMappings();
     void initializeDefaultStickConfigs();

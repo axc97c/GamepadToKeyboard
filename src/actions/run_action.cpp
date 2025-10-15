@@ -21,6 +21,17 @@ void RunAction::init()
 {
     Serial.println("RunAction: Initialized");
 
+    // Set up keyboard passthrough event handlers
+    KeyboardController *kbd = devices->getKeyboard();
+    if (kbd)
+    {
+        kbd->attachPress(onKeyPress);
+        kbd->attachRelease(onKeyRelease);
+        kbd->attachExtrasPress(onExtrasPress);
+        kbd->attachExtrasRelease(onExtrasRelease);
+        Serial.println("Keyboard passthrough handlers attached");
+    }
+
     // Store filename in config for display and later use
     strncpy(mappingConfig.filename, params.filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
     mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
@@ -480,6 +491,62 @@ ActionType RunAction::getType()
 RunActionParams &RunAction::getParams()
 {
     return params;
+}
+
+// Keyboard passthrough event handlers
+void RunAction::onKeyPress(int unicode)
+{
+    // Pass through regular key presses
+    Keyboard.press(unicode);
+    Serial.print("Keyboard passthrough: Key pressed - ");
+    if (unicode >= 32 && unicode <= 126)
+    {
+        Serial.print((char)unicode);
+        Serial.print(" ");
+    }
+    Serial.print("(0x");
+    Serial.print(unicode, HEX);
+    Serial.println(")");
+}
+
+void RunAction::onKeyRelease(int unicode)
+{
+    // Pass through regular key releases
+    Keyboard.release(unicode);
+    Serial.print("Keyboard passthrough: Key released - ");
+    if (unicode >= 32 && unicode <= 126)
+    {
+        Serial.print((char)unicode);
+        Serial.print(" ");
+    }
+    Serial.print("(0x");
+    Serial.print(unicode, HEX);
+    Serial.println(")");
+}
+
+void RunAction::onExtrasPress(uint32_t top, uint16_t key)
+{
+    // Handle special keys (modifiers, function keys, etc.)
+    Serial.print("Keyboard passthrough: Extras pressed - top: 0x");
+    Serial.print(top, HEX);
+    Serial.print(", key: 0x");
+    Serial.println(key, HEX);
+
+    // Pass through the key using the key code format
+    // The 'key' parameter contains the HID usage code
+    Keyboard.press(key | 0xF000); // Use Teensy's extended keycode format
+}
+
+void RunAction::onExtrasRelease(uint32_t top, uint16_t key)
+{
+    // Handle special key releases
+    Serial.print("Keyboard passthrough: Extras released - top: 0x");
+    Serial.print(top, HEX);
+    Serial.print(", key: 0x");
+    Serial.println(key, HEX);
+
+    // Pass through the key release
+    Keyboard.release(key | 0xF000);
 }
 
 void RunAction::DisplayLoadedFile()
