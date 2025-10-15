@@ -164,8 +164,8 @@ void LoadConfigMenuAction::onConfirm()
 
 void LoadConfigMenuAction::onCancel()
 {
-    // Handle cancel - return to main menu
-    Serial.println("Load config menu - Cancel/Back pressed, returning to main menu");
-    
-    handler->activateMainMenu({0});
+    // Handle cancel - return to previous action
+    Serial.println("Load config menu - Cancel/Back pressed, returning to previous action");
+
+    handler->popAction();
 }

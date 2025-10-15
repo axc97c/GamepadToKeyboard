@@ -132,8 +132,8 @@ void EditConfigMenuAction::onConfirm()
 
 void EditConfigMenuAction::onCancel()
 {
-    // Handle cancel - return to main menu
-    Serial.println("Edit config menu - Cancel/Back pressed, returning to main menu");
-    
-    handler->activateMainMenu({0});
+    // Handle cancel - return to previous action
+    Serial.println("Edit config menu - Cancel/Back pressed, returning to previous action");
+
+    handler->popAction();
 }

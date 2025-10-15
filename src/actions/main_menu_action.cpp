@@ -46,11 +46,8 @@ void MainMenuAction::onConfirm()
 
 void MainMenuAction::onCancel()
 {
-    // Handle cancel for the main menu - return to run action
-    Serial.println("Main menu - Cancel/Back pressed, returning to run action");
-    
-    // Get the last run action filename from handler
-    const char *filename = handler->getLastRunFilename();
-    
-    handler->activateRun({filename});
+    // Handle cancel for the main menu - return to previous action (Run)
+    Serial.println("Main menu - Cancel/Back pressed, returning to previous action");
+
+    handler->popAction();
 }
