@@ -7,8 +7,23 @@
 #include "utils.h"
 
 EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
-    : MenuAction(dev, hdlr, p)
+    : MenuAction(dev, hdlr, p), needsRefresh(false)
 {
+}
+
+void EditConfigMenuAction::loop()
+{
+    // Check if we need to refresh the menu (after returning from bind key action)
+    if (needsRefresh)
+    {
+        buildMenuItems();
+        refresh();
+        needsRefresh = false;
+        Serial.println("EditConfigMenuAction: Menu refreshed after key binding");
+    }
+
+    // Call the base class loop to handle normal menu operations
+    MenuAction::loop();
 }
 
 void EditConfigMenuAction::onInit()
@@ -87,8 +102,7 @@ void EditConfigMenuAction::onConfirm()
     Serial.print(selectedIdx);
     Serial.println(")");
 
-    // TODO: Implement key remapping functionality
-    // For now, just log which mapping was selected
+    // Open bind key action for the selected mapping
     if (selectedIdx >= 0 && selectedIdx < mappingConfig.numMappings)
     {
         Serial.print("Selected mapping: ");
@@ -96,7 +110,13 @@ void EditConfigMenuAction::onConfirm()
         Serial.print(" -> ");
         Serial.println(KeyboardMapping::keyCodeToString(mappingConfig.mappings[selectedIdx].keyCode));
 
-        // Future: Open a key selection menu to change this mapping
+        // Open bind key action to change this mapping
+        BindKeyActionParams params;
+        params.mappingIndex = selectedIdx;
+        handler->activateBindKey(params);
+
+        // Mark that we need to refresh when we return
+        needsRefresh = true;
     }
 }
 

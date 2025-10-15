@@ -6,7 +6,7 @@
 #include "mapping/joystick_mappings.h"
 
 // Input event types
-enum InputEvent
+enum GamepadInputEvent
 {
     INPUT_NONE = 0,
     INPUT_UP,
@@ -20,7 +20,7 @@ enum InputEvent
     INPUT_SELECT   // Select/Share button
 };
 
-class Input
+class GamepadInput
 {
 private:
     JoystickController *joystick;
@@ -40,17 +40,17 @@ private:
     // Helper methods
     bool isButtonPressed(uint8_t genericButton);
     bool isDPadPressed(uint8_t dpadButton);
-    InputEvent checkButton(uint8_t genericButton, InputEvent event);
-    InputEvent checkDPad();
+    GamepadInputEvent checkButton(uint8_t genericButton, GamepadInputEvent event);
+    GamepadInputEvent checkDPad();
 
 public:
-    Input(JoystickController *controller);
+    GamepadInput(JoystickController *controller);
 
     void setup();
     void update();
 
     // Get the current input event (with debouncing and repeat)
-    InputEvent getEvent();
+    GamepadInputEvent getEvent();
 
     // Check if a specific button is currently held (no debounce)
     bool isHeld(uint8_t genericButton);

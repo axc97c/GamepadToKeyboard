@@ -44,7 +44,7 @@ void MenuAction::loop()
     }
 
     // Get input event from the input handler
-    InputEvent event = devices->getInput()->getEvent();
+    GamepadInputEvent event = devices->getGamepadInput()->getEvent();
 
     if (event != INPUT_NONE)
     {

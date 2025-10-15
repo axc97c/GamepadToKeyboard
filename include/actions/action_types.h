@@ -8,7 +8,8 @@ enum class ActionType : uint8_t
 {
     NONE,
     RUN,
-    MENU
+    MENU,
+    BIND_KEY
 };
 
 enum class MappingType : uint8_t
@@ -88,6 +89,11 @@ struct RunActionParams
 struct MenuActionParams
 {
     uint8_t menuId;
+};
+
+struct BindKeyActionParams
+{
+    int mappingIndex; // Index into mappingConfig.mappings array
 };
 
 // Global joystick mapping configuration instance

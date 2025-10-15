@@ -3,7 +3,8 @@
 
 #include <USBHost_t36.h>
 #include <../lib/LCD_I2C-master/LiquidCrystal_I2C.h>
-#include "input.h"
+#include "input/gamepad_input.h"
+#include "input/keyboard_input.h"
 
 class DeviceManager
 {
@@ -18,7 +19,8 @@ public:
 
     // Non USB devices to share around
     LiquidCrystal_I2C *lcd;
-    Input *input;
+    GamepadInput *gamepadInput;
+    KeyboardInput *keyboardInput;
 
     DeviceManager();
     ~DeviceManager(); // Destructor to clean up
@@ -31,7 +33,8 @@ public:
     MouseController *getMouse() { return mouse; }
     JoystickController *getJoystick() { return joystick; }
     LiquidCrystal_I2C *getLCD() { return lcd; }
-    Input *getInput() { return input; }
+    GamepadInput *getGamepadInput() { return gamepadInput; }
+    KeyboardInput *getKeyboardInput() { return keyboardInput; }
 };
 
 #endif

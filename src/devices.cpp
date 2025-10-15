@@ -1,5 +1,6 @@
 #include "devices.h"
-#include "input.h"
+#include "input/gamepad_input.h"
+#include "input/keyboard_input.h"
 
 DeviceManager::DeviceManager()
     : host(nullptr), hub(nullptr), keyboard(nullptr),
@@ -17,8 +18,10 @@ void DeviceManager::setup()
     lcd->backlight();
     host->begin();
 
-    input = new Input(joystick);
-    input->setup();
+    gamepadInput = new GamepadInput(joystick);
+    gamepadInput->setup();
+
+    keyboardInput = new KeyboardInput(keyboard);
 
     Mouse.begin();
 }

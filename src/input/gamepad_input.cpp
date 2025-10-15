@@ -1,6 +1,6 @@
-#include "input.h"
+#include "input/gamepad_input.h"
 
-Input::Input(JoystickController *controller)
+GamepadInput::GamepadInput(JoystickController *controller)
 {
     joystick = controller;
     lastButtons = 0;
@@ -14,7 +14,7 @@ Input::Input(JoystickController *controller)
     }
 }
 
-void Input::setup()
+void GamepadInput::setup()
 {
     // Don't check controller type here - joystick may not be connected yet
     // We'll check dynamically in isDPadPressed()
@@ -22,13 +22,13 @@ void Input::setup()
     Serial.println("Input setup complete");
 }
 
-void Input::update()
+void GamepadInput::update()
 {
     // This method can be used for any per-frame updates if needed
     // Currently, all logic is in getEvent()
 }
 
-void Input::reset()
+void GamepadInput::reset()
 {
     lastButtons = 0;
     lastDPadValue = 0xFF;
@@ -42,7 +42,7 @@ void Input::reset()
     Serial.println("Input state reset");
 }
 
-bool Input::isButtonPressed(uint8_t genericButton)
+bool GamepadInput::isButtonPressed(uint8_t genericButton)
 {
     if (!joystick->available())
         return false;
@@ -62,7 +62,7 @@ bool Input::isButtonPressed(uint8_t genericButton)
     return buttons & (1 << physicalButton);
 }
 
-bool Input::isDPadPressed(uint8_t dpadButton)
+bool GamepadInput::isDPadPressed(uint8_t dpadButton)
 {
     if (!joystick->available())
         return false;
@@ -91,7 +91,7 @@ bool Input::isDPadPressed(uint8_t dpadButton)
     return false;
 }
 
-InputEvent Input::checkButton(uint8_t genericButton, InputEvent event)
+GamepadInputEvent GamepadInput::checkButton(uint8_t genericButton, GamepadInputEvent event)
 {
     bool pressed = false;
 
@@ -145,10 +145,10 @@ InputEvent Input::checkButton(uint8_t genericButton, InputEvent event)
     return INPUT_NONE;
 }
 
-InputEvent Input::checkDPad()
+GamepadInputEvent GamepadInput::checkDPad()
 {
     // Check all D-pad directions
-    InputEvent result;
+    GamepadInputEvent result;
 
     result = checkButton(GenericController::BTN_DPAD_UP, INPUT_UP);
     if (result != INPUT_NONE)
@@ -169,7 +169,7 @@ InputEvent Input::checkDPad()
     return INPUT_NONE;
 }
 
-InputEvent Input::getEvent()
+GamepadInputEvent GamepadInput::getEvent()
 {
     if (!joystick->available())
     {
@@ -177,14 +177,14 @@ InputEvent Input::getEvent()
     }
 
     // Check D-pad first (for navigation)
-    InputEvent dpadEvent = checkDPad();
+    GamepadInputEvent dpadEvent = checkDPad();
     if (dpadEvent != INPUT_NONE)
     {
         return dpadEvent;
     }
 
     // Check action buttons
-    InputEvent result;
+    GamepadInputEvent result;
 
     result = checkButton(GenericController::BTN_SOUTH, INPUT_CONFIRM);
     if (result != INPUT_NONE)
@@ -209,7 +209,7 @@ InputEvent Input::getEvent()
     return INPUT_NONE;
 }
 
-bool Input::isHeld(uint8_t genericButton)
+bool GamepadInput::isHeld(uint8_t genericButton)
 {
     return isButtonPressed(genericButton);
 }

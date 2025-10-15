@@ -4,6 +4,7 @@
 #include "actions/main_menu_action.h"
 #include "actions/load_config_menu_action.h"
 #include "actions/edit_config_menu_action.h"
+#include "actions/bind_key_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -91,6 +92,13 @@ void ActionHandler::activateEditConfigMenu(MenuActionParams params)
     pushAction(new EditConfigMenuAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
     Serial.println("Action: Edit Config Menu activated");
+}
+
+void ActionHandler::activateBindKey(BindKeyActionParams params)
+{
+    pushAction(new BindKeyAction(devices, this, params));
+    Serial.println((unsigned long)currentAction, HEX);
+    Serial.println("Action: Bind Key activated");
 }
 
 ActionType ActionHandler::getCurrentActionType()

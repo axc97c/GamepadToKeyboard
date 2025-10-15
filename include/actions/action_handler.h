@@ -33,6 +33,7 @@ public:
     void activateMainMenu(MenuActionParams params);
     void activateLoadConfigMenu(MenuActionParams params);
     void activateEditConfigMenu(MenuActionParams params);
+    void activateBindKey(BindKeyActionParams params);
 
     // Get current action (returns nullptr if none active)
     Action *getCurrentAction() { return currentAction; }
