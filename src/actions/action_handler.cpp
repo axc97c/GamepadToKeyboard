@@ -1,7 +1,6 @@
 #include "actions/action_handler.h"
 #include "actions/action.h"
 #include "actions/run_action.h"
-#include "actions/example_menu_action.h"
 #include "actions/main_menu_action.h"
 #include "actions/load_config_menu_action.h"
 #include "actions/edit_config_menu_action.h"
@@ -71,13 +70,6 @@ void ActionHandler::activateRun(RunActionParams params)
     replaceCurrentAction(new RunAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
     Serial.println("Action: Run mode activated (base action)");
-}
-
-void ActionHandler::activateMenu(MenuActionParams params)
-{
-    pushAction(new ExampleMenuAction(devices, this, params));
-    Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Example Menu activated");
 }
 
 void ActionHandler::activateMainMenu(MenuActionParams params)

@@ -30,7 +30,6 @@ public:
 
     // Activate a specific action with parameters
     void activateRun(RunActionParams params);
-    void activateMenu(MenuActionParams params);
     void activateMainMenu(MenuActionParams params);
     void activateLoadConfigMenu(MenuActionParams params);
     void activateEditConfigMenu(MenuActionParams params);
