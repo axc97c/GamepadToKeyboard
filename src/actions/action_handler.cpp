@@ -181,3 +181,16 @@ void ActionHandler::popAction()
     Serial.print("Popped action from stack. Stack size: ");
     Serial.println(actionStackSize);
 }
+
+void ActionHandler::popToRunAction()
+{
+    Serial.println("Popping all actions back to Run action...");
+
+    // Pop all actions until we're back at the base (Run action)
+    while (actionStackSize > 0)
+    {
+        popAction();
+    }
+
+    Serial.println("Returned to Run action");
+}

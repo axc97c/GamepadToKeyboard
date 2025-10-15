@@ -42,7 +42,8 @@ public:
     const char *getLastRunFilename() { return lastRunFilename; }
 
     // Navigation
-    void popAction(); // Go back to previous action
+    void popAction();        // Go back to previous action
+    void popToRunAction();   // Pop all actions back to Run (base action)
 
     void setup();
     void loop();

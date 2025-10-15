@@ -37,11 +37,9 @@ void MenuAction::loop()
     if (checkTimeout())
     {
         Serial.println("Menu timeout - returning to run action");
-        
-        // Get the last run action filename from handler
-        const char *filename = handler->getLastRunFilename();
-        
-        handler->activateRun({filename});
+
+        // Pop all actions back to the Run action (base of stack)
+        handler->popToRunAction();
         return;
     }
 

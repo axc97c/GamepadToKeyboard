@@ -6,7 +6,6 @@
 class EditConfigMenuAction : public MenuAction
 {
 private:
-    void loadCurrentConfig();
     void buildMenuItems();
     String getButtonKeyPair(int index);
 

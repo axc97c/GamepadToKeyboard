@@ -13,40 +13,17 @@ EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hd
 
 void EditConfigMenuAction::onInit()
 {
-    Serial.println("EditConfigMenuAction: Loading current config...");
+    Serial.println("EditConfigMenuAction: Editing current config...");
 
-    // Get the current config filename from the handler and store in mappingConfig
-    const char *filename = handler->getLastRunFilename();
-    strncpy(mappingConfig.filename, filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
-    mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
-
-    Serial.print("Editing config file: ");
+    Serial.print("Editing config: ");
     Serial.println(mappingConfig.filename);
+    Serial.print("Number of mappings: ");
+    Serial.println(mappingConfig.numMappings);
 
-    // Load the current config
-    loadCurrentConfig();
+    // Build the menu items directly from the current mappingConfig
+    buildMenuItems();
 
     Serial.println("EditConfigMenuAction setup complete");
-}
-
-void EditConfigMenuAction::loadCurrentConfig()
-{
-    // Load mappings from the config file (filename already in mappingConfig)
-    if (!MappingConfig::loadConfig(mappingConfig.filename, mappingConfig))
-    {
-        Serial.println("Failed to load config file for editing");
-        String errorItem[] = {"Error loading config"};
-        menuTitle = "Edit Config";
-        setMenu(menuTitle, errorItem, 1);
-        return;
-    }
-
-    Serial.print("Loaded ");
-    Serial.print(mappingConfig.numMappings);
-    Serial.println(" mappings for editing");
-
-    // Build the menu items
-    buildMenuItems();
 }
 
 void EditConfigMenuAction::buildMenuItems()
@@ -103,20 +80,13 @@ void EditConfigMenuAction::onConfirm()
 {
     int selectedIdx = getSelectedIndex();
     String selectedItem = getSelectedItem();
-    
+
     Serial.print("Edit config - Item confirmed: ");
     Serial.print(selectedItem);
     Serial.print(" (index: ");
     Serial.print(selectedIdx);
     Serial.println(")");
-    
-    // Check if there's an error state
-    if (selectedItem == "Error loading config")
-    {
-        Serial.println("Cannot edit - error state");
-        return;
-    }
-    
+
     // TODO: Implement key remapping functionality
     // For now, just log which mapping was selected
     if (selectedIdx >= 0 && selectedIdx < mappingConfig.numMappings)
