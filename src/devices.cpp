@@ -3,7 +3,7 @@
 #include "input/keyboard_input.h"
 
 DeviceManager::DeviceManager()
-    : host(nullptr), hub(nullptr), keyboard(nullptr),
+    : host(nullptr), keyboard(nullptr),
       mouse(nullptr), joystick(nullptr),
       keyboardConnected(false), mouseConnected(false), joystickConnected(false)
 {
@@ -57,15 +57,11 @@ void DeviceManager::checkDeviceConnections()
         keyboardConnected = false;
     }
 
-    // Check mouse connection status
+    // MouseController uses available() method instead of idVendor()
     bool mouseNowConnected = (mouse != nullptr && mouse->available());
     if (mouseNowConnected && !mouseConnected)
     {
         Serial.println("[USB] Mouse connected");
-        // Serial.print("[USB] VID: 0x");
-        // Serial.print(mouse->idVendor(), HEX);
-        // Serial.print(", PID: 0x");
-        // Serial.println(mouse->idProduct(), HEX);
         Serial.print("[USB] Timestamp: ");
         Serial.println(millis());
         mouseConnected = true;
@@ -77,7 +73,7 @@ void DeviceManager::checkDeviceConnections()
         Serial.println(millis());
         mouseConnected = false;
     }
-
+    
     // Check joystick connection status
     bool joystickNowConnected = (joystick != nullptr && joystick->idVendor() != 0);
     if (joystickNowConnected && !joystickConnected)
