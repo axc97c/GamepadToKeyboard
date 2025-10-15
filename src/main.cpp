@@ -9,8 +9,11 @@
 #include "mapping/mapping_config.h"
 
 USBHost usbh;
-USBHub hub(usbh);
-USBHIDParser hid(usbh);
+USBHub hub1(usbh);
+USBHub hub2(usbh);
+USBHIDParser hid1(usbh);
+USBHIDParser hid2(usbh);
+USBHIDParser hid3(usbh);
 KeyboardController keyboard(usbh);
 MouseController mouse(usbh);
 JoystickController joy(usbh);
@@ -18,14 +21,11 @@ LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 DeviceManager devices;
 ActionHandler actionHandler(&devices);
-
-// Global joystick mapping configuration
 JoystickMappingConfig mappingConfig;
 
 void setup()
 {
     devices.host = &usbh;
-    devices.hub = &hub;
     devices.keyboard = &keyboard;
     devices.mouse = &mouse;
     devices.joystick = &joy;
@@ -36,10 +36,15 @@ void setup()
     {
     }; // Probably dont want this long term
 
+    Serial.println("=== GamePad to Keyboard Starting ===");
+    Serial.println("Initializing USB Host...");
+
     MappingConfig::initSD();
 
     devices.setup();
     actionHandler.setup();
+
+    Serial.println("Setup complete. Waiting for USB devices...");
 }
 
 void loop()

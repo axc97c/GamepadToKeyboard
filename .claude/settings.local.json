@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(platformio pkg:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

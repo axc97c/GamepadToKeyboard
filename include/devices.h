@@ -11,8 +11,6 @@ class DeviceManager
 public:
     // USB host devices
     USBHost *host;
-    USBHub *hub;
-    USBHIDParser *parser;
     KeyboardController *keyboard;
     MouseController *mouse;
     JoystickController *joystick;
@@ -28,6 +26,16 @@ public:
     void setup();
     void loop();
 
+private:
+    // Track device connection states
+    bool keyboardConnected;
+    bool mouseConnected;
+    bool joystickConnected;
+
+    // Check for device connection changes
+    void checkDeviceConnections();
+
+public:
     // Getters to access the controllers
     KeyboardController *getKeyboard() { return keyboard; }
     MouseController *getMouse() { return mouse; }
