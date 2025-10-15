@@ -56,9 +56,21 @@ private:
         uint8_t button;
         const char *name;
     };
-    
+
     static const ButtonNameMapping buttonNameMap[];
     static const int buttonNameMapSize;
+
+    // Controller-specific button mapping
+    struct ControllerButtonMapping
+    {
+        uint8_t physicalButton;
+        uint8_t genericButton;
+    };
+
+    static const ControllerButtonMapping xbox360ButtonMap[];
+    static const int xbox360ButtonMapSize;
+    static const ControllerButtonMapping ps4ButtonMap[];
+    static const int ps4ButtonMapSize;
 
 public:
     // Map controller-specific button to generic button

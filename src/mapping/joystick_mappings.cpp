@@ -24,172 +24,105 @@ const JoystickMapping::ButtonNameMapping JoystickMapping::buttonNameMap[] = {
 
 const int JoystickMapping::buttonNameMapSize = sizeof(JoystickMapping::buttonNameMap) / sizeof(JoystickMapping::buttonNameMap[0]);
 
+// Xbox 360 button mapping array
+const JoystickMapping::ControllerButtonMapping JoystickMapping::xbox360ButtonMap[] = {
+    {Xbox360Physical::A, GenericController::BTN_SOUTH},
+    {Xbox360Physical::B, GenericController::BTN_EAST},
+    {Xbox360Physical::X, GenericController::BTN_WEST},
+    {Xbox360Physical::Y, GenericController::BTN_NORTH},
+    {Xbox360Physical::LB, GenericController::BTN_L1},
+    {Xbox360Physical::RB, GenericController::BTN_R1},
+    {Xbox360Physical::BACK, GenericController::BTN_SELECT},
+    {Xbox360Physical::START, GenericController::BTN_START},
+    {Xbox360Physical::XBOX_BUTTON, GenericController::BTN_MENU},
+    {Xbox360Physical::LEFT_STICK, GenericController::BTN_L3},
+    {Xbox360Physical::RIGHT_STICK, GenericController::BTN_R3},
+    {Xbox360Physical::DPAD_UP, GenericController::BTN_DPAD_UP},
+    {Xbox360Physical::DPAD_DOWN, GenericController::BTN_DPAD_DOWN},
+    {Xbox360Physical::DPAD_LEFT, GenericController::BTN_DPAD_LEFT},
+    {Xbox360Physical::DPAD_RIGHT, GenericController::BTN_DPAD_RIGHT}
+};
+
+const int JoystickMapping::xbox360ButtonMapSize = sizeof(JoystickMapping::xbox360ButtonMap) / sizeof(JoystickMapping::xbox360ButtonMap[0]);
+
+// PS4 button mapping array
+const JoystickMapping::ControllerButtonMapping JoystickMapping::ps4ButtonMap[] = {
+    {PS4Physical::CROSS, GenericController::BTN_SOUTH},
+    {PS4Physical::CIRCLE, GenericController::BTN_EAST},
+    {PS4Physical::SQUARE, GenericController::BTN_WEST},
+    {PS4Physical::TRIANGLE, GenericController::BTN_NORTH},
+    {PS4Physical::L1, GenericController::BTN_L1},
+    {PS4Physical::R1, GenericController::BTN_R1},
+    {PS4Physical::L2, GenericController::BTN_L2},
+    {PS4Physical::R2, GenericController::BTN_R2},
+    {PS4Physical::SHARE, GenericController::BTN_SELECT},
+    {PS4Physical::OPTIONS, GenericController::BTN_START},
+    {PS4Physical::PS_BUTTON, GenericController::BTN_MENU},
+    {PS4Physical::L3, GenericController::BTN_L3},
+    {PS4Physical::R3, GenericController::BTN_R3},
+    {PS4Physical::TOUCHPAD, GenericController::BTN_TOUCHPAD}
+};
+
+const int JoystickMapping::ps4ButtonMapSize = sizeof(JoystickMapping::ps4ButtonMap) / sizeof(JoystickMapping::ps4ButtonMap[0]);
+
 int JoystickMapping::mapButtonToGeneric(JoystickController::joytype_t type, uint8_t controllerButton)
 {
+    const ControllerButtonMapping *mappingArray = nullptr;
+    int mappingSize = 0;
+
     switch (type)
     {
     case JoystickController::XBOX360:
-        switch (controllerButton)
-        {
-        case Xbox360Physical::A:
-            return GenericController::BTN_SOUTH;
-        case Xbox360Physical::B:
-            return GenericController::BTN_EAST;
-        case Xbox360Physical::X:
-            return GenericController::BTN_WEST;
-        case Xbox360Physical::Y:
-            return GenericController::BTN_NORTH;
-        case Xbox360Physical::LB:
-            return GenericController::BTN_L1;
-        case Xbox360Physical::RB:
-            return GenericController::BTN_R1;
-        case Xbox360Physical::BACK:
-            return GenericController::BTN_SELECT;
-        case Xbox360Physical::START:
-            return GenericController::BTN_START;
-        case Xbox360Physical::XBOX_BUTTON:
-            return GenericController::BTN_MENU;
-        case Xbox360Physical::LEFT_STICK:
-            return GenericController::BTN_L3;
-        case Xbox360Physical::RIGHT_STICK:
-            return GenericController::BTN_R3;
-        case Xbox360Physical::DPAD_UP:
-            return GenericController::BTN_DPAD_UP;
-        case Xbox360Physical::DPAD_DOWN:
-            return GenericController::BTN_DPAD_DOWN;
-        case Xbox360Physical::DPAD_LEFT:
-            return GenericController::BTN_DPAD_LEFT;
-        case Xbox360Physical::DPAD_RIGHT:
-            return GenericController::BTN_DPAD_RIGHT;
-        default:
-            return -1;
-        }
-
+        mappingArray = xbox360ButtonMap;
+        mappingSize = xbox360ButtonMapSize;
+        break;
     case JoystickController::PS4:
-        switch (controllerButton)
-        {
-        case PS4Physical::CROSS:
-            return GenericController::BTN_SOUTH;
-        case PS4Physical::CIRCLE:
-            return GenericController::BTN_EAST;
-        case PS4Physical::SQUARE:
-            return GenericController::BTN_WEST;
-        case PS4Physical::TRIANGLE:
-            return GenericController::BTN_NORTH;
-        case PS4Physical::L1:
-            return GenericController::BTN_L1;
-        case PS4Physical::R1:
-            return GenericController::BTN_R1;
-        case PS4Physical::L2:
-            return GenericController::BTN_L2;
-        case PS4Physical::R2:
-            return GenericController::BTN_R2;
-        case PS4Physical::SHARE:
-            return GenericController::BTN_SELECT;
-        case PS4Physical::OPTIONS:
-            return GenericController::BTN_START;
-        case PS4Physical::PS_BUTTON:
-            return GenericController::BTN_MENU;
-        case PS4Physical::L3:
-            return GenericController::BTN_L3;
-        case PS4Physical::R3:
-            return GenericController::BTN_R3;
-        case PS4Physical::TOUCHPAD:
-            return GenericController::BTN_TOUCHPAD;
-        default:
-            return -1;
-        }
-
+        mappingArray = ps4ButtonMap;
+        mappingSize = ps4ButtonMapSize;
+        break;
     default:
         return -1;
     }
+
+    for (int i = 0; i < mappingSize; i++)
+    {
+        if (mappingArray[i].physicalButton == controllerButton)
+        {
+            return mappingArray[i].genericButton;
+        }
+    }
+
+    return -1;
 }
 
 int JoystickMapping::mapGenericToButton(JoystickController::joytype_t type, uint8_t genericButton)
 {
+    const ControllerButtonMapping *mappingArray = nullptr;
+    int mappingSize = 0;
+
     switch (type)
     {
     case JoystickController::XBOX360:
-        switch (genericButton)
-        {
-        case GenericController::BTN_SOUTH:
-            return Xbox360Physical::A;
-        case GenericController::BTN_EAST:
-            return Xbox360Physical::B;
-        case GenericController::BTN_WEST:
-            return Xbox360Physical::X;
-        case GenericController::BTN_NORTH:
-            return Xbox360Physical::Y;
-        case GenericController::BTN_L1:
-            return Xbox360Physical::LB;
-        case GenericController::BTN_R1:
-            return Xbox360Physical::RB;
-        case GenericController::BTN_SELECT:
-            return Xbox360Physical::BACK;
-        case GenericController::BTN_START:
-            return Xbox360Physical::START;
-        case GenericController::BTN_MENU:
-            return Xbox360Physical::XBOX_BUTTON;
-        case GenericController::BTN_L3:
-            return Xbox360Physical::LEFT_STICK;
-        case GenericController::BTN_R3:
-            return Xbox360Physical::RIGHT_STICK;
-        case GenericController::BTN_DPAD_UP:
-            return Xbox360Physical::DPAD_UP;
-        case GenericController::BTN_DPAD_DOWN:
-            return Xbox360Physical::DPAD_DOWN;
-        case GenericController::BTN_DPAD_LEFT:
-            return Xbox360Physical::DPAD_LEFT;
-        case GenericController::BTN_DPAD_RIGHT:
-            return Xbox360Physical::DPAD_RIGHT;
-        default:
-            return -1;
-        }
-
+        mappingArray = xbox360ButtonMap;
+        mappingSize = xbox360ButtonMapSize;
+        break;
     case JoystickController::PS4:
-        switch (genericButton)
-        {
-        case GenericController::BTN_SOUTH:
-            return PS4Physical::CROSS;
-        case GenericController::BTN_EAST:
-            return PS4Physical::CIRCLE;
-        case GenericController::BTN_WEST:
-            return PS4Physical::SQUARE;
-        case GenericController::BTN_NORTH:
-            return PS4Physical::TRIANGLE;
-        case GenericController::BTN_L1:
-            return PS4Physical::L1;
-        case GenericController::BTN_R1:
-            return PS4Physical::R1;
-        case GenericController::BTN_L2:
-            return PS4Physical::L2;
-        case GenericController::BTN_R2:
-            return PS4Physical::R2;
-        case GenericController::BTN_SELECT:
-            return PS4Physical::SHARE;
-        case GenericController::BTN_START:
-            return PS4Physical::OPTIONS;
-        case GenericController::BTN_MENU:
-            return PS4Physical::PS_BUTTON;
-        case GenericController::BTN_L3:
-            return PS4Physical::L3;
-        case GenericController::BTN_R3:
-            return PS4Physical::R3;
-        case GenericController::BTN_TOUCHPAD:
-            return PS4Physical::TOUCHPAD;
-        // D-pad buttons not directly mappable for PS4 (uses axis)
-        case GenericController::BTN_DPAD_UP:
-        case GenericController::BTN_DPAD_DOWN:
-        case GenericController::BTN_DPAD_LEFT:
-        case GenericController::BTN_DPAD_RIGHT:
-            return -1; // D-pad is axis-based on PS4
-        default:
-            return -1;
-        }
-
+        mappingArray = ps4ButtonMap;
+        mappingSize = ps4ButtonMapSize;
+        break;
     default:
         return -1;
     }
+
+    for (int i = 0; i < mappingSize; i++)
+    {
+        if (mappingArray[i].genericButton == genericButton)
+        {
+            return mappingArray[i].physicalButton;
+        }
+    }
+
+    return -1;
 }
 
 int JoystickMapping::mapAxisToGeneric(JoystickController::joytype_t type, uint8_t controllerAxis)
