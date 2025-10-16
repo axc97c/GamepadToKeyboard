@@ -134,3 +134,48 @@ const char *KeyboardMapping::keyCodeToString(int keyCode)
     buf[1] = '\0';
     return buf;
 }
+
+int KeyboardMapping::unicodeToKeyCode(int unicode)
+{
+    // Handle special keys that might come as unicode
+    if (unicode == 13 || unicode == 10) // Enter/Return
+        return KEY_RETURN;
+    if (unicode == 27) // ESC
+        return KEY_ESC;
+    if (unicode == 8 || unicode == 127) // Backspace/Delete
+        return KEY_BACKSPACE;
+    if (unicode == 9) // Tab
+        return KEY_TAB;
+    if (unicode == 32) // Space
+        return ' ';
+
+    // Letters: Convert lowercase (97-122) and uppercase (65-90) to KEY_A through KEY_Z
+    if (unicode >= 'a' && unicode <= 'z')
+    {
+        // Lowercase a-z (97-122) -> KEY_A to KEY_Z
+        return KEY_A + (unicode - 'a');
+    }
+    if (unicode >= 'A' && unicode <= 'Z')
+    {
+        // Uppercase A-Z (65-90) -> KEY_A to KEY_Z
+        return KEY_A + (unicode - 'A');
+    }
+
+    // Numbers: 0-9 (ASCII 48-57) -> KEY_0 to KEY_9
+    if (unicode >= '0' && unicode <= '9')
+    {
+        return KEY_0 + (unicode - '0');
+    }
+
+    // For other printable ASCII characters, return as-is
+    // The Teensy keyboard library can handle these directly
+    if (unicode >= 32 && unicode < 127)
+    {
+        return unicode;
+    }
+
+    // Unknown/unsupported key
+    Serial.print("Warning: Unsupported unicode value: ");
+    Serial.println(unicode);
+    return unicode; // Return as-is and let the system handle it
+}

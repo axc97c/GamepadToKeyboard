@@ -48,9 +48,17 @@ void BindKeyAction::loop()
     // Check for keyboard input
     if (keyboardInput != nullptr)
     {
-        int keyCode = keyboardInput->getKeyPress();
-        if (keyCode != 0)
+        int unicode = keyboardInput->getKeyPress();
+        if (unicode != 0)
         {
+            // Convert unicode/ASCII to Teensy keycode
+            int keyCode = KeyboardMapping::unicodeToKeyCode(unicode);
+
+            Serial.print("BindKeyAction: Received unicode ");
+            Serial.print(unicode);
+            Serial.print(", converted to keyCode ");
+            Serial.println(keyCode);
+
             // Key was pressed, apply the binding
             applyKeyBinding(keyCode);
 

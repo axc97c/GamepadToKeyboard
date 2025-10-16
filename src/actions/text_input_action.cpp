@@ -43,9 +43,17 @@ void TextInputAction::loop()
     // Check for keyboard input
     if (keyboardInput != nullptr)
     {
-        int keyCode = keyboardInput->getKeyPress();
-        if (keyCode != 0)
+        int unicode = keyboardInput->getKeyPress();
+        if (unicode != 0)
         {
+            // Convert unicode to keycode
+            int keyCode = KeyboardMapping::unicodeToKeyCode(unicode);
+
+            Serial.print("TextInputAction: Received unicode ");
+            Serial.print(unicode);
+            Serial.print(", converted to keyCode ");
+            Serial.println(keyCode);
+
             handleKeyPress(keyCode);
         }
     }
@@ -80,6 +88,11 @@ void TextInputAction::handleKeyPress(int keyCode)
     Serial.print(" (code: ");
     Serial.print(keyCode);
     Serial.println(")");
+
+    Serial.print("A: ");
+    Serial.println(KEY_A);
+    Serial.print("ENTER: ");
+    Serial.println(KEY_ENTER);
 
     // Handle special keys
     if (keyCode == KEY_ENTER || keyCode == KEY_RETURN)

@@ -6,13 +6,19 @@
 class MainMenuAction : public MenuAction
 {
 private:
+    static const int TEST_INPUT_MAX_LENGTH = 15;
+    char testInputBuffer[TEST_INPUT_MAX_LENGTH + 1];
+    bool waitingForTextInput;
+
     void performSave();
+    void launchTestTextInput();
 
 public:
     MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
 
     // Implement pure virtual methods from MenuAction
     void onInit() override;
+    void loop() override;
     void onConfirm() override;
     void onCancel() override;
 };

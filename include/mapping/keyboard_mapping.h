@@ -6,6 +6,9 @@ class KeyboardMapping
 public:
     static int parseKeyCode(const char *keyStr);
     static const char *keyCodeToString(int keyCode);
+
+    // Convert incoming keyboard unicode/ASCII to Teensy keycode
+    static int unicodeToKeyCode(int unicode);
 };
 
 #endif
