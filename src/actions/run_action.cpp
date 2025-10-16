@@ -32,10 +32,13 @@ void RunAction::init()
     //     Serial.println("Keyboard passthrough handlers attached");
     // }
 
-    // Store filename in config for display and later use
+    // Store filename in config for display and later use (intentional truncation)
     if (mappingConfig.filename[0] == '\0')
     {
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(mappingConfig.filename, params.filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
+        #pragma GCC diagnostic pop
         mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
     }
 

@@ -48,7 +48,11 @@ struct MenuItem
     {
         if (n != nullptr)
         {
+            // Intentional truncation with proper null termination
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Wstringop-truncation"
             strncpy(name, n, MAX_NAME_LEN - 1);
+            #pragma GCC diagnostic pop
             name[MAX_NAME_LEN - 1] = '\0';
         }
         else
@@ -61,7 +65,11 @@ struct MenuItem
     {
         if (id != nullptr)
         {
+            // Intentional truncation with proper null termination
+            #pragma GCC diagnostic push
+            #pragma GCC diagnostic ignored "-Wstringop-truncation"
             strncpy(identifier, id, MAX_ID_LEN - 1);
+            #pragma GCC diagnostic pop
             identifier[MAX_ID_LEN - 1] = '\0';
         }
         else

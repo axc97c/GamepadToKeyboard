@@ -219,7 +219,11 @@ void MenuAction::setMenu(const char* title, MenuItem items[], int itemCount)
     // Copy title to fixed char array
     if (title != nullptr)
     {
+        // Intentional truncation with proper null termination
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(menuTitle, title, MAX_TITLE_LEN - 1);
+        #pragma GCC diagnostic pop
         menuTitle[MAX_TITLE_LEN - 1] = '\0';
     }
     else
@@ -298,7 +302,11 @@ void MenuAction::setTitle(const char* title)
 {
     if (title != nullptr)
     {
+        // Intentional truncation with proper null termination
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(menuTitle, title, MAX_TITLE_LEN - 1);
+        #pragma GCC diagnostic pop
         menuTitle[MAX_TITLE_LEN - 1] = '\0';
     }
     else

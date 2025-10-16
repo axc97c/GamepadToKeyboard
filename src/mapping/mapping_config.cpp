@@ -25,8 +25,11 @@ void MappingConfig::initSD()
 
 bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &config)
 {
-    // Store the filename in the config
+    // Store the filename in the config (intentional truncation)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
+    #pragma GCC diagnostic pop
     config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
 
     File file = SD.open(filename, FILE_READ);
@@ -63,10 +66,13 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
 
 bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &config)
 {
-    // Update the filename in config if provided
+    // Update the filename in config if provided (intentional truncation)
     if (filename != nullptr && filename[0] != '\0')
     {
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
+        #pragma GCC diagnostic pop
         config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
     }
 

@@ -118,8 +118,11 @@ void SaveAsAction::performSave()
         lcd->setCursor(0, 1);
         lcd->print(filenameBuffer);
 
-        // Update the current config filename
+        // Update the current config filename (intentional truncation)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(mappingConfig.filename, fullFilename, JoystickMappingConfig::MAX_FILENAME_LENGTH - 1);
+        #pragma GCC diagnostic pop
         mappingConfig.filename[JoystickMappingConfig::MAX_FILENAME_LENGTH - 1] = '\0';
 
         Serial.print("SaveAsAction: Updated filename to: ");

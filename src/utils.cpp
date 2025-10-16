@@ -59,7 +59,10 @@ void Utils::trimFilenameToBuffer(const char *fullPath, char *outputBuffer, int b
         len = bufferSize - 1; // Leave room for null terminator
     }
 
-    // Copy the substring
+    // Copy the substring (intentional truncation with null termination)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstringop-truncation"
     strncpy(outputBuffer, start, len);
+    #pragma GCC diagnostic pop
     outputBuffer[len] = '\0';
 }
