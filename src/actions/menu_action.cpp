@@ -10,6 +10,12 @@ MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams
     selectedIndex = 0;
     scrollOffset = 0;
     menuItemCount = 0;
+
+    // Initialize all menu items as unused (pre-allocated but empty)
+    for (int i = 0; i < MAX_ITEMS; i++)
+    {
+        menuItems[i].clear();
+    }
 }
 
 void MenuAction::init()
@@ -189,7 +195,7 @@ void MenuAction::displayMenu()
     {
         int itemIndex = scrollOffset + i;
 
-        if (itemIndex < menuItemCount)
+        if (itemIndex < menuItemCount && menuItems[itemIndex].used)
         {
             lcd->setCursor(0, i + 1);
 
@@ -286,4 +292,17 @@ void MenuAction::setParams(MenuActionParams p)
     params = p;
     Serial.print("MenuAction: setParams() called with menuId: ");
     Serial.println(params.menuId);
+}
+
+void MenuAction::setTitle(const char* title)
+{
+    if (title != nullptr)
+    {
+        strncpy(menuTitle, title, MAX_TITLE_LEN - 1);
+        menuTitle[MAX_TITLE_LEN - 1] = '\0';
+    }
+    else
+    {
+        menuTitle[0] = '\0';
+    }
 }

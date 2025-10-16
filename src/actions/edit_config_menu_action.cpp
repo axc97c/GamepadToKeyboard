@@ -9,6 +9,8 @@
 EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
     : MenuAction(dev, hdlr, p), needsRefresh(false)
 {
+    // Set the fixed title in constructor since it never changes
+    setTitle("Edit Config");
 }
 
 void EditConfigMenuAction::loop()
@@ -72,19 +74,14 @@ void EditConfigMenuAction::buildMenuItems()
 {
     Serial.println("EditConfigMenuAction: buildMenuItems START");
 
-    // Clear existing menu items
-    for (int i = 0; i < menuItemCount; i++)
+    // Clear all menu items using the clear() method
+    for (int i = 0; i < MAX_ITEMS; i++)
     {
-        menuItems[i].name[0] = '\0';
-        menuItems[i].identifier[0] = '\0';
-        menuItems[i].data = 0;
+        menuItems[i].clear();
     }
     menuItemCount = 0;
 
-    // Set title using strncpy
-    strncpy(menuTitle, "Edit Config", MAX_TITLE_LEN - 1);
-    menuTitle[MAX_TITLE_LEN - 1] = '\0';
-
+    // Title already set in constructor
     int itemCount = min(mappingConfig.numMappings, MAX_ITEMS);
 
     // Build items directly into inherited menuItems array
@@ -109,10 +106,8 @@ void EditConfigMenuAction::buildMenuItems()
         char idBuffer[MenuItem::MAX_ID_LEN];
         snprintf(idBuffer, sizeof(idBuffer), "mapping_%d", i);
 
-        // Assign to inherited menuItems array using char arrays
-        menuItems[i].setName(nameBuffer);
-        menuItems[i].setIdentifier(idBuffer);
-        menuItems[i].data = i;
+        // Populate pre-allocated menuItems array using set() method
+        menuItems[i].set(nameBuffer, idBuffer, i);
     }
 
     // Set the count

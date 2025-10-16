@@ -7,6 +7,8 @@
 LoadConfigMenuAction::LoadConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
     : MenuAction(dev, hdlr, p)
 {
+    // Set the fixed title in constructor since it never changes
+    setTitle("Configs");
 }
 
 void LoadConfigMenuAction::onInit()
@@ -21,16 +23,24 @@ void LoadConfigMenuAction::onInit()
 
 void LoadConfigMenuAction::scanConfigFiles()
 {
-    menuTitle = "Configs";
+    // Clear existing menu items first
+    for (int i = 0; i < MAX_ITEMS; i++)
+    {
+        menuItems[i].clear();
+    }
+    menuItemCount = 0;
+
+    // Title already set in constructor
     int fileCount = 0;
-    
+
     // Open root directory
     File root = SD.open("/");
     if (!root)
     {
         Serial.println("LoadConfigMenuAction: Failed to open root directory");
-        MenuItem errorItem[] = {MenuItem("No SD card found", "error", 0)};
-        setMenu(menuTitle, errorItem, 1);
+        // Reuse pre-allocated item instead of temp array
+        menuItems[0].set("No SD card found", "error", 0);
+        menuItemCount = 1;
         return;
     }
 
@@ -38,8 +48,9 @@ void LoadConfigMenuAction::scanConfigFiles()
     {
         Serial.println("LoadConfigMenuAction: Root is not a directory");
         root.close();
-        MenuItem errorItem[] = {MenuItem("SD card error", "error", 0)};
-        setMenu(menuTitle, errorItem, 1);
+        // Reuse pre-allocated item instead of temp array
+        menuItems[0].set("SD card error", "error", 0);
+        menuItemCount = 1;
         return;
     }
     
@@ -70,20 +81,28 @@ void LoadConfigMenuAction::scanConfigFiles()
     if (fileCount == 0)
     {
         Serial.println("LoadConfigMenuAction: No JSON config files found");
-        MenuItem errorItem[] = {MenuItem("No configs found", "error", 0)};
-        setMenu(menuTitle, errorItem, 1);
+        // Reuse pre-allocated item instead of temp array
+        menuItems[0].set("No configs found", "error", 0);
+        menuItemCount = 1;
         return;
     }
 
     // Sort the files alphabetically
     sortConfigFiles(fileCount);
 
-    // Create menu items (with display names and full path as identifier)
-    MenuItem menuItems[MAX_CONFIG_FILES];
+    // Populate pre-allocated menu items directly (no temp array allocation!)
     for (int i = 0; i < fileCount; i++)
     {
         String displayName = Utils::trimFilename(configFiles[i]);
-        menuItems[i] = MenuItem(displayName, configFiles[i], i);
+
+        // Convert Strings to char arrays for set() method
+        char nameBuffer[MenuItem::MAX_NAME_LEN];
+        char idBuffer[MenuItem::MAX_ID_LEN];
+
+        displayName.toCharArray(nameBuffer, sizeof(nameBuffer));
+        configFiles[i].toCharArray(idBuffer, sizeof(idBuffer));
+
+        menuItems[i].set(nameBuffer, idBuffer, i);
 
         Serial.print("LoadConfigMenuAction: Display name: ");
         Serial.print(displayName);
@@ -91,10 +110,8 @@ void LoadConfigMenuAction::scanConfigFiles()
         Serial.println(configFiles[i]);
     }
 
+    menuItemCount = fileCount;
 
-    // Set up the menu with menu items
-    setMenu(menuTitle, menuItems, fileCount);
-    
     Serial.print("LoadConfigMenuAction: Loaded ");
     Serial.print(fileCount);
     Serial.println(" config files");
@@ -138,25 +155,21 @@ void LoadConfigMenuAction::onConfirm()
     Serial.print(selectedItem.data);
     Serial.println(")");
 
-    // Check if there are no configs or error state
-    if (selectedItem.identifier == "error")
+    // Check if there are no configs or error state (identifier is now char array)
+    if (strcmp(selectedItem.identifier, "error") == 0)
     {
         Serial.println("LoadConfigMenuAction: Cannot load config - error state");
         return;
     }
 
     // Use the identifier which contains the full filename path
-    String fullFilename = selectedItem.identifier;
+    const char* fullFilename = selectedItem.identifier;
 
     Serial.print("LoadConfigMenuAction: Loading config file: ");
     Serial.println(fullFilename);
 
-    // Convert String to const char* for RunActionParams
-    static char filenameBuffer[64];
-    fullFilename.toCharArray(filenameBuffer, sizeof(filenameBuffer));
-
-    // Activate run action with selected config file
-    handler->activateRun({filenameBuffer});
+    // fullFilename is already a const char* from identifier, pass directly
+    handler->activateRun({fullFilename});
 }
 
 void LoadConfigMenuAction::onCancel()

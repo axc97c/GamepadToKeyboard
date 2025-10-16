@@ -14,17 +14,34 @@ struct MenuItem
     char name[MAX_NAME_LEN];
     char identifier[MAX_ID_LEN];
     uint32_t data;
+    bool used;  // Flag to mark if this slot is in use
 
-    MenuItem() : data(0)
+    MenuItem() : data(0), used(false)
     {
         name[0] = '\0';
         identifier[0] = '\0';
     }
 
-    MenuItem(const char* n, const char* id, uint32_t d = 0) : data(d)
+    MenuItem(const char* n, const char* id, uint32_t d = 0) : data(d), used(true)
     {
         setName(n);
         setIdentifier(id);
+    }
+
+    void set(const char* n, const char* id, uint32_t d = 0)
+    {
+        setName(n);
+        setIdentifier(id);
+        data = d;
+        used = true;
+    }
+
+    void clear()
+    {
+        name[0] = '\0';
+        identifier[0] = '\0';
+        data = 0;
+        used = false;
     }
 
     void setName(const char* n)
@@ -97,6 +114,7 @@ public:
 
     // Public methods to configure menu
     void setMenu(const char* title, MenuItem items[], int itemCount);
+    void setTitle(const char* title);  // Set title only
 
     // Get current selection
     int getSelectedIndex();
