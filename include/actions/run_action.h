@@ -55,6 +55,7 @@ public:
     ActionType getType() override;
 
     RunActionParams &getParams();
+    void setParams(RunActionParams p);  // For singleton reuse
 };
 
 #endif

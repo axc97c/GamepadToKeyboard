@@ -17,22 +17,43 @@ ActionHandler::ActionHandler(DeviceManager *dev)
     {
         actionStack[i] = nullptr;
     }
+
+    // Pre-allocate all action instances ONCE (singleton pattern - no heap churn!)
+    Serial.println("ActionHandler: Pre-allocating action instances...");
+    runAction = new RunAction(devices, this, {""});
+    mainMenuAction = new MainMenuAction(devices, this, {});
+    loadConfigMenuAction = new LoadConfigMenuAction(devices, this, {});
+    editConfigMenuAction = new EditConfigMenuAction(devices, this, {});
+    bindKeyAction = new BindKeyAction(devices, this, {0});
+    textInputAction = new TextInputAction(devices, this, {});
+    saveAsAction = new SaveAsAction(devices, this);
+    Serial.println("ActionHandler: Action instances pre-allocated");
 }
 
 ActionHandler::~ActionHandler()
 {
-    clearAction();
+    Serial.println("ActionHandler: Destructor - cleaning up");
 
-    // Clean up the action stack
+    // Clear current action pointer (don't delete - it's one of our singletons)
+    currentAction = nullptr;
+
+    // Clear action stack pointers (don't delete - they're singletons)
     for (int i = 0; i < actionStackSize; i++)
     {
-        if (actionStack[i] != nullptr)
-        {
-            delete actionStack[i];
-            actionStack[i] = nullptr;
-        }
+        actionStack[i] = nullptr;
     }
     actionStackSize = 0;
+
+    // Delete pre-allocated action instances
+    Serial.println("ActionHandler: Deleting pre-allocated actions...");
+    delete runAction;
+    delete mainMenuAction;
+    delete loadConfigMenuAction;
+    delete editConfigMenuAction;
+    delete bindKeyAction;
+    delete textInputAction;
+    delete saveAsAction;
+    Serial.println("ActionHandler: Cleanup complete");
 }
 
 void ActionHandler::setup()
@@ -56,58 +77,62 @@ void ActionHandler::loop()
 void ActionHandler::activateRun(RunActionParams params)
 {
     // Clear the action stack when activating Run (base action)
+    // Don't delete - they're singleton instances
     for (int i = 0; i < actionStackSize; i++)
     {
-        if (actionStack[i] != nullptr)
-        {
-            delete actionStack[i];
-            actionStack[i] = nullptr;
-        }
+        actionStack[i] = nullptr;
     }
     actionStackSize = 0;
 
     strncpy(lastRunFilename, params.filename, sizeof(lastRunFilename) - 1);
     lastRunFilename[sizeof(lastRunFilename) - 1] = '\0';
 
-    // Replace current action without pushing (Run is always at the base)
-    replaceCurrentAction(new RunAction(devices, this, params));
-    Serial.println("ActionHandler: Run mode activated (base action)");
+    // Reuse singleton instance
+    runAction->setParams(params);
+    replaceCurrentAction(runAction);
+    Serial.println("ActionHandler: Run mode activated (base action) [SINGLETON]");
 }
 
 void ActionHandler::activateMainMenu(MenuActionParams params)
 {
-    pushAction(new MainMenuAction(devices, this, params));
-    Serial.println("ActionHandler: Main Menu activated");
+    mainMenuAction->setParams(params);
+    pushAction(mainMenuAction);
+    Serial.println("ActionHandler: Main Menu activated [SINGLETON]");
 }
 
 void ActionHandler::activateLoadConfigMenu(MenuActionParams params)
 {
-    pushAction(new LoadConfigMenuAction(devices, this, params));
-    Serial.println("ActionHandler: Load Config Menu activated");
+    loadConfigMenuAction->setParams(params);
+    pushAction(loadConfigMenuAction);
+    Serial.println("ActionHandler: Load Config Menu activated [SINGLETON]");
 }
 
 void ActionHandler::activateEditConfigMenu(MenuActionParams params)
 {
-    pushAction(new EditConfigMenuAction(devices, this, params));
-    Serial.println("ActionHandler: Edit Config Menu activated");
+    editConfigMenuAction->setParams(params);
+    pushAction(editConfigMenuAction);
+    Serial.println("ActionHandler: Edit Config Menu activated [SINGLETON]");
 }
 
 void ActionHandler::activateBindKey(BindKeyActionParams params)
 {
-    pushAction(new BindKeyAction(devices, this, params));
-    Serial.println("ActionHandler: Bind Key activated");
+    bindKeyAction->setParams(params);
+    pushAction(bindKeyAction);
+    Serial.println("ActionHandler: Bind Key activated [SINGLETON]");
 }
 
 void ActionHandler::activateTextInput(TextInputActionParams params)
 {
-    pushAction(new TextInputAction(devices, this, params));
-    Serial.println("ActionHandler: Text Input activated");
+    textInputAction->setParams(params);
+    pushAction(textInputAction);
+    Serial.println("ActionHandler: Text Input activated [SINGLETON]");
 }
 
 void ActionHandler::activateSaveAs()
 {
-    pushAction(new SaveAsAction(devices, this));
-    Serial.println("ActionHandler: Save As activated");
+    saveAsAction->reset();
+    pushAction(saveAsAction);
+    Serial.println("ActionHandler: Save As activated [SINGLETON]");
 }
 
 ActionType ActionHandler::getCurrentActionType()
@@ -121,12 +146,9 @@ ActionType ActionHandler::getCurrentActionType()
 
 void ActionHandler::clearAction()
 {
-    if (currentAction != nullptr)
-    {
-        delete currentAction;
-        currentAction = nullptr;
-        actionInitialized = false;
-    }
+    // Don't delete - actions are singletons
+    currentAction = nullptr;
+    actionInitialized = false;
 }
 
 void ActionHandler::pushAction(Action *action)
@@ -143,8 +165,8 @@ void ActionHandler::pushAction(Action *action)
         }
         else
         {
-            Serial.println("ActionHandler: Warning: Action stack full, deleting old action");
-            delete currentAction;
+            Serial.println("ActionHandler: ERROR: Action stack full!");
+            // Don't delete - actions are singletons!
         }
     }
 
@@ -156,11 +178,7 @@ void ActionHandler::pushAction(Action *action)
 void ActionHandler::replaceCurrentAction(Action *action)
 {
     // Replace current action without pushing to stack (for Run action)
-    if (currentAction != nullptr)
-    {
-        delete currentAction;
-    }
-
+    // Don't delete - actions are singletons!
     currentAction = action;
     actionInitialized = false;
 }
@@ -174,12 +192,8 @@ void ActionHandler::popAction()
         return;
     }
 
-    // Delete the current action
-    if (currentAction != nullptr)
-    {
-        delete currentAction;
-        currentAction = nullptr;
-    }
+    // Don't delete current action - it's a singleton!
+    currentAction = nullptr;
 
     // Pop the previous action from the stack
     actionStackSize--;

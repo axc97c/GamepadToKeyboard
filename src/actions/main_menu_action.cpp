@@ -12,6 +12,8 @@ MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActi
 
 void MainMenuAction::onInit()
 {
+    Serial.println("MainMenuAction: Setting up");
+
     // Initialize the main menu
     menuTitle = "Main Menu";
     MenuItem menuOptions[] = {

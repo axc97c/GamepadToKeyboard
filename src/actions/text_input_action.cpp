@@ -82,6 +82,13 @@ ActionType TextInputAction::getType()
     return ActionType::BIND_KEY; // Reuse BIND_KEY type since it's similar input mode
 }
 
+void TextInputAction::setParams(TextInputActionParams p)
+{
+    params = p;
+    Serial.print("TextInputAction: setParams() called with prompt: ");
+    Serial.println(params.prompt);
+}
+
 void TextInputAction::handleKeyPress(int unicode)
 {
     Serial.print("TextInputAction: Handling unicode: ");

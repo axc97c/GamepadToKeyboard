@@ -34,10 +34,10 @@ void EditConfigMenuAction::loop()
                 displayButtonName = buttonName + 4;
             }
 
-            static char nameBuffer[32];
+            char nameBuffer[MenuItem::MAX_NAME_LEN];
             snprintf(nameBuffer, sizeof(nameBuffer), "%s > %s", displayButtonName, keyName);
 
-            menuItems[idx].name = String(nameBuffer);
+            menuItems[idx].setName(nameBuffer);
             Serial.print("EditConfigMenuAction: Updated to: ");
             Serial.println(menuItems[idx].name);
         }
@@ -72,16 +72,18 @@ void EditConfigMenuAction::buildMenuItems()
 {
     Serial.println("EditConfigMenuAction: buildMenuItems START");
 
-    // Clear existing menu items to free String memory
+    // Clear existing menu items
     for (int i = 0; i < menuItemCount; i++)
     {
-        menuItems[i].name = "";
-        menuItems[i].identifier = "";
+        menuItems[i].name[0] = '\0';
+        menuItems[i].identifier[0] = '\0';
+        menuItems[i].data = 0;
     }
     menuItemCount = 0;
 
-    // Set title directly on inherited member to avoid String allocation
-    menuTitle = "Edit Config";
+    // Set title using strncpy
+    strncpy(menuTitle, "Edit Config", MAX_TITLE_LEN - 1);
+    menuTitle[MAX_TITLE_LEN - 1] = '\0';
 
     int itemCount = min(mappingConfig.numMappings, MAX_ITEMS);
 
@@ -99,17 +101,17 @@ void EditConfigMenuAction::buildMenuItems()
             displayButtonName = buttonName + 4;
         }
 
-        // Build the display string
-        static char nameBuffer[32];
+        // Build the display string directly into MenuItem char array - NO heap allocation!
+        char nameBuffer[MenuItem::MAX_NAME_LEN];
         snprintf(nameBuffer, sizeof(nameBuffer), "%s > %s", displayButtonName, keyName);
 
-        // Build identifier
-        static char idBuffer[16];
+        // Build identifier directly into MenuItem char array
+        char idBuffer[MenuItem::MAX_ID_LEN];
         snprintf(idBuffer, sizeof(idBuffer), "mapping_%d", i);
 
-        // Assign to inherited menuItems array
-        menuItems[i].name = String(nameBuffer);
-        menuItems[i].identifier = String(idBuffer);
+        // Assign to inherited menuItems array using char arrays
+        menuItems[i].setName(nameBuffer);
+        menuItems[i].setIdentifier(idBuffer);
         menuItems[i].data = i;
     }
 

@@ -75,6 +75,14 @@ ActionType SaveAsAction::getType()
     return ActionType::MENU; // Similar to menu action
 }
 
+void SaveAsAction::reset()
+{
+    textInputCompleted = false;
+    textInputLaunched = false;
+    filenameBuffer[0] = '\0';
+    Serial.println("SaveAsAction: reset() called");
+}
+
 void SaveAsAction::performSave()
 {
     Serial.println("SaveAsAction: performSave START");

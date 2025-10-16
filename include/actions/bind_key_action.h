@@ -25,6 +25,7 @@ public:
     void init() override;
     void loop() override;
     ActionType getType() override;
+    void setParams(BindKeyActionParams p);  // For singleton reuse
 };
 
 #endif // BIND_KEY_ACTION_H

@@ -208,9 +208,19 @@ void MenuAction::displayMenu()
     }
 }
 
-void MenuAction::setMenu(String title, MenuItem items[], int itemCount)
+void MenuAction::setMenu(const char* title, MenuItem items[], int itemCount)
 {
-    menuTitle = title;
+    // Copy title to fixed char array
+    if (title != nullptr)
+    {
+        strncpy(menuTitle, title, MAX_TITLE_LEN - 1);
+        menuTitle[MAX_TITLE_LEN - 1] = '\0';
+    }
+    else
+    {
+        menuTitle[0] = '\0';
+    }
+
     menuItemCount = min(itemCount, MAX_ITEMS);
     for (int i = 0; i < menuItemCount; i++)
     {
@@ -269,4 +279,11 @@ bool MenuAction::checkTimeout()
 {
     unsigned long currentTime = millis();
     return (currentTime - lastInputTime >= TIMEOUT_MS);
+}
+
+void MenuAction::setParams(MenuActionParams p)
+{
+    params = p;
+    Serial.print("MenuAction: setParams() called with menuId: ");
+    Serial.println(params.menuId);
 }

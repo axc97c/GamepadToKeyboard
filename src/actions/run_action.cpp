@@ -171,10 +171,19 @@ void RunAction::processButtonMappings()
 
             if (isPressed)
             {
+                Serial.print("RunAction: Button ");
+                Serial.print(getGenericButtonName(genericButton));
+                Serial.print(" pressed -> Key ");
+                Serial.println(mappingConfig.mappings[i].keyCode);
+
                 Keyboard.press(mappingConfig.mappings[i].keyCode);
             }
             else
             {
+                Serial.print("RunAction: Button ");
+                Serial.print(getGenericButtonName(genericButton));
+                Serial.println(" released");
+
                 Keyboard.release(mappingConfig.mappings[i].keyCode);
             }
         }
@@ -484,6 +493,13 @@ ActionType RunAction::getType()
 RunActionParams &RunAction::getParams()
 {
     return params;
+}
+
+void RunAction::setParams(RunActionParams p)
+{
+    params = p;
+    Serial.print("RunAction: setParams() called with filename: ");
+    Serial.println(params.filename);
 }
 
 // Keyboard passthrough event handlers
