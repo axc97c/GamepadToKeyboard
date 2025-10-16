@@ -6,6 +6,13 @@
 
 class DeviceManager;
 class Action;
+class RunAction;
+class MainMenuAction;
+class LoadConfigMenuAction;
+class EditConfigMenuAction;
+class BindKeyAction;
+class TextInputAction;
+class SaveAsAction;
 struct TextInputActionParams;
 
 class ActionHandler
@@ -21,6 +28,15 @@ private:
     // Action stack for navigation
     Action *actionStack[MAX_ACTION_STACK_SIZE];
     int actionStackSize;
+
+    // Pre-allocated action instances (singleton pattern - no heap allocation!)
+    RunAction *runAction;
+    MainMenuAction *mainMenuAction;
+    LoadConfigMenuAction *loadConfigMenuAction;
+    EditConfigMenuAction *editConfigMenuAction;
+    BindKeyAction *bindKeyAction;
+    TextInputAction *textInputAction;
+    SaveAsAction *saveAsAction;
 
     void pushAction(Action *action);
     void replaceCurrentAction(Action *action);

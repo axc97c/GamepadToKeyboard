@@ -38,6 +38,7 @@ public:
     void init() override;
     void loop() override;
     ActionType getType() override;
+    void setParams(TextInputActionParams p);  // For singleton reuse
 };
 
 #endif // TEXT_INPUT_ACTION_H

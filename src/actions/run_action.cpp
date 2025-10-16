@@ -495,6 +495,13 @@ RunActionParams &RunAction::getParams()
     return params;
 }
 
+void RunAction::setParams(RunActionParams p)
+{
+    params = p;
+    Serial.print("RunAction: setParams() called with filename: ");
+    Serial.println(params.filename);
+}
+
 // Keyboard passthrough event handlers
 void RunAction::onKeyPress(int unicode)
 {

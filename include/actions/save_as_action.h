@@ -19,6 +19,7 @@ public:
     void init() override;
     void loop() override;
     ActionType getType() override;
+    void reset();  // For singleton reuse
 
 private:
     void performSave();

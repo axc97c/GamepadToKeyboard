@@ -8,21 +8,22 @@ MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActi
     : MenuAction(dev, hdlr, p)
 {
     testInputBuffer[0] = '\0';
+
+    // Set the fixed title in constructor since it never changes
+    setTitle("Main Menu");
+
+    // Populate fixed menu items in pre-allocated array (no dynamic allocation!)
+    menuItems[0].set("Load config", "load_config", 0);
+    menuItems[1].set("Edit config", "edit_config", 0);
+    menuItems[2].set("Save config", "save_config", 0);
+    menuItems[3].set("Save config as...", "save_config_as", 0);
+    menuItemCount = 4;
 }
 
 void MainMenuAction::onInit()
 {
-    // Initialize the main menu
-    menuTitle = "Main Menu";
-    MenuItem menuOptions[] = {
-        MenuItem("Load config", "load_config", 0),
-        MenuItem("Edit config", "edit_config", 0),
-        MenuItem("Save config", "save_config", 0),
-        MenuItem("Save config as...", "save_config_as", 0)
-    };
-
-    setMenu(menuTitle, menuOptions, 5);
-
+    Serial.println("MainMenuAction: Setting up");
+    // Menu items already populated in constructor - nothing to do here!
     Serial.println("MainMenuAction: Setup complete");
 }
 
@@ -39,21 +40,21 @@ void MainMenuAction::onConfirm()
     Serial.print(selectedItem.data);
     Serial.println(")");
 
-    // Handle each menu option using identifier
-    if (selectedItem.identifier == "load_config")
+    // Handle each menu option using identifier (now char array - use strcmp)
+    if (strcmp(selectedItem.identifier, "load_config") == 0)
     {
         handler->activateLoadConfigMenu({0});
     }
-    else if (selectedItem.identifier == "save_config")
+    else if (strcmp(selectedItem.identifier, "save_config") == 0)
     {
         performSave();
     }
-    else if (selectedItem.identifier == "save_config_as")
+    else if (strcmp(selectedItem.identifier, "save_config_as") == 0)
     {
         // Open save as action
         handler->activateSaveAs();
     }
-    else if (selectedItem.identifier == "edit_config")
+    else if (strcmp(selectedItem.identifier, "edit_config") == 0)
     {
         handler->activateEditConfigMenu({0});
     }

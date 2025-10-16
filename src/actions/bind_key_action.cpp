@@ -83,6 +83,13 @@ ActionType BindKeyAction::getType()
     return ActionType::BIND_KEY;
 }
 
+void BindKeyAction::setParams(BindKeyActionParams p)
+{
+    params = p;
+    Serial.print("BindKeyAction: setParams() called with mappingIndex: ");
+    Serial.println(params.mappingIndex);
+}
+
 void BindKeyAction::updateDisplay()
 {
     LiquidCrystal_I2C *lcd = devices->getLCD();
