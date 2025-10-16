@@ -5,7 +5,7 @@
 #include "mapping/mapping_config.h"
 
 MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
-    : MenuAction(dev, hdlr, p), waitingForTextInput(false)
+    : MenuAction(dev, hdlr, p)
 {
     testInputBuffer[0] = '\0';
 }
@@ -25,37 +25,6 @@ void MainMenuAction::onInit()
     setMenu(menuTitle, menuOptions, 5);
 
     Serial.println("MainMenuAction setup complete");
-}
-
-void MainMenuAction::loop()
-{
-    // Check if we've returned from text input
-    if (waitingForTextInput && handler->getCurrentAction() == this)
-    {
-        waitingForTextInput = false;
-
-        Serial.print("MainMenuAction: Text input test returned with: '");
-        Serial.print(testInputBuffer);
-        Serial.println("'");
-
-        // Display the result on LCD
-        LiquidCrystal_I2C *lcd = devices->getLCD();
-        lcd->clear();
-        lcd->setCursor(0, 0);
-        lcd->print("You entered:");
-        lcd->setCursor(0, 1);
-        lcd->print(testInputBuffer);
-        lcd->setCursor(0, 3);
-        lcd->print("Press any button");
-
-        delay(3000);
-
-        // Refresh the menu
-        refresh();
-    }
-
-    // Call parent loop to handle normal menu operations
-    MenuAction::loop();
 }
 
 void MainMenuAction::onConfirm()
@@ -152,5 +121,4 @@ void MainMenuAction::launchTestTextInput()
     params.maxLength = TEST_INPUT_MAX_LENGTH;
 
     handler->activateTextInput(params);
-    waitingForTextInput = true;
 }
