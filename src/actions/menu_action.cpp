@@ -44,8 +44,20 @@ void MenuAction::init()
     displayMenu();
 
     Serial.println("MenuAction initialized");
-    Serial.print("Selected: ");
-    Serial.println(menuItems[selectedIndex].name);
+    Serial.print("Selected index: ");
+    Serial.print(selectedIndex);
+    Serial.print(" of ");
+    Serial.println(menuItemCount);
+
+    if (selectedIndex >= 0 && selectedIndex < menuItemCount)
+    {
+        Serial.print("Selected: ");
+        Serial.println(menuItems[selectedIndex].name);
+    }
+    else
+    {
+        Serial.println("ERROR: Selected index out of bounds!");
+    }
 }
 
 void MenuAction::loop()
@@ -81,9 +93,16 @@ void MenuAction::loop()
 
     case INPUT_CONFIRM:
         // Handle selection confirmation - delegate to derived class
-        Serial.print("Confirmed: ");
-        Serial.println(menuItems[selectedIndex].name);
-        onConfirm();
+        if (selectedIndex >= 0 && selectedIndex < menuItemCount)
+        {
+            Serial.print("Confirmed: ");
+            Serial.println(menuItems[selectedIndex].name);
+            onConfirm();
+        }
+        else
+        {
+            Serial.println("ERROR: Cannot confirm - selected index out of bounds!");
+        }
         break;
 
     case INPUT_CANCEL:
@@ -106,8 +125,12 @@ void MenuAction::moveUp()
         selectedIndex--;
         updateScrollOffset();
         displayMenu();
-        Serial.print("Selected: ");
-        Serial.println(menuItems[selectedIndex].name);
+
+        if (selectedIndex >= 0 && selectedIndex < menuItemCount)
+        {
+            Serial.print("Selected: ");
+            Serial.println(menuItems[selectedIndex].name);
+        }
     }
 }
 
@@ -118,8 +141,12 @@ void MenuAction::moveDown()
         selectedIndex++;
         updateScrollOffset();
         displayMenu();
-        Serial.print("Selected: ");
-        Serial.println(menuItems[selectedIndex].name);
+
+        if (selectedIndex >= 0 && selectedIndex < menuItemCount)
+        {
+            Serial.print("Selected: ");
+            Serial.println(menuItems[selectedIndex].name);
+        }
     }
 }
 
@@ -207,7 +234,20 @@ int MenuAction::getSelectedIndex()
 
 MenuItem MenuAction::getSelectedItem()
 {
-    return menuItems[selectedIndex];
+    if (selectedIndex >= 0 && selectedIndex < menuItemCount)
+    {
+        return menuItems[selectedIndex];
+    }
+    else
+    {
+        Serial.print("ERROR: getSelectedItem() - index ");
+        Serial.print(selectedIndex);
+        Serial.print(" out of bounds (menuItemCount: ");
+        Serial.print(menuItemCount);
+        Serial.println(")");
+        // Return empty item as fallback
+        return MenuItem();
+    }
 }
 
 void MenuAction::refresh()

@@ -21,7 +21,7 @@ class MenuAction : public Action
 protected:
     MenuActionParams params;
 
-    static const int MAX_ITEMS = 20;
+    static const int MAX_ITEMS = 32; // Match JoystickMappingConfig::MAX_MAPPINGS
 
     String menuTitle;
     MenuItem menuItems[MAX_ITEMS];

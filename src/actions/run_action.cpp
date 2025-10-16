@@ -450,7 +450,6 @@ void RunAction::initializeDefaultMappings()
     // Center buttons
     mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_START, 'r', false};
     mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_SELECT, 'f', false};
-    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_MENU, 'y', false};
 
     // Stick clicks
     mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_L3, 't', false};
