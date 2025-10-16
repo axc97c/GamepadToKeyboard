@@ -46,21 +46,21 @@ void RunAction::init()
     if (joy && *joy)
     {
         controllerType = joy->joystickType();
-        Serial.print("Controller type detected: ");
+        Serial.print("RunAction: Controller type detected: ");
         Serial.println(controllerType);
     }
 
     // Try to load button mappings (loadConfig will reaffirm the filename)
     if (!MappingConfig::loadConfig(params.filename, mappingConfig))
     {
-        Serial.println("Failed to load button mappings, using defaults");
+        Serial.println("RunAction: Failed to load button mappings, using defaults");
         initializeDefaultMappings();
         initializeDefaultStickConfigs();
 
         MappingConfig::saveConfig(params.filename, mappingConfig);
     }
 
-    Serial.println("RunAction initialization complete");
+    Serial.println("RunAction: RunAction initialization complete");
 }
 
 void RunAction::loop()
@@ -70,7 +70,7 @@ void RunAction::loop()
         unsigned long currentTime = millis();
         if (currentTime > backlightOnTime + BACKLIGHT_TIMEOUT_MS)
         {
-            Serial.println("Backlight off");
+            Serial.println("RunAction: Backlight off");
             devices->getLCD()->noBacklight();
             backlightOnTime = 0;
         }
@@ -85,7 +85,7 @@ void RunAction::loop()
         if (currentType != controllerType)
         {
             controllerType = currentType;
-            Serial.print("Controller type changed to: ");
+            Serial.print("RunAction: Controller type changed to: ");
             Serial.println(controllerType);
         }
 
@@ -171,7 +171,7 @@ void RunAction::processButtonMappings()
 
             if (isPressed)
             {
-                Serial.print("Button ");
+                Serial.print("RunAction: Button ");
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.print(" pressed -> Key ");
                 Serial.println(mappingConfig.mappings[i].keyCode);
@@ -180,7 +180,7 @@ void RunAction::processButtonMappings()
             }
             else
             {
-                Serial.print("Button ");
+                Serial.print("RunAction: Button ");
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.println(" released");
 
@@ -231,7 +231,7 @@ void RunAction::processDPadAxisMappings()
 
             if (isPressed)
             {
-                Serial.print("D-Pad ");
+                Serial.print("RunAction: D-Pad ");
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.print(" pressed -> Key ");
                 Serial.println(mappingConfig.mappings[i].keyCode);
@@ -240,7 +240,7 @@ void RunAction::processDPadAxisMappings()
             }
             else
             {
-                Serial.print("D-Pad ");
+                Serial.print("RunAction: D-Pad ");
                 Serial.print(getGenericButtonName(genericButton));
                 Serial.println(" released");
 
@@ -467,7 +467,7 @@ void RunAction::initializeDefaultMappings()
     // Special
     mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_TOUCHPAD, 'h', false};
 
-    Serial.print("Initialized ");
+    Serial.print("RunAction: Initialized ");
     Serial.print(mappingConfig.numMappings);
     Serial.println(" default generic mappings");
 }
@@ -477,7 +477,7 @@ void RunAction::initializeDefaultStickConfigs()
     mappingConfig.rightStick.behavior = StickBehavior::MOUSE_MOVEMENT;
     mappingConfig.leftStick.behavior = StickBehavior::ARROW_KEYS;
 
-    Serial.println("Default stick configurations initialized");
+    Serial.println("RunAction: Default stick configurations initialized");
 }
 
 const char *RunAction::getGenericButtonName(uint8_t genericButton)
@@ -500,7 +500,7 @@ void RunAction::onKeyPress(int unicode)
 {
     // Pass through regular key presses
     Keyboard.press(unicode);
-    Serial.print("Keyboard passthrough: Key pressed - ");
+    Serial.print("RunAction: Keyboard passthrough: Key pressed - ");
     if (unicode >= 32 && unicode <= 126)
     {
         Serial.print((char)unicode);
@@ -515,7 +515,7 @@ void RunAction::onKeyRelease(int unicode)
 {
     // Pass through regular key releases
     Keyboard.release(unicode);
-    Serial.print("Keyboard passthrough: Key released - ");
+    Serial.print("RunAction: Keyboard passthrough: Key released - ");
     if (unicode >= 32 && unicode <= 126)
     {
         Serial.print((char)unicode);
@@ -529,7 +529,7 @@ void RunAction::onKeyRelease(int unicode)
 void RunAction::onExtrasPress(uint32_t top, uint16_t key)
 {
     // Handle special keys (modifiers, function keys, etc.)
-    Serial.print("Keyboard passthrough: Extras pressed - top: 0x");
+    Serial.print("RunAction: Keyboard passthrough: Extras pressed - top: 0x");
     Serial.print(top, HEX);
     Serial.print(", key: 0x");
     Serial.println(key, HEX);
@@ -542,7 +542,7 @@ void RunAction::onExtrasPress(uint32_t top, uint16_t key)
 void RunAction::onExtrasRelease(uint32_t top, uint16_t key)
 {
     // Handle special key releases
-    Serial.print("Keyboard passthrough: Extras released - top: 0x");
+    Serial.print("RunAction: Keyboard passthrough: Extras released - top: 0x");
     Serial.print(top, HEX);
     Serial.print(", key: 0x");
     Serial.println(key, HEX);

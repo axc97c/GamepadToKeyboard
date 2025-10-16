@@ -19,7 +19,7 @@ void GamepadInput::setup()
     // Don't check controller type here - joystick may not be connected yet
     // We'll check dynamically in isDPadPressed()
 
-    Serial.println("Input setup complete");
+    Serial.println("GamepadInput: Input setup complete");
 }
 
 void GamepadInput::update()
@@ -39,7 +39,7 @@ void GamepadInput::reset()
         buttonRepeating[i] = false;
     }
 
-    Serial.println("Input state reset");
+    Serial.println("GamepadInput: Input state reset");
 }
 
 bool GamepadInput::isButtonPressed(uint8_t genericButton)

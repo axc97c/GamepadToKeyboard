@@ -20,7 +20,7 @@ void KeyboardInput::setup()
         keyboard->attachRelease(onKeyRelease);
         Serial.println("KeyboardInput: Callback handlers attached");
     } else {
-        Serial.println("ERROR: KeyboardInput: not able to attach handlers");
+        Serial.println("KeyboardInput: ERROR: not able to attach handlers");
     }
 }
 

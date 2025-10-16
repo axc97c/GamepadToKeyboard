@@ -134,7 +134,7 @@ void BindKeyAction::applyKeyBinding(int keyCode)
 
     // Mark config as modified
     mappingConfig.modified = true;
-    Serial.println("Config marked as modified");
+    Serial.println("BindKeyAction: Config marked as modified");
 
     // Show confirmation on LCD
     LiquidCrystal_I2C *lcd = devices->getLCD();

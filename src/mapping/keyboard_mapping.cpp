@@ -150,7 +150,7 @@ int KeyboardMapping::parseKeyCode(const char *keyStr)
         }
     }
 
-    Serial.print("Warning: Unknown key string: ");
+    Serial.print("KeyMapping: Warning: Unknown key string: ");
     Serial.println(keyStr);
     return -1;
 }
@@ -253,7 +253,7 @@ int KeyboardMapping::unicodeToKeyCode(int unicode)
     }
 
     // Unknown/unsupported key
-    Serial.print("Warning: Unsupported unicode value: 0x");
+    Serial.print("KeyMapping: Warning: Unsupported unicode value: 0x");
     Serial.print(unicode, HEX);
     Serial.print(" (");
     Serial.print(unicode);

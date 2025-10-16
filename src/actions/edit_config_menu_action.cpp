@@ -22,7 +22,7 @@ void EditConfigMenuAction::loop()
         int idx = selectedIndex;
         if (idx >= 0 && idx < mappingConfig.numMappings && idx < menuItemCount)
         {
-            Serial.print("Updating item ");
+            Serial.print("EditConfigMenuAction: Updating item ");
             Serial.println(idx);
 
             const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[idx].genericButton);
@@ -38,7 +38,7 @@ void EditConfigMenuAction::loop()
             snprintf(nameBuffer, sizeof(nameBuffer), "%s > %s", displayButtonName, keyName);
 
             menuItems[idx].name = String(nameBuffer);
-            Serial.print("Updated to: ");
+            Serial.print("EditConfigMenuAction: Updated to: ");
             Serial.println(menuItems[idx].name);
         }
 
@@ -57,20 +57,20 @@ void EditConfigMenuAction::onInit()
 {
     Serial.println("EditConfigMenuAction: Editing current config...");
 
-    Serial.print("Editing config: ");
+    Serial.print("EditConfigMenuAction: Editing config: ");
     Serial.println(mappingConfig.filename);
-    Serial.print("Number of mappings: ");
+    Serial.print("EditConfigMenuAction: Number of mappings: ");
     Serial.println(mappingConfig.numMappings);
 
     // Build the menu items directly from the current mappingConfig
     buildMenuItems();
 
-    Serial.println("EditConfigMenuAction setup complete");
+    Serial.println("EditConfigMenuAction: Setup complete");
 }
 
 void EditConfigMenuAction::buildMenuItems()
 {
-    Serial.println("buildMenuItems START");
+    Serial.println("EditConfigMenuAction: buildMenuItems START");
 
     // Clear existing menu items to free String memory
     for (int i = 0; i < menuItemCount; i++)
@@ -122,12 +122,12 @@ void EditConfigMenuAction::buildMenuItems()
         selectedIndex = menuItemCount > 0 ? menuItemCount - 1 : 0;
     }
 
-    Serial.println("buildMenuItems DONE");
+    Serial.println("EditConfigMenuAction: buildMenuItems DONE");
 }
 
 String EditConfigMenuAction::getButtonKeyPair(int index)
 {
-    Serial.print("getButtonKeyPair(");
+    Serial.print("EditConfigMenuAction: getButtonKeyPair(");
     Serial.print(index);
     Serial.print(")");
 
@@ -158,7 +158,7 @@ String EditConfigMenuAction::getButtonKeyPair(int index)
     // Format directly into buffer to avoid String concatenation
     snprintf(resultBuffer, sizeof(resultBuffer), "%s > %s", displayButtonName, keyName);
 
-    Serial.print("Result: ");
+    Serial.print("EditConfigMenuAction: Result: ");
     Serial.println(resultBuffer);
 
     return String(resultBuffer);
@@ -168,7 +168,7 @@ void EditConfigMenuAction::onConfirm()
 {
     MenuItem selectedItem = getSelectedItem();
 
-    Serial.print("Edit config - Item confirmed: ");
+    Serial.print("EditConfigMenuAction: Edit config - Item confirmed: ");
     Serial.print(selectedItem.name);
     Serial.print(" (identifier: ");
     Serial.print(selectedItem.identifier);
@@ -182,7 +182,7 @@ void EditConfigMenuAction::onConfirm()
     // Open bind key action for the selected mapping
     if (mappingIndex >= 0 && mappingIndex < mappingConfig.numMappings)
     {
-        Serial.print("Selected mapping: ");
+        Serial.print("EditConfigMenuAction: Selected mapping: ");
         Serial.print(JoystickMapping::getGenericButtonName(mappingConfig.mappings[mappingIndex].genericButton));
         Serial.print(" -> ");
         Serial.println(KeyboardMapping::keyCodeToString(mappingConfig.mappings[mappingIndex].keyCode));
@@ -200,7 +200,7 @@ void EditConfigMenuAction::onConfirm()
 void EditConfigMenuAction::onCancel()
 {
     // Handle cancel - return to previous action
-    Serial.println("Edit config menu - Cancel/Back pressed, returning to previous action");
+    Serial.println("EditConfigMenuAction: Edit config menu - Cancel/Back pressed, returning to previous action");
 
     handler->popAction();
 }

@@ -72,49 +72,49 @@ void ActionHandler::activateRun(RunActionParams params)
     // Replace current action without pushing (Run is always at the base)
     replaceCurrentAction(new RunAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Run mode activated (base action)");
+    Serial.println("ActionHandler: Run mode activated (base action)");
 }
 
 void ActionHandler::activateMainMenu(MenuActionParams params)
 {
     pushAction(new MainMenuAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Main Menu activated");
+    Serial.println("ActionHandler: Main Menu activated");
 }
 
 void ActionHandler::activateLoadConfigMenu(MenuActionParams params)
 {
     pushAction(new LoadConfigMenuAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Load Config Menu activated");
+    Serial.println("ActionHandler: Load Config Menu activated");
 }
 
 void ActionHandler::activateEditConfigMenu(MenuActionParams params)
 {
     pushAction(new EditConfigMenuAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Edit Config Menu activated");
+    Serial.println("ActionHandler: Edit Config Menu activated");
 }
 
 void ActionHandler::activateBindKey(BindKeyActionParams params)
 {
     pushAction(new BindKeyAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Bind Key activated");
+    Serial.println("ActionHandler: Bind Key activated");
 }
 
 void ActionHandler::activateTextInput(TextInputActionParams params)
 {
     pushAction(new TextInputAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Text Input activated");
+    Serial.println("ActionHandler: Text Input activated");
 }
 
 void ActionHandler::activateSaveAs()
 {
     pushAction(new SaveAsAction(devices, this));
     Serial.println((unsigned long)currentAction, HEX);
-    Serial.println("Action: Save As activated");
+    Serial.println("ActionHandler: Save As activated");
 }
 
 ActionType ActionHandler::getCurrentActionType()
@@ -145,12 +145,12 @@ void ActionHandler::pushAction(Action *action)
         {
             actionStack[actionStackSize] = currentAction;
             actionStackSize++;
-            Serial.print("Pushed action onto stack. Stack size: ");
+            Serial.print("ActionHandler: Pushed action onto stack. Stack size: ");
             Serial.println(actionStackSize);
         }
         else
         {
-            Serial.println("Warning: Action stack full, deleting old action");
+            Serial.println("ActionHandler: Warning: Action stack full, deleting old action");
             delete currentAction;
         }
     }
@@ -177,7 +177,7 @@ void ActionHandler::popAction()
     // Don't pop if we're at the base (Run action)
     if (actionStackSize == 0)
     {
-        Serial.println("Cannot pop: at base action (Run)");
+        Serial.println("ActionHandler: Cannot pop: at base action (Run)");
         return;
     }
 
@@ -194,13 +194,13 @@ void ActionHandler::popAction()
     actionStack[actionStackSize] = nullptr;
     actionInitialized = false;
 
-    Serial.print("Popped action from stack. Stack size: ");
+    Serial.print("ActionHandler: Popped action from stack. Stack size: ");
     Serial.println(actionStackSize);
 }
 
 void ActionHandler::popToRunAction()
 {
-    Serial.println("Popping all actions back to Run action...");
+    Serial.println("ActionHandler: Popping all actions back to Run action...");
 
     // Pop all actions until we're back at the base (Run action)
     while (actionStackSize > 0)
@@ -208,5 +208,5 @@ void ActionHandler::popToRunAction()
         popAction();
     }
 
-    Serial.println("Returned to Run action");
+    Serial.println("ActionHandler: Returned to Run action");
 }

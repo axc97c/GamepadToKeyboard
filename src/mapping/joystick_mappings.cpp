@@ -218,7 +218,7 @@ int JoystickMapping::parseGenericButtonName(const char *buttonName)
         }
     }
 
-    Serial.print("Warning: Unknown generic button name: ");
+    Serial.print("JoystickMapping: Warning: Unknown generic button name: ");
     Serial.println(buttonName);
     return -1;
 }

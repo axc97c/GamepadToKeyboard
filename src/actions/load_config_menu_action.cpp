@@ -28,7 +28,7 @@ void LoadConfigMenuAction::scanConfigFiles()
     File root = SD.open("/");
     if (!root)
     {
-        Serial.println("Failed to open root directory");
+        Serial.println("LoadConfigMenuAction: Failed to open root directory");
         MenuItem errorItem[] = {MenuItem("No SD card found", "error", 0)};
         setMenu(menuTitle, errorItem, 1);
         return;
@@ -36,7 +36,7 @@ void LoadConfigMenuAction::scanConfigFiles()
 
     if (!root.isDirectory())
     {
-        Serial.println("Root is not a directory");
+        Serial.println("LoadConfigMenuAction: Root is not a directory");
         root.close();
         MenuItem errorItem[] = {MenuItem("SD card error", "error", 0)};
         setMenu(menuTitle, errorItem, 1);
@@ -58,7 +58,7 @@ void LoadConfigMenuAction::scanConfigFiles()
                 configFiles[fileCount] = "/" + filename;
                 fileCount++;
                 
-                Serial.print("Found config file: ");
+                Serial.print("LoadConfigMenuAction: Found config file: ");
                 Serial.println(filename);
             }
         }
@@ -69,7 +69,7 @@ void LoadConfigMenuAction::scanConfigFiles()
     
     if (fileCount == 0)
     {
-        Serial.println("No JSON config files found");
+        Serial.println("LoadConfigMenuAction: No JSON config files found");
         MenuItem errorItem[] = {MenuItem("No configs found", "error", 0)};
         setMenu(menuTitle, errorItem, 1);
         return;
@@ -85,7 +85,7 @@ void LoadConfigMenuAction::scanConfigFiles()
         String displayName = Utils::trimFilename(configFiles[i]);
         menuItems[i] = MenuItem(displayName, configFiles[i], i);
 
-        Serial.print("Display name: ");
+        Serial.print("LoadConfigMenuAction: Display name: ");
         Serial.print(displayName);
         Serial.print(" -> ");
         Serial.println(configFiles[i]);
@@ -95,7 +95,7 @@ void LoadConfigMenuAction::scanConfigFiles()
     // Set up the menu with menu items
     setMenu(menuTitle, menuItems, fileCount);
     
-    Serial.print("Loaded ");
+    Serial.print("LoadConfigMenuAction: Loaded ");
     Serial.print(fileCount);
     Serial.println(" config files");
 }
@@ -130,7 +130,7 @@ void LoadConfigMenuAction::onConfirm()
 {
     MenuItem selectedItem = getSelectedItem();
 
-    Serial.print("Load config - Item confirmed: ");
+    Serial.print("LoadConfigMenuAction: Load config - Item confirmed: ");
     Serial.print(selectedItem.name);
     Serial.print(" (identifier: ");
     Serial.print(selectedItem.identifier);
@@ -141,14 +141,14 @@ void LoadConfigMenuAction::onConfirm()
     // Check if there are no configs or error state
     if (selectedItem.identifier == "error")
     {
-        Serial.println("Cannot load config - error state");
+        Serial.println("LoadConfigMenuAction: Cannot load config - error state");
         return;
     }
 
     // Use the identifier which contains the full filename path
     String fullFilename = selectedItem.identifier;
 
-    Serial.print("Loading config file: ");
+    Serial.print("LoadConfigMenuAction: Loading config file: ");
     Serial.println(fullFilename);
 
     // Convert String to const char* for RunActionParams
@@ -162,7 +162,7 @@ void LoadConfigMenuAction::onConfirm()
 void LoadConfigMenuAction::onCancel()
 {
     // Handle cancel - return to previous action
-    Serial.println("Load config menu - Cancel/Back pressed, returning to previous action");
+    Serial.println("LoadConfigMenuAction: Cancel/Back pressed, returning to previous action");
 
     handler->popAction();
 }

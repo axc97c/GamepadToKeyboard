@@ -36,15 +36,15 @@ void setup()
     {
     }; // Probably dont want this long term
 
-    Serial.println("=== GamePad to Keyboard Starting ===");
-    Serial.println("Initializing USB Host...");
+    Serial.println("Main: === GamePad to Keyboard Starting ===");
+    Serial.println("Main: Initializing USB Host...");
 
     MappingConfig::initSD();
 
     devices.setup();
     actionHandler.setup();
 
-    Serial.println("Setup complete. Waiting for USB devices...");
+    Serial.println("Main: Setup complete. Waiting for USB devices...");
 }
 
 void loop()

@@ -17,10 +17,10 @@ void MappingConfig::initSD()
 {
     if (!SD.begin(CHIPSELECT_PIN))
     {
-        Serial.println("SD Card initialization failed!");
+        Serial.println("MappingConfig: SD Card initialization failed!");
         return;
     }
-    Serial.println("SD Card initialized successfully");
+    Serial.println("MappingConfig: SD Card initialized successfully");
 }
 
 bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &config)
@@ -32,12 +32,12 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
     File file = SD.open(filename, FILE_READ);
     if (!file)
     {
-        Serial.print("Failed to open file: ");
+        Serial.print("MappingConfig: Failed to open file: ");
         Serial.println(filename);
         return false;
     }
 
-    Serial.print("Reading mappings from: ");
+    Serial.print("MappingConfig: Reading mappings from: ");
     Serial.println(filename);
 
     JsonDocument doc;
@@ -47,7 +47,7 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
 
     if (error)
     {
-        Serial.print("JSON parsing failed: ");
+        Serial.print("MappingConfig: JSON parsing failed: ");
         Serial.println(error.c_str());
         return false;
     }
@@ -86,7 +86,7 @@ bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &conf
     File file = SD.open(targetFile, FILE_WRITE);
     if (!file)
     {
-        Serial.print("Failed to create file: ");
+        Serial.print("MappingConfig: Failed to create file: ");
         Serial.println(targetFile);
         return false;
     }
@@ -100,7 +100,7 @@ bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &conf
     file = SD.open(targetFile, FILE_WRITE);
     if (!file)
     {
-        Serial.println("Failed to save stick config");
+        Serial.println("MappingConfig: Failed to save stick config");
         return false;
     }
     serializeJsonPretty(doc, file);
@@ -122,7 +122,7 @@ void MappingConfig::loadMappings(JsonDocument &doc, ButtonMapping *mappings, int
     {
         if (numMappings >= maxMappings)
         {
-            Serial.println("Warning: Too many mappings, truncating");
+            Serial.println("MappingConfig: Warning: Too many mappings, truncating");
             break;
         }
 
@@ -138,7 +138,7 @@ void MappingConfig::loadMappings(JsonDocument &doc, ButtonMapping *mappings, int
             mappings[numMappings].keyCode = keyCode;
             mappings[numMappings].currentlyPressed = false;
 
-            Serial.print("  Loaded: ");
+            Serial.print("MappingConfig: Loaded: ");
             Serial.print(buttonStr);
             Serial.print(" -> ");
             Serial.println(keyStr);
@@ -147,7 +147,7 @@ void MappingConfig::loadMappings(JsonDocument &doc, ButtonMapping *mappings, int
         }
     }
 
-    Serial.print("Loaded ");
+    Serial.print("MappingConfig: Loaded ");
     Serial.print(numMappings);
     Serial.println(" mappings");
 }
@@ -161,7 +161,7 @@ void MappingConfig::loadStickConfig(JsonDocument &doc, StickConfig *leftStick, S
         JsonObject left = doc["leftStick"];
         parseStickConfig(leftStick, left);
 
-        Serial.print("  Left stick: ");
+        Serial.print("MappingConfig: Left stick: ");
         Serial.println(stickBehaviorToString(leftStick->behavior));
     }
 
@@ -171,11 +171,11 @@ void MappingConfig::loadStickConfig(JsonDocument &doc, StickConfig *leftStick, S
         JsonObject right = doc["rightStick"];
         parseStickConfig(rightStick, right);
 
-        Serial.print("  Right stick: ");
+        Serial.print("MappingConfig: Right stick: ");
         Serial.println(stickBehaviorToString(rightStick->behavior));
     }
 
-    Serial.println("Stick configuration loaded");
+    Serial.println("MappingConfig: Stick configuration loaded");
 }
 
 bool MappingConfig::saveMappings(JsonDocument &doc, ButtonMapping *mappings, int numMappings)
@@ -189,7 +189,7 @@ bool MappingConfig::saveMappings(JsonDocument &doc, ButtonMapping *mappings, int
         mapping["key"] = KeyboardMapping::keyCodeToString(mappings[i].keyCode);
     }
 
-    Serial.print("Saved ");
+    Serial.print("MappingConfig: Saved ");
     Serial.print(numMappings);
     Serial.println(" mappings");
 
@@ -229,7 +229,7 @@ bool MappingConfig::saveStickConfig(JsonDocument &doc, StickConfig *leftStick, S
         rightKeys["right"] = KeyboardMapping::keyCodeToString(rightStick->keyRight);
     }
 
-    Serial.println("Stick configuration saved");
+    Serial.println("MappingConfig: Stick configuration saved");
     return true;
 }
 
@@ -260,7 +260,7 @@ StickBehavior MappingConfig::parseStickBehavior(const char *behaviorStr)
         }
     }
 
-    Serial.print("Warning: Unknown stick behavior: ");
+    Serial.print("MappingConfig: Warning: Unknown stick behavior: ");
     Serial.println(behaviorStr);
     return StickBehavior::DISABLED;
 }

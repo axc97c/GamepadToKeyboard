@@ -41,19 +41,19 @@ void DeviceManager::checkDeviceConnections()
     bool keyboardNowConnected = (keyboard != nullptr && keyboard->idVendor() != 0);
     if (keyboardNowConnected && !keyboardConnected)
     {
-        Serial.println("[USB] Keyboard connected");
-        Serial.print("[USB] VID: 0x");
+        Serial.println("DeviceManager: [USB] Keyboard connected");
+        Serial.print("DeviceManager: [USB] VID: 0x");
         Serial.print(keyboard->idVendor(), HEX);
         Serial.print(", PID: 0x");
         Serial.println(keyboard->idProduct(), HEX);
-        Serial.print("[USB] Timestamp: ");
+        Serial.print("DeviceManager: [USB] Timestamp: ");
         Serial.println(millis());
         keyboardConnected = true;
     }
     else if (!keyboardNowConnected && keyboardConnected)
     {
-        Serial.println("[USB] Keyboard disconnected");
-        Serial.print("[USB] Timestamp: ");
+        Serial.println("DeviceManager: [USB] Keyboard disconnected");
+        Serial.print("DeviceManager: [USB] Timestamp: ");
         Serial.println(millis());
         keyboardConnected = false;
     }
@@ -62,15 +62,15 @@ void DeviceManager::checkDeviceConnections()
     bool mouseNowConnected = (mouse != nullptr && mouse->available());
     if (mouseNowConnected && !mouseConnected)
     {
-        Serial.println("[USB] Mouse connected");
-        Serial.print("[USB] Timestamp: ");
+        Serial.println("DeviceManager: [USB] Mouse connected");
+        Serial.print("DeviceManager: [USB] Timestamp: ");
         Serial.println(millis());
         mouseConnected = true;
     }
     else if (!mouseNowConnected && mouseConnected)
     {
-        Serial.println("[USB] Mouse disconnected");
-        Serial.print("[USB] Timestamp: ");
+        Serial.println("DeviceManager: [USB] Mouse disconnected");
+        Serial.print("DeviceManager: [USB] Timestamp: ");
         Serial.println(millis());
         mouseConnected = false;
     }
@@ -79,19 +79,19 @@ void DeviceManager::checkDeviceConnections()
     bool joystickNowConnected = (joystick != nullptr && joystick->idVendor() != 0);
     if (joystickNowConnected && !joystickConnected)
     {
-        Serial.println("[USB] Joystick/Gamepad connected");
-        Serial.print("[USB] VID: 0x");
+        Serial.println("DeviceManager: [USB] Joystick/Gamepad connected");
+        Serial.print("DeviceManager: [USB] VID: 0x");
         Serial.print(joystick->idVendor(), HEX);
         Serial.print(", PID: 0x");
         Serial.println(joystick->idProduct(), HEX);
-        Serial.print("[USB] Timestamp: ");
+        Serial.print("DeviceManager: [USB] Timestamp: ");
         Serial.println(millis());
         joystickConnected = true;
     }
     else if (!joystickNowConnected && joystickConnected)
     {
-        Serial.println("[USB] Joystick/Gamepad disconnected");
-        Serial.print("[USB] Timestamp: ");
+        Serial.println("DeviceManager: [USB] Joystick/Gamepad disconnected");
+        Serial.print("DeviceManager: [USB] Timestamp: ");
         Serial.println(millis());
         joystickConnected = false;
     }

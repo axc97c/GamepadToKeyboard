@@ -18,13 +18,12 @@ void MainMenuAction::onInit()
         MenuItem("Load config", "load_config", 0),
         MenuItem("Edit config", "edit_config", 0),
         MenuItem("Save config", "save_config", 0),
-        MenuItem("Save config as...", "save_config_as", 0),
-        MenuItem("Test text input", "test_text_input", 0)
+        MenuItem("Save config as...", "save_config_as", 0)
     };
 
     setMenu(menuTitle, menuOptions, 5);
 
-    Serial.println("MainMenuAction setup complete");
+    Serial.println("MainMenuAction: Setup complete");
 }
 
 void MainMenuAction::onConfirm()
@@ -32,7 +31,7 @@ void MainMenuAction::onConfirm()
     // Handle confirmation for the main menu
     MenuItem selectedItem = getSelectedItem();
 
-    Serial.print("Main menu - Item confirmed: ");
+    Serial.print("MainMenuAction: Item confirmed: ");
     Serial.print(selectedItem.name);
     Serial.print(" (identifier: ");
     Serial.print(selectedItem.identifier);
@@ -58,16 +57,12 @@ void MainMenuAction::onConfirm()
     {
         handler->activateEditConfigMenu({0});
     }
-    else if (selectedItem.identifier == "test_text_input")
-    {
-        launchTestTextInput();
-    }
 }
 
 void MainMenuAction::onCancel()
 {
     // Handle cancel for the main menu - return to previous action (Run)
-    Serial.println("Main menu - Cancel/Back pressed, returning to previous action");
+    Serial.println("MainMenuAction: Cancel/Back pressed, returning to previous action");
 
     handler->popAction();
 }
@@ -75,7 +70,7 @@ void MainMenuAction::onCancel()
 void MainMenuAction::performSave()
 {
     // Save the currently loaded config to its file
-    Serial.print("Saving config to: ");
+    Serial.print("MainMenuAction: Saving config to: ");
     Serial.println(mappingConfig.filename);
 
     LiquidCrystal_I2C *lcd = devices->getLCD();
@@ -89,12 +84,12 @@ void MainMenuAction::performSave()
     lcd->setCursor(0, 0);
     if (success)
     {
-        Serial.println("Config saved successfully");
+        Serial.println("MainMenuAction: Config saved successfully");
         lcd->print("Config saved!");
     }
     else
     {
-        Serial.println("Failed to save config");
+        Serial.println("MainMenuAction: Failed to save config");
         lcd->print("Save failed!");
     }
 

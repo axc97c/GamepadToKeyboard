@@ -14,7 +14,7 @@ MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams
 
 void MenuAction::init()
 {
-    Serial.println("MenuAction base init");
+    Serial.println("MenuAction: Base init");
 
     // Store the previous selection before calling onInit
     int previousSelection = selectedIndex;
@@ -43,20 +43,20 @@ void MenuAction::init()
 
     displayMenu();
 
-    Serial.println("MenuAction initialized");
-    Serial.print("Selected index: ");
+    Serial.println("MenuAction: initialized");
+    Serial.print("MenuAction: Selected index: ");
     Serial.print(selectedIndex);
     Serial.print(" of ");
     Serial.println(menuItemCount);
 
     if (selectedIndex >= 0 && selectedIndex < menuItemCount)
     {
-        Serial.print("Selected: ");
+        Serial.print("MenuAction: Selected: ");
         Serial.println(menuItems[selectedIndex].name);
     }
     else
     {
-        Serial.println("ERROR: Selected index out of bounds!");
+        Serial.println("MenuAction: ERROR: Selected index out of bounds!");
     }
 }
 
@@ -65,7 +65,7 @@ void MenuAction::loop()
     // Check for timeout
     if (checkTimeout())
     {
-        Serial.println("Menu timeout - returning to run action");
+        Serial.println("MenuAction: Menu timeout - returning to run action");
 
         // Pop all actions back to the Run action (base of stack)
         handler->popToRunAction();
@@ -95,18 +95,18 @@ void MenuAction::loop()
         // Handle selection confirmation - delegate to derived class
         if (selectedIndex >= 0 && selectedIndex < menuItemCount)
         {
-            Serial.print("Confirmed: ");
+            Serial.print("MenuAction: Confirmed: ");
             Serial.println(menuItems[selectedIndex].name);
             onConfirm();
         }
         else
         {
-            Serial.println("ERROR: Cannot confirm - selected index out of bounds!");
+            Serial.println("MenuAction: ERROR: Cannot confirm - selected index out of bounds!");
         }
         break;
 
     case INPUT_CANCEL:
-        Serial.println("Cancel pressed");
+        Serial.println("MenuAction: Cancel pressed");
         // Delegate to derived class
         onCancel();
         break;
@@ -128,7 +128,7 @@ void MenuAction::moveUp()
 
         if (selectedIndex >= 0 && selectedIndex < menuItemCount)
         {
-            Serial.print("Selected: ");
+            Serial.print("MenuAction: Selected: ");
             Serial.println(menuItems[selectedIndex].name);
         }
     }
@@ -144,7 +144,7 @@ void MenuAction::moveDown()
 
         if (selectedIndex >= 0 && selectedIndex < menuItemCount)
         {
-            Serial.print("Selected: ");
+            Serial.print("MenuAction: Selected: ");
             Serial.println(menuItems[selectedIndex].name);
         }
     }
@@ -240,7 +240,7 @@ MenuItem MenuAction::getSelectedItem()
     }
     else
     {
-        Serial.print("ERROR: getSelectedItem() - index ");
+        Serial.print("MenuAction: ERROR: getSelectedItem() - index ");
         Serial.print(selectedIndex);
         Serial.print(" out of bounds (menuItemCount: ");
         Serial.print(menuItemCount);
