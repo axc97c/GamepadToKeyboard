@@ -10,15 +10,11 @@ private:
     char testInputBuffer[TEST_INPUT_MAX_LENGTH + 1];
 
     void performSave();
-    void launchTestTextInput();
-
 public:
     MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
 
     // Implement pure virtual methods from MenuAction
-    void onInit() override;
     void onConfirm() override;
-    void onCancel() override;
 };
 
 #endif // MAIN_MENU_ACTION_H

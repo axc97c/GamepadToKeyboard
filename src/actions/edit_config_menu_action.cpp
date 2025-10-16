@@ -9,8 +9,6 @@
 EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
     : MenuAction(dev, hdlr, p), needsRefresh(false)
 {
-    // Set the fixed title in constructor since it never changes
-    setTitle("Edit Config");
 }
 
 void EditConfigMenuAction::loop()
@@ -60,7 +58,7 @@ void EditConfigMenuAction::onInit()
     Serial.println("EditConfigMenuAction: Editing current config...");
 
     Serial.print("EditConfigMenuAction: Editing config: ");
-    Serial.println(mappingConfig.filename);
+    Serial.println(mappingConfig.displayName);
     Serial.print("EditConfigMenuAction: Number of mappings: ");
     Serial.println(mappingConfig.numMappings);
 
@@ -73,6 +71,7 @@ void EditConfigMenuAction::onInit()
 void EditConfigMenuAction::buildMenuItems()
 {
     Serial.println("EditConfigMenuAction: buildMenuItems START");
+   char nameBuffer[MenuItem::MAX_NAME_LEN];
 
     // Clear all menu items using the clear() method
     for (int i = 0; i < MAX_ITEMS; i++)
@@ -80,6 +79,17 @@ void EditConfigMenuAction::buildMenuItems()
         menuItems[i].clear();
     }
     menuItemCount = 0;
+
+    snprintf(nameBuffer, sizeof(nameBuffer), "Edit: %s", mappingConfig.displayName);
+    setTitle(nameBuffer);
+   
+    const char * leftBehaviourName = MappingConfig::stickBehaviorToString(mappingConfig.leftStick.behavior);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftBehaviourName);
+    menuItems[0].set(nameBuffer, "left_stick", 1);
+    const char * rightBehaviourName = MappingConfig::stickBehaviorToString(mappingConfig.rightStick.behavior);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightBehaviourName);
+    menuItems[1].set(nameBuffer, "right_stick", 1);
+    menuItems[2].set("Trigger", "triggers", 0);
 
     // Title already set in constructor
     int itemCount = min(mappingConfig.numMappings, MAX_ITEMS);
@@ -99,7 +109,6 @@ void EditConfigMenuAction::buildMenuItems()
         }
 
         // Build the display string directly into MenuItem char array - NO heap allocation!
-        char nameBuffer[MenuItem::MAX_NAME_LEN];
         snprintf(nameBuffer, sizeof(nameBuffer), "%s > %s", displayButtonName, keyName);
 
         // Build identifier directly into MenuItem char array
@@ -107,11 +116,11 @@ void EditConfigMenuAction::buildMenuItems()
         snprintf(idBuffer, sizeof(idBuffer), "mapping_%d", i);
 
         // Populate pre-allocated menuItems array using set() method
-        menuItems[i].set(nameBuffer, idBuffer, i);
+        menuItems[i+3].set(nameBuffer, idBuffer, i);
     }
 
     // Set the count
-    menuItemCount = itemCount;
+    menuItemCount = itemCount + 3;
 
     // Validate selectedIndex
     if (selectedIndex >= menuItemCount)

@@ -84,13 +84,6 @@ void ActionHandler::activateRun(RunActionParams params)
     }
     actionStackSize = 0;
 
-    // Store last run filename (intentional truncation)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wstringop-truncation"
-    strncpy(lastRunFilename, params.filename, sizeof(lastRunFilename) - 1);
-    #pragma GCC diagnostic pop
-    lastRunFilename[sizeof(lastRunFilename) - 1] = '\0';
-
     // Reuse singleton instance
     runAction->setParams(params);
     replaceCurrentAction(runAction);

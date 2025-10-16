@@ -7,6 +7,7 @@
 #include "actions/action_handler.h"
 #include "actions/run_action.h"
 #include "mapping/mapping_config.h"
+#include "memory.h"
 
 USBHost usbh;
 USBHub hub1(usbh);
@@ -44,6 +45,9 @@ void setup()
     devices.setup();
     actionHandler.setup();
 
+    // Initialize memory monitoring (reports every 10 seconds by default)
+    MemoryMonitor::init();
+
     Serial.println("Main: Setup complete. Waiting for USB devices...");
 }
 
@@ -51,4 +55,7 @@ void loop()
 {
     devices.loop();
     actionHandler.loop();
+
+    // Update memory monitor (prints report every 10 seconds)
+    MemoryMonitor::update();
 }

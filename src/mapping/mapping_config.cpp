@@ -3,12 +3,12 @@
 #include "mapping/keyboard_mapping.h"
 
 const MappingConfig::StickBehaviorMapping MappingConfig::stickBehaviorMap[] = {
-    {StickBehavior::DISABLED, "DISABLED"},
-    {StickBehavior::MOUSE_MOVEMENT, "MOUSE_MOVEMENT"},
-    {StickBehavior::BUTTON_EMULATION, "BUTTON_EMULATION"},
-    {StickBehavior::SCROLL_WHEEL, "SCROLL_WHEEL"},
-    {StickBehavior::WASD_KEYS, "WASD_KEYS"},
-    {StickBehavior::ARROW_KEYS, "ARROW_KEYS"}
+    {StickBehavior::DISABLED, "Disabled"},
+    {StickBehavior::MOUSE_MOVEMENT, "Mouse"},
+    {StickBehavior::BUTTON_EMULATION, "Custom Keys"},
+    {StickBehavior::SCROLL_WHEEL, "Scroll"},
+    {StickBehavior::WASD_KEYS, "WASD Keys"},
+    {StickBehavior::ARROW_KEYS, "Arrow Keys"}
 };
 
 const int MappingConfig::stickBehaviorMapSize = sizeof(MappingConfig::stickBehaviorMap) / sizeof(MappingConfig::stickBehaviorMap[0]);
@@ -25,13 +25,6 @@ void MappingConfig::initSD()
 
 bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &config)
 {
-    // Store the filename in the config (intentional truncation)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wstringop-truncation"
-    strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
-    #pragma GCC diagnostic pop
-    config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
-
     File file = SD.open(filename, FILE_READ);
     if (!file)
     {
@@ -55,6 +48,7 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
         return false;
     }
 
+    config.setFilename(filename);
     loadMappings(doc, config.mappings, config.numMappings, config.MAX_MAPPINGS);
     loadStickConfig(doc, &config.leftStick, &config.rightStick);
 
@@ -69,11 +63,7 @@ bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &conf
     // Update the filename in config if provided (intentional truncation)
     if (filename != nullptr && filename[0] != '\0')
     {
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
-        strncpy(config.filename, filename, config.MAX_FILENAME_LENGTH - 1);
-        #pragma GCC diagnostic pop
-        config.filename[config.MAX_FILENAME_LENGTH - 1] = '\0';
+        config.setFilename(filename);
     }
 
     // Use the filename from config

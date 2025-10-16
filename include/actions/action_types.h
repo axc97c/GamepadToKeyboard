@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 #include <cstdint>
+#include "utils.h"
 
 enum class ActionType : uint8_t
 {
@@ -70,6 +71,7 @@ struct JoystickMappingConfig
     static const int MAX_FILENAME_LENGTH = 64;
 
     char filename[MAX_FILENAME_LENGTH];
+    char displayName[MAX_FILENAME_LENGTH];
     ButtonMapping mappings[MAX_MAPPINGS];
     int numMappings;
     StickConfig leftStick;
@@ -80,16 +82,39 @@ struct JoystickMappingConfig
     {
         filename[0] = '\0';
     }
+
+    void setFilename(const char *newName)
+    {
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wstringop-truncation"
+        strncpy(filename, newName, MAX_FILENAME_LENGTH - 1);
+        #pragma GCC diagnostic pop
+        filename[MAX_FILENAME_LENGTH - 1] = '\0';
+
+        Utils::trimFilenameToBuffer(filename, displayName, MAX_FILENAME_LENGTH);
+
+        Serial.print("Setting filename to: ");
+        Serial.println(newName);
+        Serial.print("Saved filename as: ");
+        Serial.println(filename);
+        Serial.print("Display name as: ");
+        Serial.println(displayName);
+    }
 };
 
 struct RunActionParams
 {
-    const char *filename;
+    char filename[JoystickMappingConfig::MAX_FILENAME_LENGTH];
 };
 
 struct MenuActionParams
 {
     uint8_t menuId;
+};
+
+struct StickConfigActionParams  : MenuActionParams
+{
+    StickConfig* config;
 };
 
 struct BindKeyActionParams

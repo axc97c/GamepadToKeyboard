@@ -104,6 +104,7 @@ void SaveAsAction::performSave()
     Serial.println("SaveAsAction: Calling saveConfig...");
 
     // Save the config
+    mappingConfig.setFilename(fullFilename);
     bool success = MappingConfig::saveConfig(fullFilename, mappingConfig);
 
     Serial.print("SaveAsAction: Save result: ");
@@ -114,19 +115,10 @@ void SaveAsAction::performSave()
     if (success)
     {
         Serial.println("SaveAsAction: Config saved successfully");
-        lcd->print("Saved as:");
-        lcd->setCursor(0, 1);
+        lcd->print("Saved: ");
         lcd->print(filenameBuffer);
 
-        // Update the current config filename (intentional truncation)
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
-        strncpy(mappingConfig.filename, fullFilename, JoystickMappingConfig::MAX_FILENAME_LENGTH - 1);
-        #pragma GCC diagnostic pop
-        mappingConfig.filename[JoystickMappingConfig::MAX_FILENAME_LENGTH - 1] = '\0';
-
-        Serial.print("SaveAsAction: Updated filename to: ");
-        Serial.println(mappingConfig.filename);
+        mappingConfig.setFilename(fullFilename);
     }
     else
     {

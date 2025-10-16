@@ -3,28 +3,19 @@
 #include "actions/text_input_action.h"
 #include "devices.h"
 #include "mapping/mapping_config.h"
+#include "utils.h"
 
 MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
     : MenuAction(dev, hdlr, p)
 {
     testInputBuffer[0] = '\0';
 
-    // Set the fixed title in constructor since it never changes
+    clear();
     setTitle("Main Menu");
-
-    // Populate fixed menu items in pre-allocated array (no dynamic allocation!)
-    menuItems[0].set("Load config", "load_config", 0);
-    menuItems[1].set("Edit config", "edit_config", 0);
-    menuItems[2].set("Save config", "save_config", 0);
-    menuItems[3].set("Save config as...", "save_config_as", 0);
-    menuItemCount = 4;
-}
-
-void MainMenuAction::onInit()
-{
-    Serial.println("MainMenuAction: Setting up");
-    // Menu items already populated in constructor - nothing to do here!
-    Serial.println("MainMenuAction: Setup complete");
+    addItem("Load config", "load_config");
+    addItem("Edit config", "edit_config");
+    addItem("Save config", "save_config");
+    addItem("Save config as...", "save_config_as");
 }
 
 void MainMenuAction::onConfirm()
@@ -60,19 +51,11 @@ void MainMenuAction::onConfirm()
     }
 }
 
-void MainMenuAction::onCancel()
-{
-    // Handle cancel for the main menu - return to previous action (Run)
-    Serial.println("MainMenuAction: Cancel/Back pressed, returning to previous action");
-
-    handler->popAction();
-}
-
 void MainMenuAction::performSave()
 {
     // Save the currently loaded config to its file
     Serial.print("MainMenuAction: Saving config to: ");
-    Serial.println(mappingConfig.filename);
+    Serial.println(mappingConfig.displayName);
 
     LiquidCrystal_I2C *lcd = devices->getLCD();
     lcd->clear();
@@ -86,35 +69,19 @@ void MainMenuAction::performSave()
     if (success)
     {
         Serial.println("MainMenuAction: Config saved successfully");
-        lcd->print("Config saved!");
+        lcd->print("Saved: ");
+        lcd->print(mappingConfig.displayName);
     }
     else
     {
         Serial.println("MainMenuAction: Failed to save config");
         lcd->print("Save failed!");
+        lcd->setCursor(0, 1);
+        lcd->print(mappingConfig.displayName);
     }
-
-    lcd->setCursor(0, 1);
-    lcd->print(mappingConfig.filename);
 
     delay(2000);
 
     // Refresh the menu display
     refresh();
-}
-
-void MainMenuAction::launchTestTextInput()
-{
-    Serial.println("MainMenuAction: Launching test text input");
-
-    // Clear the buffer
-    testInputBuffer[0] = '\0';
-
-    // Launch text input action
-    TextInputActionParams params;
-    params.prompt = "Test input:";
-    params.resultBuffer = testInputBuffer;
-    params.maxLength = TEST_INPUT_MAX_LENGTH;
-
-    handler->activateTextInput(params);
 }

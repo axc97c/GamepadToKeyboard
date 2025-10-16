@@ -175,14 +175,14 @@ void LoadConfigMenuAction::onConfirm()
         return;
     }
 
-    // Use the identifier which contains the full filename path
-    const char* fullFilename = selectedItem.identifier;
-
-    Serial.print("LoadConfigMenuAction: Loading config file: ");
-    Serial.println(fullFilename);
-
     // fullFilename is already a const char* from identifier, pass directly
-    handler->activateRun({fullFilename});
+
+    RunActionParams runParams;
+    strncpy(runParams.filename, selectedItem.identifier, MAX_FILENAME_LEN);
+    Serial.print("LoadConfigMenuAction: Loading config file: ");
+    Serial.println(runParams.filename);
+
+    handler->activateRun(runParams);
 }
 
 void LoadConfigMenuAction::onCancel()

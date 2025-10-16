@@ -9,13 +9,8 @@ MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams
 {
     selectedIndex = 0;
     scrollOffset = 0;
-    menuItemCount = 0;
 
-    // Initialize all menu items as unused (pre-allocated but empty)
-    for (int i = 0; i < MAX_ITEMS; i++)
-    {
-        menuItems[i].clear();
-    }
+    clear();
 }
 
 void MenuAction::init()
@@ -312,5 +307,16 @@ void MenuAction::setTitle(const char* title)
     else
     {
         menuTitle[0] = '\0';
+    }
+}
+
+void MenuAction::clear()
+{
+    menuItemCount = 0;
+
+    // Initialize all menu items as unused (pre-allocated but empty)
+    for (int i = 0; i < MAX_ITEMS; i++)
+    {
+        menuItems[i].clear();
     }
 }

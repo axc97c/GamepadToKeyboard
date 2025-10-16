@@ -32,18 +32,6 @@ void RunAction::init()
     //     Serial.println("Keyboard passthrough handlers attached");
     // }
 
-    // Store filename in config for display and later use (intentional truncation)
-    if (mappingConfig.filename[0] == '\0')
-    {
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
-        strncpy(mappingConfig.filename, params.filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
-        #pragma GCC diagnostic pop
-        mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
-    }
-
-    DisplayLoadedFile();
-
     // Detect controller type
     JoystickController *joy = devices->getJoystick();
     if (joy && *joy)
@@ -53,16 +41,25 @@ void RunAction::init()
         Serial.println(controllerType);
     }
 
-    // Try to load button mappings (loadConfig will reaffirm the filename)
-    if (!MappingConfig::loadConfig(params.filename, mappingConfig))
-    {
-        Serial.println("RunAction: Failed to load button mappings, using defaults");
-        initializeDefaultMappings();
-        initializeDefaultStickConfigs();
+    Serial.print("RunAction: params.filename = ");
+    Serial.println(params.filename);
 
-        MappingConfig::saveConfig(params.filename, mappingConfig);
+    if (params.filename[0] != '\0')
+    {
+        if (!MappingConfig::loadConfig(params.filename, mappingConfig))
+        {
+            Serial.println("RunAction: Failed to load button mappings, using defaults");
+            initializeDefaultMappings();
+            initializeDefaultStickConfigs();
+
+            MappingConfig::saveConfig(params.filename, mappingConfig);
+        }
+
+        // Clear loading filename
+        params.filename[0] = '\0';
     }
 
+    DisplayLoadedFile();
     Serial.println("RunAction: RunAction initialization complete");
 }
 
@@ -570,12 +567,10 @@ void RunAction::DisplayLoadedFile()
     lcd->setCursor(3, 1);
     lcd->print("Running file:");
 
-    String displayName = Utils::trimFilename(mappingConfig.filename);
-
-    int filenameLen = displayName.length();
+    int filenameLen = strlen(mappingConfig.displayName);
     int filenamePos = (20 - filenameLen) / 2; // Center on 20 character display
     lcd->setCursor(filenamePos, 2);
-    lcd->print(displayName);
+    lcd->print(mappingConfig.displayName);
 
     backlightOnTime = millis();
 }
