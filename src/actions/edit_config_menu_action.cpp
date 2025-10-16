@@ -80,21 +80,14 @@ void EditConfigMenuAction::buildMenuItems()
     }
     menuItemCount = 0;
 
-    Serial.println("Cleared old items");
-
     // Set title directly on inherited member to avoid String allocation
     menuTitle = "Edit Config";
 
     int itemCount = min(mappingConfig.numMappings, MAX_ITEMS);
-    Serial.print("Items: ");
-    Serial.println(itemCount);
 
     // Build items directly into inherited menuItems array
     for (int i = 0; i < itemCount; i++)
     {
-        Serial.print("Item ");
-        Serial.println(i);
-
         // Get names as const char* to avoid allocations
         const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[i].genericButton);
         const char *keyName = KeyboardMapping::keyCodeToString(mappingConfig.mappings[i].keyCode);

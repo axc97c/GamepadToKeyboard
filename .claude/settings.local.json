@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(platformio pkg:*)",
-      "Bash(pio run:*)"
+      "Bash(pio run:*)",
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []

@@ -56,6 +56,8 @@ void BindKeyAction::loop()
 
             Serial.print("BindKeyAction: Received unicode ");
             Serial.print(unicode);
+            Serial.print(", 0x");
+            Serial.print(unicode, HEX);
             Serial.print(", converted to keyCode ");
             Serial.println(keyCode);
 
