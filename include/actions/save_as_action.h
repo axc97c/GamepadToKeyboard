@@ -9,6 +9,7 @@ private:
     static const int MAX_FILENAME_LENGTH = 15;
     char filenameBuffer[MAX_FILENAME_LENGTH + 1];
     bool textInputCompleted;
+    bool textInputLaunched; // Track if we've already launched text input
 
 public:
     SaveAsAction(DeviceManager *dev, ActionHandler *hdlr);

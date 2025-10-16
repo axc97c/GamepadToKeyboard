@@ -6,7 +6,7 @@
 #include "utils.h"
 
 SaveAsAction::SaveAsAction(DeviceManager *dev, ActionHandler *hdlr)
-    : Action(dev, hdlr), textInputCompleted(false)
+    : Action(dev, hdlr), textInputCompleted(false), textInputLaunched(false)
 {
     filenameBuffer[0] = '\0';
 }
@@ -17,18 +17,32 @@ SaveAsAction::~SaveAsAction()
 
 void SaveAsAction::init()
 {
-    Serial.println("SaveAsAction: Initializing...");
+    Serial.println("SaveAsAction::init() called");
+    Serial.print("textInputLaunched: ");
+    Serial.println(textInputLaunched);
 
-    // Launch text input action
-    TextInputActionParams params;
-    params.prompt = "Filename:";
-    params.resultBuffer = filenameBuffer;
-    params.maxLength = MAX_FILENAME_LENGTH;
+    // Only launch text input once
+    if (!textInputLaunched)
+    {
+        Serial.println("Launching text input...");
 
-    handler->activateTextInput(params);
-    textInputCompleted = false;
+        textInputLaunched = true;
+        textInputCompleted = false;
 
-    Serial.println("SaveAsAction: Text input action launched");
+        // Launch text input action
+        TextInputActionParams params;
+        params.prompt = "Filename:";
+        params.resultBuffer = filenameBuffer;
+        params.maxLength = MAX_FILENAME_LENGTH;
+
+        handler->activateTextInput(params);
+
+        Serial.println("Text input launched");
+    }
+    else
+    {
+        Serial.println("Text input already launched, skipping");
+    }
 }
 
 void SaveAsAction::loop()
@@ -63,10 +77,13 @@ ActionType SaveAsAction::getType()
 
 void SaveAsAction::performSave()
 {
-    // Build full filename with path and extension
-    String fullFilename = "/" + String(filenameBuffer) + ".json";
+    Serial.println("performSave START");
 
-    Serial.print("SaveAsAction: Saving config to: ");
+    // Build full filename with path and extension using char buffer
+    static char fullFilename[64];
+    snprintf(fullFilename, sizeof(fullFilename), "/%s.json", filenameBuffer);
+
+    Serial.print("SaveAsAction: Saving to: ");
     Serial.println(fullFilename);
 
     LiquidCrystal_I2C *lcd = devices->getLCD();
@@ -74,33 +91,35 @@ void SaveAsAction::performSave()
     lcd->setCursor(0, 0);
     lcd->print("Saving as...");
     lcd->setCursor(0, 1);
+    lcd->print(filenameBuffer); // Display the name without path/extension
 
-    // Display filename (may need to truncate for display)
-    String displayName = Utils::trimFilename(fullFilename.c_str());
-    lcd->print(displayName);
+    Serial.println("Calling saveConfig...");
 
     // Save the config
-    bool success = MappingConfig::saveConfig(fullFilename.c_str(), mappingConfig);
+    bool success = MappingConfig::saveConfig(fullFilename, mappingConfig);
+
+    Serial.print("Save result: ");
+    Serial.println(success ? "SUCCESS" : "FAILED");
 
     lcd->clear();
     lcd->setCursor(0, 0);
     if (success)
     {
-        Serial.println("SaveAsAction: Config saved successfully");
+        Serial.println("Config saved successfully");
         lcd->print("Saved as:");
         lcd->setCursor(0, 1);
-        lcd->print(displayName);
+        lcd->print(filenameBuffer);
 
         // Update the current config filename
-        strncpy(mappingConfig.filename, fullFilename.c_str(), JoystickMappingConfig::MAX_FILENAME_LENGTH - 1);
+        strncpy(mappingConfig.filename, fullFilename, JoystickMappingConfig::MAX_FILENAME_LENGTH - 1);
         mappingConfig.filename[JoystickMappingConfig::MAX_FILENAME_LENGTH - 1] = '\0';
 
-        Serial.print("SaveAsAction: Updated mappingConfig.filename to: ");
+        Serial.print("Updated filename to: ");
         Serial.println(mappingConfig.filename);
     }
     else
     {
-        Serial.println("SaveAsAction: Failed to save config");
+        Serial.println("Save failed");
         lcd->print("Save failed!");
         lcd->setCursor(0, 1);
         lcd->print("Check SD card");
@@ -108,7 +127,6 @@ void SaveAsAction::performSave()
 
     delay(2000);
 
-    // Return to run action
-    Serial.println("SaveAsAction: Returning to run action");
+    Serial.println("Returning to run action");
     handler->popToRunAction();
 }
