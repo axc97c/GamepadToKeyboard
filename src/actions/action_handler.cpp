@@ -5,6 +5,8 @@
 #include "actions/load_config_menu_action.h"
 #include "actions/edit_config_menu_action.h"
 #include "actions/bind_key_action.h"
+#include "actions/text_input_action.h"
+#include "actions/save_as_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -99,6 +101,20 @@ void ActionHandler::activateBindKey(BindKeyActionParams params)
     pushAction(new BindKeyAction(devices, this, params));
     Serial.println((unsigned long)currentAction, HEX);
     Serial.println("Action: Bind Key activated");
+}
+
+void ActionHandler::activateTextInput(TextInputActionParams params)
+{
+    pushAction(new TextInputAction(devices, this, params));
+    Serial.println((unsigned long)currentAction, HEX);
+    Serial.println("Action: Text Input activated");
+}
+
+void ActionHandler::activateSaveAs()
+{
+    pushAction(new SaveAsAction(devices, this));
+    Serial.println((unsigned long)currentAction, HEX);
+    Serial.println("Action: Save As activated");
 }
 
 ActionType ActionHandler::getCurrentActionType()

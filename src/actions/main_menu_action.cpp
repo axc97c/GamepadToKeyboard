@@ -14,11 +14,12 @@ void MainMenuAction::onInit()
     menuTitle = "Main Menu";
     MenuItem menuOptions[] = {
         MenuItem("Load config", "load_config", 0),
+        MenuItem("Edit config", "edit_config", 0),
         MenuItem("Save config", "save_config", 0),
-        MenuItem("Edit config", "edit_config", 0)
+        MenuItem("Save config as...", "save_config_as", 0)
     };
 
-    setMenu(menuTitle, menuOptions, 3);
+    setMenu(menuTitle, menuOptions, 4);
 
     Serial.println("MainMenuAction setup complete");
 }
@@ -75,6 +76,11 @@ void MainMenuAction::onConfirm()
 
         // Refresh the menu display
         refresh();
+    }
+    else if (selectedItem.identifier == "save_config_as")
+    {
+        // Open save as action
+        handler->activateSaveAs();
     }
     else if (selectedItem.identifier == "edit_config")
     {

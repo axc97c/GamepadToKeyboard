@@ -6,6 +6,7 @@
 
 class DeviceManager;
 class Action;
+struct TextInputActionParams;
 
 class ActionHandler
 {
@@ -34,6 +35,8 @@ public:
     void activateLoadConfigMenu(MenuActionParams params);
     void activateEditConfigMenu(MenuActionParams params);
     void activateBindKey(BindKeyActionParams params);
+    void activateTextInput(TextInputActionParams params);
+    void activateSaveAs();
 
     // Get current action (returns nullptr if none active)
     Action *getCurrentAction() { return currentAction; }
