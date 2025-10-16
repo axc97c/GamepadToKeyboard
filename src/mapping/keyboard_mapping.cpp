@@ -128,11 +128,37 @@ const char *KeyboardMapping::keyCodeToString(int keyCode)
     if (keyCode == KEY_RIGHT)
         return "RIGHT";
 
-    // Single character
-    static char buf[2];
-    buf[0] = (char)keyCode;
-    buf[1] = '\0';
-    return buf;
+    // Letters: KEY_A through KEY_Z (0xF000 to 0xF019)
+    if (keyCode >= KEY_A && keyCode <= KEY_Z)
+    {
+        static char letterBuf[2];
+        letterBuf[0] = 'a' + (keyCode - KEY_A);
+        letterBuf[1] = '\0';
+        return letterBuf;
+    }
+
+    // Numbers: KEY_0 through KEY_9
+    if (keyCode >= KEY_0 && keyCode <= KEY_9)
+    {
+        static char numberBuf[2];
+        numberBuf[0] = '0' + (keyCode - KEY_0);
+        numberBuf[1] = '\0';
+        return numberBuf;
+    }
+
+    // Single character (for other ASCII characters that were stored directly)
+    if (keyCode >= 32 && keyCode < 127)
+    {
+        static char buf[2];
+        buf[0] = (char)keyCode;
+        buf[1] = '\0';
+        return buf;
+    }
+
+    // Unknown key
+    static char unknownBuf[8];
+    snprintf(unknownBuf, sizeof(unknownBuf), "0x%X", keyCode);
+    return unknownBuf;
 }
 
 int KeyboardMapping::unicodeToKeyCode(int unicode)

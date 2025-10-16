@@ -63,7 +63,7 @@ void BindKeyAction::loop()
             applyKeyBinding(keyCode);
 
             // Return to previous action (edit config menu)
-            handler->popToRunAction();
+            handler->popAction();
         }
     }
 
