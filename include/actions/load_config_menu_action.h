@@ -7,8 +7,9 @@ class LoadConfigMenuAction : public MenuAction
 {
 private:
     static const int MAX_CONFIG_FILES = 20;
-    String configFiles[MAX_CONFIG_FILES]; // Store full filenames with path
-    
+    static const int MAX_FILENAME_LEN = 32;  // Max length for full path+filename
+    char configFiles[MAX_CONFIG_FILES][MAX_FILENAME_LEN]; // Store full filenames with path
+
     void scanConfigFiles();
     void sortConfigFiles(int count);
 

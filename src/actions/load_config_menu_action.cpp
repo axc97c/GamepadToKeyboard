@@ -30,6 +30,12 @@ void LoadConfigMenuAction::scanConfigFiles()
     }
     menuItemCount = 0;
 
+    // Clear config files array
+    for (int i = 0; i < MAX_CONFIG_FILES; i++)
+    {
+        configFiles[i][0] = '\0';
+    }
+
     // Title already set in constructor
     int fileCount = 0;
 
@@ -53,31 +59,35 @@ void LoadConfigMenuAction::scanConfigFiles()
         menuItemCount = 1;
         return;
     }
-    
+
     // Read all files in root directory
     File entry = root.openNextFile();
     while (entry && fileCount < MAX_CONFIG_FILES)
     {
         if (!entry.isDirectory())
         {
-            String filename = entry.name();
-            
-            // Check if it's a JSON file
-            if (filename.endsWith(".json") || filename.endsWith(".JSON"))
+            const char *filename = entry.name();
+            int len = strlen(filename);
+
+            // Check if it's a JSON file (case insensitive)
+            if (len > 5 &&
+                (strcmp(filename + len - 5, ".json") == 0 ||
+                 strcmp(filename + len - 5, ".JSON") == 0))
             {
-                // Store full filename with path
-                configFiles[fileCount] = "/" + filename;
-                fileCount++;
-                
+                // Store full filename with path (no heap allocation!)
+                snprintf(configFiles[fileCount], MAX_FILENAME_LEN, "/%s", filename);
+
                 Serial.print("LoadConfigMenuAction: Found config file: ");
-                Serial.println(filename);
+                Serial.println(configFiles[fileCount]);
+
+                fileCount++;
             }
         }
         entry.close();
         entry = root.openNextFile();
     }
     root.close();
-    
+
     if (fileCount == 0)
     {
         Serial.println("LoadConfigMenuAction: No JSON config files found");
@@ -93,16 +103,13 @@ void LoadConfigMenuAction::scanConfigFiles()
     // Populate pre-allocated menu items directly (no temp array allocation!)
     for (int i = 0; i < fileCount; i++)
     {
-        String displayName = Utils::trimFilename(configFiles[i]);
+        char displayName[MenuItem::MAX_NAME_LEN];
 
-        // Convert Strings to char arrays for set() method
-        char nameBuffer[MenuItem::MAX_NAME_LEN];
-        char idBuffer[MenuItem::MAX_ID_LEN];
+        // Extract display name without path/extension (no heap allocation!)
+        Utils::trimFilenameToBuffer(configFiles[i], displayName, sizeof(displayName));
 
-        displayName.toCharArray(nameBuffer, sizeof(nameBuffer));
-        configFiles[i].toCharArray(idBuffer, sizeof(idBuffer));
-
-        menuItems[i].set(nameBuffer, idBuffer, i);
+        // Use full path as identifier (already in char array)
+        menuItems[i].set(displayName, configFiles[i], i);
 
         Serial.print("LoadConfigMenuAction: Display name: ");
         Serial.print(displayName);
@@ -119,25 +126,23 @@ void LoadConfigMenuAction::scanConfigFiles()
 
 void LoadConfigMenuAction::sortConfigFiles(int count)
 {
-    // Simple bubble sort for alphabetical ordering
+    // Simple bubble sort for alphabetical ordering (no heap allocation!)
     for (int i = 0; i < count - 1; i++)
     {
         for (int j = 0; j < count - i - 1; j++)
         {
-            // Extract filenames without path for comparison
-            String name1 = configFiles[j].substring(1); // Remove leading '/'
-            String name2 = configFiles[j + 1].substring(1);
-            
-            // Compare case-insensitive
-            name1.toLowerCase();
-            name2.toLowerCase();
-            
-            if (name1.compareTo(name2) > 0)
+            // Compare filenames case-insensitive (skip leading '/' if present)
+            const char *name1 = configFiles[j][0] == '/' ? &configFiles[j][1] : configFiles[j];
+            const char *name2 = configFiles[j + 1][0] == '/' ? &configFiles[j + 1][1] : configFiles[j + 1];
+
+            // Case-insensitive comparison
+            if (strcasecmp(name1, name2) > 0)
             {
-                // Swap
-                String temp = configFiles[j];
-                configFiles[j] = configFiles[j + 1];
-                configFiles[j + 1] = temp;
+                // Swap using char array swap (no heap allocation!)
+                char temp[MAX_FILENAME_LEN];
+                strncpy(temp, configFiles[j], MAX_FILENAME_LEN);
+                strncpy(configFiles[j], configFiles[j + 1], MAX_FILENAME_LEN);
+                strncpy(configFiles[j + 1], temp, MAX_FILENAME_LEN);
             }
         }
     }
