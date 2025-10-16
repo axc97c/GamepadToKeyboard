@@ -44,37 +44,7 @@ void MainMenuAction::onConfirm()
     }
     else if (selectedItem.identifier == "save_config")
     {
-        // Save the currently loaded config to its file
-        Serial.print("Saving config to: ");
-        Serial.println(mappingConfig.filename);
-
-        LiquidCrystal_I2C *lcd = devices->getLCD();
-        lcd->clear();
-        lcd->setCursor(0, 0);
-        lcd->print("Saving config...");
-
-        bool success = MappingConfig::saveConfig(mappingConfig.filename, mappingConfig);
-
-        lcd->clear();
-        lcd->setCursor(0, 0);
-        if (success)
-        {
-            Serial.println("Config saved successfully");
-            lcd->print("Config saved!");
-        }
-        else
-        {
-            Serial.println("Failed to save config");
-            lcd->print("Save failed!");
-        }
-
-        lcd->setCursor(0, 1);
-        lcd->print(mappingConfig.filename);
-
-        delay(2000);
-
-        // Refresh the menu display
-        refresh();
+        performSave();
     }
     else if (selectedItem.identifier == "save_config_as")
     {
@@ -93,4 +63,39 @@ void MainMenuAction::onCancel()
     Serial.println("Main menu - Cancel/Back pressed, returning to previous action");
 
     handler->popAction();
+}
+
+void MainMenuAction::performSave()
+{
+    // Save the currently loaded config to its file
+    Serial.print("Saving config to: ");
+    Serial.println(mappingConfig.filename);
+
+    LiquidCrystal_I2C *lcd = devices->getLCD();
+    lcd->clear();
+    lcd->setCursor(0, 0);
+    lcd->print("Saving config...");
+
+    bool success = MappingConfig::saveConfig(mappingConfig.filename, mappingConfig);
+
+    lcd->clear();
+    lcd->setCursor(0, 0);
+    if (success)
+    {
+        Serial.println("Config saved successfully");
+        lcd->print("Config saved!");
+    }
+    else
+    {
+        Serial.println("Failed to save config");
+        lcd->print("Save failed!");
+    }
+
+    lcd->setCursor(0, 1);
+    lcd->print(mappingConfig.filename);
+
+    delay(2000);
+
+    // Refresh the menu display
+    refresh();
 }

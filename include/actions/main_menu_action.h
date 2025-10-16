@@ -5,6 +5,9 @@
 
 class MainMenuAction : public MenuAction
 {
+private:
+    void performSave();
+
 public:
     MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
 
