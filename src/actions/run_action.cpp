@@ -171,19 +171,10 @@ void RunAction::processButtonMappings()
 
             if (isPressed)
             {
-                Serial.print("RunAction: Button ");
-                Serial.print(getGenericButtonName(genericButton));
-                Serial.print(" pressed -> Key ");
-                Serial.println(mappingConfig.mappings[i].keyCode);
-
                 Keyboard.press(mappingConfig.mappings[i].keyCode);
             }
             else
             {
-                Serial.print("RunAction: Button ");
-                Serial.print(getGenericButtonName(genericButton));
-                Serial.println(" released");
-
                 Keyboard.release(mappingConfig.mappings[i].keyCode);
             }
         }

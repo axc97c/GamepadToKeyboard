@@ -71,49 +71,42 @@ void ActionHandler::activateRun(RunActionParams params)
 
     // Replace current action without pushing (Run is always at the base)
     replaceCurrentAction(new RunAction(devices, this, params));
-    Serial.println((unsigned long)currentAction, HEX);
     Serial.println("ActionHandler: Run mode activated (base action)");
 }
 
 void ActionHandler::activateMainMenu(MenuActionParams params)
 {
     pushAction(new MainMenuAction(devices, this, params));
-    Serial.println((unsigned long)currentAction, HEX);
     Serial.println("ActionHandler: Main Menu activated");
 }
 
 void ActionHandler::activateLoadConfigMenu(MenuActionParams params)
 {
     pushAction(new LoadConfigMenuAction(devices, this, params));
-    Serial.println((unsigned long)currentAction, HEX);
     Serial.println("ActionHandler: Load Config Menu activated");
 }
 
 void ActionHandler::activateEditConfigMenu(MenuActionParams params)
 {
     pushAction(new EditConfigMenuAction(devices, this, params));
-    Serial.println((unsigned long)currentAction, HEX);
     Serial.println("ActionHandler: Edit Config Menu activated");
 }
 
 void ActionHandler::activateBindKey(BindKeyActionParams params)
 {
     pushAction(new BindKeyAction(devices, this, params));
-    Serial.println((unsigned long)currentAction, HEX);
     Serial.println("ActionHandler: Bind Key activated");
 }
 
 void ActionHandler::activateTextInput(TextInputActionParams params)
 {
     pushAction(new TextInputAction(devices, this, params));
-    Serial.println((unsigned long)currentAction, HEX);
     Serial.println("ActionHandler: Text Input activated");
 }
 
 void ActionHandler::activateSaveAs()
 {
     pushAction(new SaveAsAction(devices, this));
-    Serial.println((unsigned long)currentAction, HEX);
     Serial.println("ActionHandler: Save As activated");
 }
 
