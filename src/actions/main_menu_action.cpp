@@ -11,11 +11,11 @@ void MainMenuAction::onInit()
 {
     // Initialize the main menu
     menuTitle = "Main Menu";
-    String menuOptions[] = {
-        "Load config",
-        "Edit config"
+    MenuItem menuOptions[] = {
+        MenuItem("Load config", "load_config", 0),
+        MenuItem("Edit config", "edit_config", 0)
     };
-        
+
     setMenu(menuTitle, menuOptions, 2);
 
     Serial.println("MainMenuAction setup complete");
@@ -24,21 +24,23 @@ void MainMenuAction::onInit()
 void MainMenuAction::onConfirm()
 {
     // Handle confirmation for the main menu
-    String selectedItem = getSelectedItem();
+    MenuItem selectedItem = getSelectedItem();
     int selectedIdx = getSelectedIndex();
-    
+
     Serial.print("Main menu - Item confirmed: ");
-    Serial.print(selectedItem);
-    Serial.print(" (index: ");
-    Serial.print(selectedIdx);
+    Serial.print(selectedItem.name);
+    Serial.print(" (identifier: ");
+    Serial.print(selectedItem.identifier);
+    Serial.print(", data: ");
+    Serial.print(selectedItem.data);
     Serial.println(")");
-    
-    // Handle each menu option
-    if (selectedIdx == 0)
+
+    // Handle each menu option using identifier
+    if (selectedItem.identifier == "load_config")
     {
         handler->activateLoadConfigMenu({0});
     }
-    else if (selectedIdx == 1)
+    else if (selectedItem.identifier == "edit_config")
     {
         handler->activateEditConfigMenu({0});
     }

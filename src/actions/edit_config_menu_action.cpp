@@ -48,15 +48,17 @@ void EditConfigMenuAction::buildMenuItems()
     menuTitle = "Edit " + displayName;
 
     // Create menu items - one per button mapping
-    String items[JoystickMappingConfig::MAX_MAPPINGS];
+    MenuItem items[JoystickMappingConfig::MAX_MAPPINGS];
     for (int i = 0; i < mappingConfig.numMappings; i++)
     {
-        items[i] = getButtonKeyPair(i);
+        String buttonKeyPair = getButtonKeyPair(i);
+        String identifier = String("mapping_") + String(i);
+        items[i] = MenuItem(buttonKeyPair, identifier, i);
 
         Serial.print("Menu item ");
         Serial.print(i);
         Serial.print(": ");
-        Serial.println(items[i]);
+        Serial.println(buttonKeyPair);
     }
 
     setMenu(menuTitle, items, mappingConfig.numMappings);
@@ -93,26 +95,31 @@ String EditConfigMenuAction::getButtonKeyPair(int index)
 
 void EditConfigMenuAction::onConfirm()
 {
+    MenuItem selectedItem = getSelectedItem();
     int selectedIdx = getSelectedIndex();
-    String selectedItem = getSelectedItem();
 
     Serial.print("Edit config - Item confirmed: ");
-    Serial.print(selectedItem);
-    Serial.print(" (index: ");
-    Serial.print(selectedIdx);
+    Serial.print(selectedItem.name);
+    Serial.print(" (identifier: ");
+    Serial.print(selectedItem.identifier);
+    Serial.print(", data: ");
+    Serial.print(selectedItem.data);
     Serial.println(")");
 
+    // Use the data field which contains the mapping index
+    int mappingIndex = selectedItem.data;
+
     // Open bind key action for the selected mapping
-    if (selectedIdx >= 0 && selectedIdx < mappingConfig.numMappings)
+    if (mappingIndex >= 0 && mappingIndex < mappingConfig.numMappings)
     {
         Serial.print("Selected mapping: ");
-        Serial.print(JoystickMapping::getGenericButtonName(mappingConfig.mappings[selectedIdx].genericButton));
+        Serial.print(JoystickMapping::getGenericButtonName(mappingConfig.mappings[mappingIndex].genericButton));
         Serial.print(" -> ");
-        Serial.println(KeyboardMapping::keyCodeToString(mappingConfig.mappings[selectedIdx].keyCode));
+        Serial.println(KeyboardMapping::keyCodeToString(mappingConfig.mappings[mappingIndex].keyCode));
 
         // Open bind key action to change this mapping
         BindKeyActionParams params;
-        params.mappingIndex = selectedIdx;
+        params.mappingIndex = mappingIndex;
         handler->activateBindKey(params);
 
         // Mark that we need to refresh when we return

@@ -28,7 +28,7 @@ void MenuAction::init()
     
     Serial.println("MenuAction initialized");
     Serial.print("Selected: ");
-    Serial.println(menuItems[selectedIndex]);
+    Serial.println(menuItems[selectedIndex].name);
 }
 
 void MenuAction::loop()
@@ -65,7 +65,7 @@ void MenuAction::loop()
     case INPUT_CONFIRM:
         // Handle selection confirmation - delegate to derived class
         Serial.print("Confirmed: ");
-        Serial.println(menuItems[selectedIndex]);
+        Serial.println(menuItems[selectedIndex].name);
         onConfirm();
         break;
 
@@ -90,7 +90,7 @@ void MenuAction::moveUp()
         updateScrollOffset();
         displayMenu();
         Serial.print("Selected: ");
-        Serial.println(menuItems[selectedIndex]);
+        Serial.println(menuItems[selectedIndex].name);
     }
 }
 
@@ -102,7 +102,7 @@ void MenuAction::moveDown()
         updateScrollOffset();
         displayMenu();
         Serial.print("Selected: ");
-        Serial.println(menuItems[selectedIndex]);
+        Serial.println(menuItems[selectedIndex].name);
     }
 }
 
@@ -153,18 +153,18 @@ void MenuAction::displayMenu()
             if (itemIndex == selectedIndex)
             {
                 lcd->print(">");
-                lcd->print(menuItems[itemIndex]);
+                lcd->print(menuItems[itemIndex].name);
             }
             else
             {
                 lcd->print(" ");
-                lcd->print(menuItems[itemIndex]);
+                lcd->print(menuItems[itemIndex].name);
             }
         }
     }
 }
 
-void MenuAction::setMenu(String title, String items[], int itemCount)
+void MenuAction::setMenu(String title, MenuItem items[], int itemCount)
 {
     menuTitle = title;
     menuItemCount = min(itemCount, MAX_ITEMS);
@@ -181,7 +181,7 @@ int MenuAction::getSelectedIndex()
     return selectedIndex;
 }
 
-String MenuAction::getSelectedItem()
+MenuItem MenuAction::getSelectedItem()
 {
     return menuItems[selectedIndex];
 }

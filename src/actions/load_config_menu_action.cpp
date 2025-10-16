@@ -29,16 +29,16 @@ void LoadConfigMenuAction::scanConfigFiles()
     if (!root)
     {
         Serial.println("Failed to open root directory");
-        String errorItem[] = {"No SD card found"};
+        MenuItem errorItem[] = {MenuItem("No SD card found", "error", 0)};
         setMenu(menuTitle, errorItem, 1);
         return;
     }
-    
+
     if (!root.isDirectory())
     {
         Serial.println("Root is not a directory");
         root.close();
-        String errorItem[] = {"SD card error"};
+        MenuItem errorItem[] = {MenuItem("SD card error", "error", 0)};
         setMenu(menuTitle, errorItem, 1);
         return;
     }
@@ -70,29 +70,30 @@ void LoadConfigMenuAction::scanConfigFiles()
     if (fileCount == 0)
     {
         Serial.println("No JSON config files found");
-        String errorItem[] = {"No configs found"};
+        MenuItem errorItem[] = {MenuItem("No configs found", "error", 0)};
         setMenu(menuTitle, errorItem, 1);
         return;
     }
-    
+
     // Sort the files alphabetically
     sortConfigFiles(fileCount);
-    
-    // Create display names (without path or extension) for menu
-    String displayNames[MAX_CONFIG_FILES];
+
+    // Create menu items (with display names and full path as identifier)
+    MenuItem menuItems[MAX_CONFIG_FILES];
     for (int i = 0; i < fileCount; i++)
     {
-        displayNames[i] = Utils::trimFilename(configFiles[i]);
-        
+        String displayName = Utils::trimFilename(configFiles[i]);
+        menuItems[i] = MenuItem(displayName, configFiles[i], i);
+
         Serial.print("Display name: ");
-        Serial.print(displayNames[i]);
+        Serial.print(displayName);
         Serial.print(" -> ");
         Serial.println(configFiles[i]);
     }
-    
-    
-    // Set up the menu with display names
-    setMenu(menuTitle, displayNames, fileCount);
+
+
+    // Set up the menu with menu items
+    setMenu(menuTitle, menuItems, fileCount);
     
     Serial.print("Loaded ");
     Serial.print(fileCount);
@@ -127,39 +128,36 @@ void LoadConfigMenuAction::sortConfigFiles(int count)
 
 void LoadConfigMenuAction::onConfirm()
 {
+    MenuItem selectedItem = getSelectedItem();
     int selectedIdx = getSelectedIndex();
-    String selectedItem = getSelectedItem();
-    
+
     Serial.print("Load config - Item confirmed: ");
-    Serial.print(selectedItem);
-    Serial.print(" (index: ");
-    Serial.print(selectedIdx);
+    Serial.print(selectedItem.name);
+    Serial.print(" (identifier: ");
+    Serial.print(selectedItem.identifier);
+    Serial.print(", data: ");
+    Serial.print(selectedItem.data);
     Serial.println(")");
-    
+
     // Check if there are no configs or error state
-    if (selectedItem == "No SD card found" || 
-        selectedItem == "SD card error" || 
-        selectedItem == "No configs found")
+    if (selectedItem.identifier == "error")
     {
         Serial.println("Cannot load config - error state");
         return;
     }
-    
-    // Get the full filename from the stored array
-    if (selectedIdx >= 0 && selectedIdx < MAX_CONFIG_FILES)
-    {
-        String fullFilename = configFiles[selectedIdx];
-        
-        Serial.print("Loading config file: ");
-        Serial.println(fullFilename);
-        
-        // Convert String to const char* for RunActionParams
-        static char filenameBuffer[64];
-        fullFilename.toCharArray(filenameBuffer, sizeof(filenameBuffer));
-        
-        // Activate run action with selected config file
-        handler->activateRun({filenameBuffer});
-    }
+
+    // Use the identifier which contains the full filename path
+    String fullFilename = selectedItem.identifier;
+
+    Serial.print("Loading config file: ");
+    Serial.println(fullFilename);
+
+    // Convert String to const char* for RunActionParams
+    static char filenameBuffer[64];
+    fullFilename.toCharArray(filenameBuffer, sizeof(filenameBuffer));
+
+    // Activate run action with selected config file
+    handler->activateRun({filenameBuffer});
 }
 
 void LoadConfigMenuAction::onCancel()

@@ -6,6 +6,16 @@
 #include <USBHost_t36.h>
 #include "actions/action.h"
 
+struct MenuItem
+{
+    String name;
+    String identifier;
+    uint32_t data;
+
+    MenuItem() : name(""), identifier(""), data(0) {}
+    MenuItem(String n, String id, uint32_t d = 0) : name(n), identifier(id), data(d) {}
+};
+
 class MenuAction : public Action
 {
 protected:
@@ -14,7 +24,7 @@ protected:
     static const int MAX_ITEMS = 20;
 
     String menuTitle;
-    String menuItems[MAX_ITEMS];
+    MenuItem menuItems[MAX_ITEMS];
     int menuItemCount;
 
     int selectedIndex;
@@ -47,11 +57,11 @@ public:
     virtual void onCancel() = 0;
 
     // Public methods to configure menu
-    void setMenu(String title, String items[], int itemCount);
+    void setMenu(String title, MenuItem items[], int itemCount);
 
     // Get current selection
     int getSelectedIndex();
-    String getSelectedItem();
+    MenuItem getSelectedItem();
 
     // Force a menu refresh
     void refresh();
