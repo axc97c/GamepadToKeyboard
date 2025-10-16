@@ -26,7 +26,7 @@ private:
     const unsigned long blinkInterval = 500;
 
     void updateDisplay();
-    void handleKeyPress(int keyCode);
+    void handleKeyPress(int unicode);
     void finishInput();
     void cancelInput();
 

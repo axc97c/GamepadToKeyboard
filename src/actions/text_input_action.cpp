@@ -46,15 +46,16 @@ void TextInputAction::loop()
         int unicode = keyboardInput->getKeyPress();
         if (unicode != 0)
         {
-            // Convert unicode to keycode
-            int keyCode = KeyboardMapping::unicodeToKeyCode(unicode);
-
             Serial.print("TextInputAction: Received unicode ");
             Serial.print(unicode);
-            Serial.print(", converted to keyCode ");
-            Serial.println(keyCode);
+            Serial.print(" ('");
+            if (unicode >= 32 && unicode < 127)
+            {
+                Serial.print((char)unicode);
+            }
+            Serial.println("')");
 
-            handleKeyPress(keyCode);
+            handleKeyPress(unicode);
         }
     }
 
@@ -81,27 +82,18 @@ ActionType TextInputAction::getType()
     return ActionType::BIND_KEY; // Reuse BIND_KEY type since it's similar input mode
 }
 
-void TextInputAction::handleKeyPress(int keyCode)
+void TextInputAction::handleKeyPress(int unicode)
 {
-    Serial.print("TextInputAction: Key pressed: ");
-    Serial.print(KeyboardMapping::keyCodeToString(keyCode));
-    Serial.print(" (code: ");
-    Serial.print(keyCode);
-    Serial.println(")");
+    Serial.print("TextInputAction: Handling unicode: ");
+    Serial.println(unicode);
 
-    Serial.print("A: ");
-    Serial.println(KEY_A);
-    Serial.print("ENTER: ");
-    Serial.println(KEY_ENTER);
-
-    // Handle special keys
-    if (keyCode == KEY_ENTER || keyCode == KEY_RETURN)
+    // Handle special keys (by unicode value)
+    if (unicode == 13 || unicode == 10) // Enter/Return
     {
-        // Finish input
         finishInput();
         return;
     }
-    else if (keyCode == KEY_BACKSPACE || keyCode == KEY_DELETE)
+    else if (unicode == 8 || unicode == 127) // Backspace/Delete
     {
         // Remove last character
         if (inputText.length() > 0)
@@ -112,9 +104,8 @@ void TextInputAction::handleKeyPress(int keyCode)
         }
         return;
     }
-    else if (keyCode == KEY_ESC)
+    else if (unicode == 27) // ESC
     {
-        // Cancel input
         cancelInput();
         return;
     }
@@ -126,28 +117,43 @@ void TextInputAction::handleKeyPress(int keyCode)
         return;
     }
 
-    // Convert key code to character
-    // For simplicity, we'll handle alphanumeric keys
+    // Convert unicode to character - handle allowed characters
     char c = 0;
 
-    // Letters (a-z)
-    if (keyCode >= KEY_A && keyCode <= KEY_Z)
+    // Uppercase letters (A-Z) - ASCII 65-90
+    if (unicode >= 'A' && unicode <= 'Z')
     {
-        c = 'a' + (keyCode - KEY_A);
+        c = (char)unicode;
     }
-    // Numbers (0-9) - top row keys
-    else if (keyCode >= KEY_0 && keyCode <= KEY_9)
+    // Lowercase letters (a-z) - ASCII 97-122
+    else if (unicode >= 'a' && unicode <= 'z')
     {
-        c = '0' + (keyCode - KEY_0);
+        c = (char)unicode;
     }
-    // Underscore and dash
-    else if (keyCode == KEY_MINUS)
+    // Numbers (0-9) - ASCII 48-57
+    else if (unicode >= '0' && unicode <= '9')
+    {
+        c = (char)unicode;
+    }
+    // Space - convert to underscore for filename safety
+    else if (unicode == ' ' || unicode == 32)
+    {
+        c = '_';
+    }
+    // Underscore
+    else if (unicode == '_' || unicode == 95)
+    {
+        c = '_';
+    }
+    // Dash/Hyphen
+    else if (unicode == '-' || unicode == 45)
     {
         c = '-';
     }
-    else if (keyCode == KEY_SPACE)
+    // Period/Dot
+    else if (unicode == '.' || unicode == 46)
     {
-        c = '_'; // Replace space with underscore for filenames
+        c = '.';
     }
 
     // If we got a valid character, add it
@@ -157,12 +163,16 @@ void TextInputAction::handleKeyPress(int keyCode)
         cursorPosition = inputText.length();
         updateDisplay();
 
-        Serial.print("TextInputAction: Current input: ");
+        Serial.print("TextInputAction: Added '");
+        Serial.print(c);
+        Serial.print("', current input: ");
         Serial.println(inputText);
     }
     else
     {
-        Serial.println("TextInputAction: Invalid character for filename");
+        Serial.print("TextInputAction: Invalid/unsupported character (unicode ");
+        Serial.print(unicode);
+        Serial.println(")");
     }
 }
 
