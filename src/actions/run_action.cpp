@@ -33,8 +33,11 @@ void RunAction::init()
     // }
 
     // Store filename in config for display and later use
-    strncpy(mappingConfig.filename, params.filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
-    mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
+    if (mappingConfig.filename[0] == '\0')
+    {
+        strncpy(mappingConfig.filename, params.filename, mappingConfig.MAX_FILENAME_LENGTH - 1);
+        mappingConfig.filename[mappingConfig.MAX_FILENAME_LENGTH - 1] = '\0';
+    }
 
     DisplayLoadedFile();
 
