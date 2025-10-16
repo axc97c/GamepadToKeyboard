@@ -15,17 +15,34 @@ MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams
 void MenuAction::init()
 {
     Serial.println("MenuAction base init");
-    
-    // Call derived class initialization
+
+    // Store the previous selection before calling onInit
+    int previousSelection = selectedIndex;
+
+    // Call derived class initialization (which may call setMenu)
     onInit();
-    
-    selectedIndex = 0;
-    scrollOffset = 0;
+
+    // Restore selection if it's still valid for the new menu
+    if (previousSelection > 0 && previousSelection < menuItemCount)
+    {
+        selectedIndex = previousSelection;
+        Serial.print("MenuAction: Restored selection to index ");
+        Serial.println(selectedIndex);
+    }
+    else
+    {
+        Serial.print("MenuAction: Selection at index ");
+        Serial.println(selectedIndex);
+    }
+
+    // Update scroll offset for current selection
+    updateScrollOffset();
+
     lastInputTime = millis();
     devices->getLCD()->backlight();
 
     displayMenu();
-    
+
     Serial.println("MenuAction initialized");
     Serial.print("Selected: ");
     Serial.println(menuItems[selectedIndex].name);
@@ -172,8 +189,15 @@ void MenuAction::setMenu(String title, MenuItem items[], int itemCount)
     {
         menuItems[i] = items[i];
     }
-    selectedIndex = 0;
-    scrollOffset = 0;
+    // Don't reset selectedIndex here - let init() handle it
+    // This allows preservation of selection when rebuilding menus
+
+    // Ensure selectedIndex is within bounds of new menu
+    if (selectedIndex >= menuItemCount)
+    {
+        selectedIndex = 0;
+        scrollOffset = 0;
+    }
 }
 
 int MenuAction::getSelectedIndex()
