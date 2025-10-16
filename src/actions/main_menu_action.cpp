@@ -28,7 +28,6 @@ void MainMenuAction::onConfirm()
 {
     // Handle confirmation for the main menu
     MenuItem selectedItem = getSelectedItem();
-    int selectedIdx = getSelectedIndex();
 
     Serial.print("Main menu - Item confirmed: ");
     Serial.print(selectedItem.name);

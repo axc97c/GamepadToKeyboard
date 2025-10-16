@@ -96,7 +96,6 @@ String EditConfigMenuAction::getButtonKeyPair(int index)
 void EditConfigMenuAction::onConfirm()
 {
     MenuItem selectedItem = getSelectedItem();
-    int selectedIdx = getSelectedIndex();
 
     Serial.print("Edit config - Item confirmed: ");
     Serial.print(selectedItem.name);

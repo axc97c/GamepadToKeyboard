@@ -55,6 +55,9 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
     loadMappings(doc, config.mappings, config.numMappings, config.MAX_MAPPINGS);
     loadStickConfig(doc, &config.leftStick, &config.rightStick);
 
+    // Mark config as unmodified since we just loaded it
+    config.modified = false;
+
     return true;
 }
 
@@ -102,6 +105,9 @@ bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &conf
     }
     serializeJsonPretty(doc, file);
     file.close();
+
+    // Mark config as unmodified since we just saved it
+    config.modified = false;
 
     return true;
 }

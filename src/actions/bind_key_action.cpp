@@ -122,6 +122,10 @@ void BindKeyAction::applyKeyBinding(int keyCode)
     // Update the mapping configuration
     mappingConfig.mappings[params.mappingIndex].keyCode = keyCode;
 
+    // Mark config as modified
+    mappingConfig.modified = true;
+    Serial.println("Config marked as modified");
+
     // Show confirmation on LCD
     LiquidCrystal_I2C *lcd = devices->getLCD();
     if (lcd != nullptr)

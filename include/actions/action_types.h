@@ -74,8 +74,9 @@ struct JoystickMappingConfig
     int numMappings;
     StickConfig leftStick;
     StickConfig rightStick;
+    bool modified; // Flag to track if config has been changed since loading
 
-    JoystickMappingConfig() : numMappings(0)
+    JoystickMappingConfig() : numMappings(0), modified(false)
     {
         filename[0] = '\0';
     }

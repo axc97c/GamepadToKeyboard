@@ -129,7 +129,6 @@ void LoadConfigMenuAction::sortConfigFiles(int count)
 void LoadConfigMenuAction::onConfirm()
 {
     MenuItem selectedItem = getSelectedItem();
-    int selectedIdx = getSelectedIndex();
 
     Serial.print("Load config - Item confirmed: ");
     Serial.print(selectedItem.name);
