@@ -155,17 +155,6 @@ void ActionHandler::pushAction(Action *action)
         }
     }
 
-    // Reset input states to prevent carryover button presses
-    if (devices->getGamepadInput() != nullptr)
-    {
-        devices->getGamepadInput()->reset();
-    }
-    if (devices->getKeyboardInput() != nullptr)
-    {
-        devices->getKeyboardInput()->reset();
-    }
-    Serial.println("ActionHandler: Input states reset");
-
     // Set the new action as current
     currentAction = action;
     actionInitialized = false;
@@ -178,17 +167,6 @@ void ActionHandler::replaceCurrentAction(Action *action)
     {
         delete currentAction;
     }
-
-    // Reset input states to prevent carryover button presses
-    if (devices->getGamepadInput() != nullptr)
-    {
-        devices->getGamepadInput()->reset();
-    }
-    if (devices->getKeyboardInput() != nullptr)
-    {
-        devices->getKeyboardInput()->reset();
-    }
-    Serial.println("ActionHandler: Input states reset");
 
     currentAction = action;
     actionInitialized = false;
@@ -215,17 +193,6 @@ void ActionHandler::popAction()
     currentAction = actionStack[actionStackSize];
     actionStack[actionStackSize] = nullptr;
     actionInitialized = false;
-
-    // Reset input states to prevent carryover button presses
-    if (devices->getGamepadInput() != nullptr)
-    {
-        devices->getGamepadInput()->reset();
-    }
-    if (devices->getKeyboardInput() != nullptr)
-    {
-        devices->getKeyboardInput()->reset();
-    }
-    Serial.println("ActionHandler: Input states reset on pop");
 
     Serial.print("Popped action from stack. Stack size: ");
     Serial.println(actionStackSize);
