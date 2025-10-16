@@ -16,10 +16,37 @@ void EditConfigMenuAction::loop()
     // Check if we need to refresh the menu (after returning from bind key action)
     if (needsRefresh)
     {
-        buildMenuItems();
+        Serial.println("EditConfigMenuAction: Refreshing display after key binding");
+
+        // Just rebuild the ONE item that changed, not the whole menu!
+        int idx = selectedIndex;
+        if (idx >= 0 && idx < mappingConfig.numMappings && idx < menuItemCount)
+        {
+            Serial.print("Updating item ");
+            Serial.println(idx);
+
+            const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[idx].genericButton);
+            const char *keyName = KeyboardMapping::keyCodeToString(mappingConfig.mappings[idx].keyCode);
+
+            const char *displayButtonName = buttonName;
+            if (strncmp(buttonName, "BTN_", 4) == 0)
+            {
+                displayButtonName = buttonName + 4;
+            }
+
+            static char nameBuffer[32];
+            snprintf(nameBuffer, sizeof(nameBuffer), "%s > %s", displayButtonName, keyName);
+
+            menuItems[idx].name = String(nameBuffer);
+            Serial.print("Updated to: ");
+            Serial.println(menuItems[idx].name);
+        }
+
+        Serial.println("EditConfigMenuAction: Calling refresh()");
         refresh();
+
         needsRefresh = false;
-        Serial.println("EditConfigMenuAction: Menu refreshed after key binding");
+        Serial.println("EditConfigMenuAction: Refresh complete");
     }
 
     // Call the base class loop to handle normal menu operations
@@ -43,54 +70,105 @@ void EditConfigMenuAction::onInit()
 
 void EditConfigMenuAction::buildMenuItems()
 {
-    String displayName = Utils::trimFilename(mappingConfig.filename);
+    Serial.println("buildMenuItems START");
 
-    menuTitle = "Edit " + displayName;
-
-    // Create menu items - one per button mapping
-    MenuItem items[JoystickMappingConfig::MAX_MAPPINGS];
-    for (int i = 0; i < mappingConfig.numMappings; i++)
+    // Clear existing menu items to free String memory
+    for (int i = 0; i < menuItemCount; i++)
     {
-        String buttonKeyPair = getButtonKeyPair(i);
-        String identifier = String("mapping_") + String(i);
-        items[i] = MenuItem(buttonKeyPair, identifier, i);
+        menuItems[i].name = "";
+        menuItems[i].identifier = "";
+    }
+    menuItemCount = 0;
 
-        Serial.print("Menu item ");
-        Serial.print(i);
-        Serial.print(": ");
-        Serial.println(buttonKeyPair);
+    Serial.println("Cleared old items");
+
+    // Set title directly on inherited member to avoid String allocation
+    menuTitle = "Edit Config";
+
+    int itemCount = min(mappingConfig.numMappings, MAX_ITEMS);
+    Serial.print("Items: ");
+    Serial.println(itemCount);
+
+    // Build items directly into inherited menuItems array
+    for (int i = 0; i < itemCount; i++)
+    {
+        Serial.print("Item ");
+        Serial.println(i);
+
+        // Get names as const char* to avoid allocations
+        const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[i].genericButton);
+        const char *keyName = KeyboardMapping::keyCodeToString(mappingConfig.mappings[i].keyCode);
+
+        // Skip "BTN_" prefix
+        const char *displayButtonName = buttonName;
+        if (strncmp(buttonName, "BTN_", 4) == 0)
+        {
+            displayButtonName = buttonName + 4;
+        }
+
+        // Build the display string
+        static char nameBuffer[32];
+        snprintf(nameBuffer, sizeof(nameBuffer), "%s > %s", displayButtonName, keyName);
+
+        // Build identifier
+        static char idBuffer[16];
+        snprintf(idBuffer, sizeof(idBuffer), "mapping_%d", i);
+
+        // Assign to inherited menuItems array
+        menuItems[i].name = String(nameBuffer);
+        menuItems[i].identifier = String(idBuffer);
+        menuItems[i].data = i;
     }
 
-    setMenu(menuTitle, items, mappingConfig.numMappings);
+    // Set the count
+    menuItemCount = itemCount;
+
+    // Validate selectedIndex
+    if (selectedIndex >= menuItemCount)
+    {
+        selectedIndex = menuItemCount > 0 ? menuItemCount - 1 : 0;
+    }
+
+    Serial.println("buildMenuItems DONE");
 }
 
 String EditConfigMenuAction::getButtonKeyPair(int index)
 {
+    Serial.print("getButtonKeyPair(");
+    Serial.print(index);
+    Serial.print(")");
+
     if (index < 0 || index >= mappingConfig.numMappings)
     {
-        return "Invalid";
+        Serial.println(" - Index out of range!");
+        return String("Invalid");
     }
 
-    // Get button name
+    Serial.println(" - OK");
+
+    // Get button name (returns const char*, no allocation)
     const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[index].genericButton);
 
-    // Get key name
+    // Get key name (returns const char*, no allocation)
     const char *keyName = KeyboardMapping::keyCodeToString(mappingConfig.mappings[index].keyCode);
 
-    // Format: "BTN_SOUTH -> s"
-    // We need to shorten button names to fit on 20 char display
-    String shortButtonName = String(buttonName);
+    // Build result string efficiently using a char buffer
+    static char resultBuffer[32];
+    const char *displayButtonName = buttonName;
 
-    // Remove "BTN_" prefix if present
-    if (shortButtonName.startsWith("BTN_"))
+    // Skip "BTN_" prefix if present
+    if (strncmp(buttonName, "BTN_", 4) == 0)
     {
-        shortButtonName = shortButtonName.substring(4);
+        displayButtonName = buttonName + 4;
     }
 
-    // Create the display string
-    String result = shortButtonName + " > " + String(keyName);
+    // Format directly into buffer to avoid String concatenation
+    snprintf(resultBuffer, sizeof(resultBuffer), "%s > %s", displayButtonName, keyName);
 
-    return result;
+    Serial.print("Result: ");
+    Serial.println(resultBuffer);
+
+    return String(resultBuffer);
 }
 
 void EditConfigMenuAction::onConfirm()
