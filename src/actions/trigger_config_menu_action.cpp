@@ -3,6 +3,7 @@
 #include "actions/text_input_action.h"
 #include "devices.h"
 #include "mapping/mapping_config.h"
+#include "mapping/keyboard_mapping.h"
 #include "utils.h"
 
 namespace {
@@ -56,8 +57,13 @@ void TriggerConfigMenuAction::buildMenuItems()
     snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", mappingConfig.triggers.activationThreshold);
     addItem(nameBuffer, TRIGGER_CONFIG_THRESHOLD);
 
-    addItem("Left > Left", TRIGGER_CONFIG_LEFT);
-    addItem("Right > Right", TRIGGER_CONFIG_RIGHT);
+    const char *leftKeyName = KeyboardMapping::keyCodeToString(mappingConfig.triggers.keyLeft);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftKeyName);
+    addItem(nameBuffer, TRIGGER_CONFIG_LEFT);
+
+    const char *rightKeyName = KeyboardMapping::keyCodeToString(mappingConfig.triggers.keyRight);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightKeyName);
+    addItem(nameBuffer, TRIGGER_CONFIG_RIGHT);
 }
 
 void TriggerConfigMenuAction::onConfirm()
@@ -67,6 +73,22 @@ void TriggerConfigMenuAction::onConfirm()
     if (strcmp(selectedItem.identifier, TRIGGER_CONFIG_MODE) == 0)
     {
         handler->activateTriggerModeMenu();
+    }
+    else if (strcmp(selectedItem.identifier, TRIGGER_CONFIG_LEFT) == 0)
+    {
+        BindKeyActionParams params;
+        params.target = BindKeyTarget::TRIGGER_LEFT;
+        params.mappingIndex = -1; // Not used for trigger keys
+        needsRefresh = true;
+        handler->activateBindKey(params);
+    }
+    else if (strcmp(selectedItem.identifier, TRIGGER_CONFIG_RIGHT) == 0)
+    {
+        BindKeyActionParams params;
+        params.target = BindKeyTarget::TRIGGER_RIGHT;
+        params.mappingIndex = -1; // Not used for trigger keys
+        needsRefresh = true;
+        handler->activateBindKey(params);
     }
 }
 

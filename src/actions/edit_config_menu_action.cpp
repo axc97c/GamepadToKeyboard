@@ -122,6 +122,7 @@ void EditConfigMenuAction::onConfirm()
     if (mappingIndex >= 0 && mappingIndex < mappingConfig.numMappings)
     {
         BindKeyActionParams params;
+        params.target = BindKeyTarget::BUTTON_MAPPING;
         params.mappingIndex = mappingIndex;
         handler->activateBindKey(params);
         return;

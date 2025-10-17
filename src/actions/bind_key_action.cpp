@@ -15,10 +15,14 @@ BindKeyAction::~BindKeyAction()
 
 void BindKeyAction::init()
 {
-    if (params.mappingIndex < 0 || params.mappingIndex >= mappingConfig.numMappings)
+    // Validate parameters based on target type
+    if (params.target == BindKeyTarget::BUTTON_MAPPING)
     {
-        handler->popAction();
-        return;
+        if (params.mappingIndex < 0 || params.mappingIndex >= mappingConfig.numMappings)
+        {
+            handler->popAction();
+            return;
+        }
     }
 
     KeyboardInput* keyboardInput = devices->getKeyboardInput();
@@ -79,17 +83,29 @@ void BindKeyAction::updateDisplay()
 
     lcd->clear();
 
-    // Get the button name
-    const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton);
-    String shortButtonName = String(buttonName);
+    // Get the target name based on what we're binding
+    String targetName;
+    if (params.target == BindKeyTarget::BUTTON_MAPPING)
+    {
+        const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton);
+        targetName = String(buttonName);
+    }
+    else if (params.target == BindKeyTarget::TRIGGER_LEFT)
+    {
+        targetName = "Left Trigger";
+    }
+    else if (params.target == BindKeyTarget::TRIGGER_RIGHT)
+    {
+        targetName = "Right Trigger";
+    }
 
     // Line 1: "Bind key for:"
     lcd->setCursor(0, 0);
     lcd->print("Bind key for:");
 
-    // Line 2: Button name (centered if short enough)
+    // Line 2: Target name
     lcd->setCursor(0, 1);
-    lcd->print(shortButtonName);
+    lcd->print(targetName);
 
     // Line 3: "Press a key..."
     lcd->setCursor(0, 2);
@@ -106,11 +122,30 @@ void BindKeyAction::applyKeyBinding(int keyCode)
     Serial.print(KeyboardMapping::keyCodeToString(keyCode));
     Serial.print(" (code: ");
     Serial.print(keyCode);
-    Serial.print(") to button ");
-    Serial.println(JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton));
+    Serial.print(") to ");
 
-    // Update the mapping configuration
-    mappingConfig.mappings[params.mappingIndex].keyCode = keyCode;
+    String targetName;
+
+    // Update the mapping configuration based on target type
+    if (params.target == BindKeyTarget::BUTTON_MAPPING)
+    {
+        const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton);
+        Serial.println(buttonName);
+        targetName = String(buttonName);
+        mappingConfig.mappings[params.mappingIndex].keyCode = keyCode;
+    }
+    else if (params.target == BindKeyTarget::TRIGGER_LEFT)
+    {
+        Serial.println("Left Trigger");
+        targetName = "Left Trigger";
+        mappingConfig.triggers.keyLeft = keyCode;
+    }
+    else if (params.target == BindKeyTarget::TRIGGER_RIGHT)
+    {
+        Serial.println("Right Trigger");
+        targetName = "Right Trigger";
+        mappingConfig.triggers.keyRight = keyCode;
+    }
 
     // Mark config as modified
     mappingConfig.modified = true;
@@ -124,10 +159,7 @@ void BindKeyAction::applyKeyBinding(int keyCode)
         lcd->setCursor(0, 0);
         lcd->print("Key bound!");
         lcd->setCursor(0, 1);
-
-        const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton);
-
-        lcd->print(buttonName);
+        lcd->print(targetName);
         lcd->print(" > ");
         lcd->print(KeyboardMapping::keyCodeToString(keyCode));
 

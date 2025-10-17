@@ -136,9 +136,17 @@ struct StickConfigActionParams
     bool isRight;
 };
 
+enum class BindKeyTarget : uint8_t
+{
+    BUTTON_MAPPING,  // Binding a button from mappings array
+    TRIGGER_LEFT,    // Binding left trigger key
+    TRIGGER_RIGHT    // Binding right trigger key
+};
+
 struct BindKeyActionParams
 {
-    int mappingIndex; // Index into mappingConfig.mappings array
+    BindKeyTarget target;
+    int mappingIndex; // Index into mappingConfig.mappings array (only used for BUTTON_MAPPING)
 };
 
 // Global joystick mapping configuration instance
