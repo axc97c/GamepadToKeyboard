@@ -13,6 +13,7 @@ class EditConfigMenuAction;
 class BindKeyAction;
 class TextInputAction;
 class SaveAsAction;
+class StickConfigMenuAction;
 struct TextInputActionParams;
 
 class ActionHandler
@@ -37,6 +38,7 @@ private:
     BindKeyAction *bindKeyAction;
     TextInputAction *textInputAction;
     SaveAsAction *saveAsAction;
+    StickConfigMenuAction *stickConfigMenuAction;
 
     void pushAction(Action *action);
     void replaceCurrentAction(Action *action);
@@ -53,6 +55,7 @@ public:
     void activateBindKey(BindKeyActionParams params);
     void activateTextInput(TextInputActionParams params);
     void activateSaveAs();
+    void activateStickConfigMenu(StickConfigActionParams params);
 
     // Get current action (returns nullptr if none active)
     Action *getCurrentAction() { return currentAction; }

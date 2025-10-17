@@ -19,7 +19,8 @@ public:
     // Implement pure virtual methods from MenuAction
     void onInit() override;
     void onConfirm() override;
-    void onCancel() override;
+
+    void clear() override;
 };
 
 #endif // LOAD_CONFIG_MENU_ACTION_H

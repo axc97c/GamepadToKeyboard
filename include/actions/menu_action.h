@@ -135,7 +135,7 @@ public:
     // For singleton reuse
     void setParams(MenuActionParams p);
 
-    void clear();
+    virtual void clear();
     void addItem(const char *name, const char *id, uint32_t data = 0)
     {
         menuItems[menuItemCount++].set(name, id, data);

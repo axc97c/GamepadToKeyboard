@@ -23,18 +23,7 @@ void LoadConfigMenuAction::onInit()
 
 void LoadConfigMenuAction::scanConfigFiles()
 {
-    // Clear existing menu items first
-    for (int i = 0; i < MAX_ITEMS; i++)
-    {
-        menuItems[i].clear();
-    }
-    menuItemCount = 0;
-
-    // Clear config files array
-    for (int i = 0; i < MAX_CONFIG_FILES; i++)
-    {
-        configFiles[i][0] = '\0';
-    }
+    clear();
 
     // Title already set in constructor
     int fileCount = 0;
@@ -45,8 +34,7 @@ void LoadConfigMenuAction::scanConfigFiles()
     {
         Serial.println("LoadConfigMenuAction: Failed to open root directory");
         // Reuse pre-allocated item instead of temp array
-        menuItems[0].set("No SD card found", "error", 0);
-        menuItemCount = 1;
+        addItem("No SD card found", "error", 0);
         return;
     }
 
@@ -55,8 +43,7 @@ void LoadConfigMenuAction::scanConfigFiles()
         Serial.println("LoadConfigMenuAction: Root is not a directory");
         root.close();
         // Reuse pre-allocated item instead of temp array
-        menuItems[0].set("SD card error", "error", 0);
-        menuItemCount = 1;
+        addItem("SD card error", "error", 0);
         return;
     }
 
@@ -96,8 +83,7 @@ void LoadConfigMenuAction::scanConfigFiles()
     {
         Serial.println("LoadConfigMenuAction: No JSON config files found");
         // Reuse pre-allocated item instead of temp array
-        menuItems[0].set("No configs found", "error", 0);
-        menuItemCount = 1;
+        addItem("No configs found", "error", 0);
         return;
     }
 
@@ -113,15 +99,13 @@ void LoadConfigMenuAction::scanConfigFiles()
         Utils::trimFilenameToBuffer(configFiles[i], displayName, sizeof(displayName));
 
         // Use full path as identifier (already in char array)
-        menuItems[i].set(displayName, configFiles[i], i);
+        addItem(displayName, configFiles[i], i);
 
         Serial.print("LoadConfigMenuAction: Display name: ");
         Serial.print(displayName);
         Serial.print(" -> ");
         Serial.println(configFiles[i]);
     }
-
-    menuItemCount = fileCount;
 
     Serial.print("LoadConfigMenuAction: Loaded ");
     Serial.print(fileCount);
@@ -185,10 +169,12 @@ void LoadConfigMenuAction::onConfirm()
     handler->activateRun(runParams);
 }
 
-void LoadConfigMenuAction::onCancel()
+void LoadConfigMenuAction::clear()
 {
-    // Handle cancel - return to previous action
-    Serial.println("LoadConfigMenuAction: Cancel/Back pressed, returning to previous action");
+    for (int i = 0; i < MAX_CONFIG_FILES; i++)
+    {
+        configFiles[i][0] = '\0';
+    }
 
-    handler->popAction();
+    MenuAction::clear();
 }

@@ -9,18 +9,17 @@ private:
     bool needsRefresh;
 
     void buildMenuItems();
-    String getButtonKeyPair(int index);
-
+    StickConfigActionParams stickParams;
+    StickConfig* stickConfig;
+    
 public:
     StickConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, StickConfigActionParams p);
 
-    // Override loop to handle refresh after returning from bind key action
     void loop() override;
-
-    // Implement pure virtual methods from MenuAction
     void onInit() override;
     void onConfirm() override;
-    void onCancel() override;
+
+    void setStickParams(StickConfigActionParams p);
 };
 
 #endif // STICK_CONFIG_MENU_ACTION_H

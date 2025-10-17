@@ -114,7 +114,7 @@ struct MenuActionParams
 
 struct StickConfigActionParams  : MenuActionParams
 {
-    StickConfig* config;
+    bool isRight;
 };
 
 struct BindKeyActionParams

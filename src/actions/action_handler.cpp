@@ -7,6 +7,7 @@
 #include "actions/bind_key_action.h"
 #include "actions/text_input_action.h"
 #include "actions/save_as_action.h"
+#include "actions/stick_config_menu_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -27,6 +28,7 @@ ActionHandler::ActionHandler(DeviceManager *dev)
     bindKeyAction = new BindKeyAction(devices, this, {0});
     textInputAction = new TextInputAction(devices, this, {});
     saveAsAction = new SaveAsAction(devices, this);
+    stickConfigMenuAction = new StickConfigMenuAction(devices, this, {});
     Serial.println("ActionHandler: Action instances pre-allocated");
 }
 
@@ -130,6 +132,15 @@ void ActionHandler::activateSaveAs()
     saveAsAction->reset();
     pushAction(saveAsAction);
     Serial.println("ActionHandler: Save As activated [SINGLETON]");
+}
+
+void ActionHandler::activateStickConfigMenu(StickConfigActionParams params)
+{
+    Serial.print("ActionHandler: StickConfigActionParams.isRight : ");
+    Serial.println(params.isRight);
+    stickConfigMenuAction->setStickParams(params);
+    pushAction(stickConfigMenuAction);
+    Serial.println("ActionHandler: Stick Config Menu activated [SINGLETON]");
 }
 
 ActionType ActionHandler::getCurrentActionType()

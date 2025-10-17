@@ -6,24 +6,53 @@
 #include "utils.h"
 
 StickConfigMenuAction::StickConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, StickConfigActionParams p)
-    : MenuAction(dev, hdlr, p)
+    : MenuAction(dev, hdlr, p), needsRefresh(false)
 {
-    // Set the fixed title in constructor since it never changes
-    // setTitle("Main Menu");
+    stickParams = p;
+}
 
-    // // Populate fixed menu items in pre-allocated array (no dynamic allocation!)
-    // menuItems[0].set("Load config", "load_config", 0);
-    // menuItems[1].set("Edit config", "edit_config", 0);
-    // menuItems[2].set("Save config", "save_config", 0);
-    // menuItems[3].set("Save config as...", "save_config_as", 0);
-    // menuItemCount = 4;
+void StickConfigMenuAction::setStickParams(StickConfigActionParams p)
+{
+    stickParams = p;
+    MenuAction::setParams(p);
+}
+
+void StickConfigMenuAction::loop()
+{
+    // Check if we need to refresh the menu (after returning from bind key action)
+    if (needsRefresh)
+    {
+        Serial.println("EditConfigMenuAction: Refreshing display after key binding");
+        buildMenuItems();
+        refresh();
+        needsRefresh = false;
+        Serial.println("EditConfigMenuAction: Refresh complete");
+    }
+
+    // Call the base class loop to handle normal menu operations
+    MenuAction::loop();
 }
 
 void StickConfigMenuAction::onInit()
 {
+
     Serial.println("StickConfigMenuAction: Setting up");
-    // Menu items already populated in constructor - nothing to do here!
+    stickConfig = stickParams.isRight ? &mappingConfig.rightStick : &mappingConfig.leftStick;
+    buildMenuItems();
     Serial.println("StickConfigMenuAction: Setup complete");
+}
+
+void StickConfigMenuAction::buildMenuItems()
+{
+    clear();
+
+    char nameBuffer[MenuItem::MAX_NAME_LEN];
+    snprintf(nameBuffer, sizeof(nameBuffer), "Stick: %s", stickParams.isRight ? "Right" : "Left");
+    setTitle(nameBuffer);
+
+    const char *leftBehaviourName = MappingConfig::stickBehaviorToString(stickConfig->behavior);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Mode > %s", leftBehaviourName);
+    addItem(nameBuffer, "mode", 1);
 }
 
 void StickConfigMenuAction::onConfirm()
@@ -57,12 +86,4 @@ void StickConfigMenuAction::onConfirm()
     // {
     //     handler->activateEditConfigMenu({0});
     // }
-}
-
-void StickConfigMenuAction::onCancel()
-{
-    // Handle cancel for the main menu - return to previous action (Run)
-    Serial.println("StickConfigMenuAction: Cancel/Back pressed, returning to previous action");
-
-    handler->popAction();
 }
