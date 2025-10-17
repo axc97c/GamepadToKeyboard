@@ -437,9 +437,9 @@ void RunAction::processTriggers(int leftAxis, int rightAxis)
         return;
     }
 
-    JoystickController *joy = devices->getJoystick();
-    int leftValue = joy->getAxis(leftAxis);
-    int rightValue = joy->getAxis(rightAxis);
+    //JoystickController *joy = devices->getJoystick();
+    //int leftValue = joy->getAxis(leftAxis);
+    //int rightValue = joy->getAxis(rightAxis);
 
     // Apply behavior
     switch (mappingConfig.triggers.behavior)
