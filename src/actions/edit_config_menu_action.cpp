@@ -6,9 +6,11 @@
 #include "devices.h"
 #include "utils.h"
 
-static const char* MENU_LEFT_STICK = "left_stick";
-static const char* MENU_RIGHT_STICK = "right_stick";
-static const char* MENU_TRIGGERS = "triggers";
+namespace {
+    constexpr const char* MENU_LEFT_STICK = "left_stick";
+    constexpr const char* MENU_RIGHT_STICK = "right_stick";
+    constexpr const char* MENU_TRIGGERS = "triggers";
+}
 
 EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr)
     : MenuAction(dev, hdlr), needsRefresh(false)

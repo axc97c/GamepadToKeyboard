@@ -5,6 +5,17 @@
 #include "mapping/mapping_config.h"
 #include "utils.h"
 
+namespace {
+    constexpr const char* STICK_CONFIG_MODE = "mode";
+    constexpr const char* STICK_CONFIG_SENSITIVITY = "sensitivity";
+    constexpr const char* STICK_CONFIG_DEADZONE = "deadzone";
+    constexpr const char* STICK_CONFIG_THRESHOLD = "threshold";
+    constexpr const char* STICK_CONFIG_UP = "up";
+    constexpr const char* STICK_CONFIG_DOWN = "down";
+    constexpr const char* STICK_CONFIG_LEFT = "left";
+    constexpr const char* STICK_CONFIG_RIGHT = "right";
+}
+
 StickConfigMenuAction::StickConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, StickConfigActionParams p)
     : MenuAction(dev, hdlr), needsRefresh(false)
 {
@@ -44,21 +55,21 @@ void StickConfigMenuAction::buildMenuItems()
 
     const char *leftBehaviourName = MappingConfig::stickBehaviorToString(stickConfig->behavior);
     snprintf(nameBuffer, sizeof(nameBuffer), "Mode: %s", leftBehaviourName);
-    addItem(nameBuffer, "mode", 1);
+    addItem(nameBuffer, STICK_CONFIG_MODE, 1);
 
     snprintf(nameBuffer, sizeof(nameBuffer), "Sensitivity: %.2f", stickConfig->sensitivity);
-    addItem(nameBuffer, "sensitivity");
+    addItem(nameBuffer, STICK_CONFIG_SENSITIVITY);
 
     snprintf(nameBuffer, sizeof(nameBuffer), "Deadzone: %d", stickConfig->deadzone);
-    addItem(nameBuffer, "deadzone");
+    addItem(nameBuffer, STICK_CONFIG_DEADZONE);
 
     snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", stickConfig->activationThreshold);
-    addItem(nameBuffer, "threshold");
+    addItem(nameBuffer, STICK_CONFIG_THRESHOLD);
 
-    addItem("Up > Up", "up");
-    addItem("Down > Down", "down");
-    addItem("Left > Left", "left");
-    addItem("Right > Right", "right");
+    addItem("Up > Up", STICK_CONFIG_UP);
+    addItem("Down > Down", STICK_CONFIG_DOWN);
+    addItem("Left > Left", STICK_CONFIG_LEFT);
+    addItem("Right > Right", STICK_CONFIG_RIGHT);
 }
 
 void StickConfigMenuAction::onConfirm()
@@ -74,7 +85,7 @@ void StickConfigMenuAction::onConfirm()
     Serial.println(")");
 
     // Handle each menu option using identifier (now char array - use strcmp)
-    if (strcmp(selectedItem.identifier, "mode") == 0)
+    if (strcmp(selectedItem.identifier, STICK_CONFIG_MODE) == 0)
     {
         handler->activateStickModeMenu(stickParams);
     }
@@ -94,17 +105,17 @@ void StickConfigMenuAction::changeValue(bool isDecrease)
 {
     MenuItem selectedItem = getSelectedItem();
 
-    if (strcmp(selectedItem.identifier, "sensitivity") == 0)
+    if (strcmp(selectedItem.identifier, STICK_CONFIG_SENSITIVITY) == 0)
     {
         needsRefresh = true;
         stickConfig->sensitivity += isDecrease ? -0.01 : 0.01;
     }
-    else if (strcmp(selectedItem.identifier, "deadzone") == 0)
+    else if (strcmp(selectedItem.identifier, STICK_CONFIG_DEADZONE) == 0)
     {
         needsRefresh = true;
         stickConfig->deadzone += isDecrease ? -1 : 1;
     }
-    else if (strcmp(selectedItem.identifier, "threshold") == 0)
+    else if (strcmp(selectedItem.identifier, STICK_CONFIG_THRESHOLD) == 0)
     {
         needsRefresh = true;
         stickConfig->activationThreshold += isDecrease ? -1 : 1;

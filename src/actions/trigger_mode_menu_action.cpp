@@ -5,6 +5,16 @@
 #include "mapping/mapping_config.h"
 #include "utils.h"
 
+namespace {
+    constexpr const char* TRIGGER_MODE_DISABLED = "disabled";
+    constexpr const char* TRIGGER_MODE_MOUSE_X = "mouse_x";
+    constexpr const char* TRIGGER_MODE_MOUSE_Y = "mouse_y";
+    constexpr const char* TRIGGER_MODE_SCROLL = "scroll";
+    constexpr const char* TRIGGER_MODE_KEYS = "keys";
+    constexpr const char* TRIGGER_MODE_JOYSTICK_X = "joystick_x";
+    constexpr const char* TRIGGER_MODE_JOYSTICK_Y = "joystick_y";
+}
+
 TriggerModeMenuAction::TriggerModeMenuAction(DeviceManager *dev, ActionHandler *hdlr)
     : MenuAction(dev, hdlr), needsRefresh(false)
 {
@@ -12,44 +22,44 @@ TriggerModeMenuAction::TriggerModeMenuAction(DeviceManager *dev, ActionHandler *
 
     setTitle("Trigger Mode");
 
-    addItem("Disabled", "disabled");
-    addItem("Mouse X", "mouse_x");
-    addItem("Mouse Y", "mouse_y");
-    addItem("Scroll", "scroll");
-    addItem("Keys", "keys");
-    addItem("Joystick X", "joystick_x");
-    addItem("Joystick Y", "joystick_y");
+    addItem("Disabled", TRIGGER_MODE_DISABLED);
+    addItem("Mouse X", TRIGGER_MODE_MOUSE_X);
+    addItem("Mouse Y", TRIGGER_MODE_MOUSE_Y);
+    addItem("Scroll", TRIGGER_MODE_SCROLL);
+    addItem("Keys", TRIGGER_MODE_KEYS);
+    addItem("Joystick X", TRIGGER_MODE_JOYSTICK_X);
+    addItem("Joystick Y", TRIGGER_MODE_JOYSTICK_Y);
 }
 
 void TriggerModeMenuAction::onConfirm()
 {
     MenuItem selectedItem = getSelectedItem();
 
-    if (strcmp(selectedItem.identifier, "disabled") == 0)
+    if (strcmp(selectedItem.identifier, TRIGGER_MODE_DISABLED) == 0)
     {
         mappingConfig.triggers.behavior = TriggerBehavior::DISABLED;
     }
-    else if (strcmp(selectedItem.identifier, "mouse_x") == 0)
+    else if (strcmp(selectedItem.identifier, TRIGGER_MODE_MOUSE_X) == 0)
     {
         mappingConfig.triggers.behavior = TriggerBehavior::MOUSE_X;
     }
-    else if (strcmp(selectedItem.identifier, "mouse_y") == 0)
+    else if (strcmp(selectedItem.identifier, TRIGGER_MODE_MOUSE_Y) == 0)
     {
         mappingConfig.triggers.behavior = TriggerBehavior::MOUSE_Y;
     }
-    else if (strcmp(selectedItem.identifier, "scroll") == 0)
+    else if (strcmp(selectedItem.identifier, TRIGGER_MODE_SCROLL) == 0)
     {
         mappingConfig.triggers.behavior = TriggerBehavior::SCROLL_WHEEL;
     }
-    else if (strcmp(selectedItem.identifier, "keys") == 0)
+    else if (strcmp(selectedItem.identifier, TRIGGER_MODE_KEYS) == 0)
     {
         mappingConfig.triggers.behavior = TriggerBehavior::BUTTONS;
     }
-    else if (strcmp(selectedItem.identifier, "joystick_x") == 0)
+    else if (strcmp(selectedItem.identifier, TRIGGER_MODE_JOYSTICK_X) == 0)
     {
         mappingConfig.triggers.behavior = TriggerBehavior::JOYSTICK_X;
     }
-    else if (strcmp(selectedItem.identifier, "joystick_y") == 0)
+    else if (strcmp(selectedItem.identifier, TRIGGER_MODE_JOYSTICK_Y) == 0)
     {
         mappingConfig.triggers.behavior = TriggerBehavior::JOYSTICK_Y;
     }

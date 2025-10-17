@@ -6,6 +6,15 @@
 #include "mapping/mapping_config.h"
 #include "utils.h"
 
+namespace {
+    constexpr const char* STICK_MODE_DISABLED = "disabled";
+    constexpr const char* STICK_MODE_MOUSE = "mouse";
+    constexpr const char* STICK_MODE_KEYS = "keys";
+    constexpr const char* STICK_MODE_SCROLL = "scroll";
+    constexpr const char* STICK_MODE_WASD = "wasd";
+    constexpr const char* STICK_MODE_ARROWS = "arrows";
+}
+
 StickModeMenuAction::StickModeMenuAction(DeviceManager *dev, ActionHandler *hdlr, StickConfigActionParams p)
     : MenuAction(dev, hdlr), needsRefresh(false)
 {
@@ -18,12 +27,12 @@ void StickModeMenuAction::setStickParams(StickConfigActionParams p)
 
     clear();
 
-    addItem("Disabled", "disabled");
-    addItem("Mouse", "mouse");
-    addItem("Custom Keys", "keys");
-    addItem("Scroll", "scroll");
-    addItem("WASD Keys", "wasd");
-    addItem("Arrow Keys", "arrows");
+    addItem("Disabled", STICK_MODE_DISABLED);
+    addItem("Mouse", STICK_MODE_MOUSE);
+    addItem("Custom Keys", STICK_MODE_KEYS);
+    addItem("Scroll", STICK_MODE_SCROLL);
+    addItem("WASD Keys", STICK_MODE_WASD);
+    addItem("Arrow Keys", STICK_MODE_ARROWS);
 }
 
 void StickModeMenuAction::loop()
@@ -55,27 +64,27 @@ void StickModeMenuAction::onConfirm()
 {
     MenuItem selectedItem = getSelectedItem();
 
-    if (strcmp(selectedItem.identifier, "disabled") == 0)
+    if (strcmp(selectedItem.identifier, STICK_MODE_DISABLED) == 0)
     {
         stickConfig->behavior = StickBehavior::DISABLED;
     }
-    else if (strcmp(selectedItem.identifier, "mouse") == 0)
+    else if (strcmp(selectedItem.identifier, STICK_MODE_MOUSE) == 0)
     {
         stickConfig->behavior = StickBehavior::MOUSE_MOVEMENT;
     }
-    else if (strcmp(selectedItem.identifier, "keys") == 0)
+    else if (strcmp(selectedItem.identifier, STICK_MODE_KEYS) == 0)
     {
         stickConfig->behavior = StickBehavior::BUTTON_EMULATION;
     }
-    else if (strcmp(selectedItem.identifier, "scroll") == 0)
+    else if (strcmp(selectedItem.identifier, STICK_MODE_SCROLL) == 0)
     {
         stickConfig->behavior = StickBehavior::SCROLL_WHEEL;
     }
-    else if (strcmp(selectedItem.identifier, "wasd") == 0)
+    else if (strcmp(selectedItem.identifier, STICK_MODE_WASD) == 0)
     {
         stickConfig->behavior = StickBehavior::WASD_KEYS;
     }
-    else if (strcmp(selectedItem.identifier, "arrows") == 0)
+    else if (strcmp(selectedItem.identifier, STICK_MODE_ARROWS) == 0)
     {
         stickConfig->behavior = StickBehavior::ARROW_KEYS;
     }

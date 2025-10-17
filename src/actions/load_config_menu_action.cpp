@@ -4,6 +4,10 @@
 #include "utils.h"
 #include <SD.h>
 
+namespace {
+    constexpr const char* MENU_ERROR = "error";
+}
+
 LoadConfigMenuAction::LoadConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr)
     : MenuAction(dev, hdlr)
 {
@@ -34,7 +38,7 @@ void LoadConfigMenuAction::scanConfigFiles()
     {
         Serial.println("LoadConfigMenuAction: Failed to open root directory");
         // Reuse pre-allocated item instead of temp array
-        addItem("No SD card found", "error", 0);
+        addItem("No SD card found", MENU_ERROR, 0);
         return;
     }
 
@@ -43,7 +47,7 @@ void LoadConfigMenuAction::scanConfigFiles()
         Serial.println("LoadConfigMenuAction: Root is not a directory");
         root.close();
         // Reuse pre-allocated item instead of temp array
-        addItem("SD card error", "error", 0);
+        addItem("SD card error", MENU_ERROR, 0);
         return;
     }
 
@@ -79,7 +83,7 @@ void LoadConfigMenuAction::scanConfigFiles()
     {
         Serial.println("LoadConfigMenuAction: No JSON config files found");
         // Reuse pre-allocated item instead of temp array
-        addItem("No configs found", "error", 0);
+        addItem("No configs found", MENU_ERROR, 0);
         return;
     }
 
@@ -146,7 +150,7 @@ void LoadConfigMenuAction::onConfirm()
     Serial.println(")");
 
     // Check if there are no configs or error state (identifier is now char array)
-    if (strcmp(selectedItem.identifier, "error") == 0)
+    if (strcmp(selectedItem.identifier, MENU_ERROR) == 0)
     {
         Serial.println("LoadConfigMenuAction: Cannot load config - error state");
         return;

@@ -5,6 +5,13 @@
 #include "mapping/mapping_config.h"
 #include "utils.h"
 
+namespace {
+    constexpr const char* MENU_LOAD_CONFIG = "load_config";
+    constexpr const char* MENU_EDIT_CONFIG = "edit_config";
+    constexpr const char* MENU_SAVE_CONFIG = "save_config";
+    constexpr const char* MENU_SAVE_CONFIG_AS = "save_config_as";
+}
+
 MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr)
     : MenuAction(dev, hdlr)
 {
@@ -12,10 +19,10 @@ MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr)
 
     clear();
     setTitle("Main Menu");
-    addItem("Load config", "load_config");
-    addItem("Edit config", "edit_config");
-    addItem("Save config", "save_config");
-    addItem("Save config as...", "save_config_as");
+    addItem("Load config", MENU_LOAD_CONFIG);
+    addItem("Edit config", MENU_EDIT_CONFIG);
+    addItem("Save config", MENU_SAVE_CONFIG);
+    addItem("Save config as...", MENU_SAVE_CONFIG_AS);
 }
 
 void MainMenuAction::onConfirm()
@@ -32,20 +39,20 @@ void MainMenuAction::onConfirm()
     Serial.println(")");
 
     // Handle each menu option using identifier (now char array - use strcmp)
-    if (strcmp(selectedItem.identifier, "load_config") == 0)
+    if (strcmp(selectedItem.identifier, MENU_LOAD_CONFIG) == 0)
     {
         handler->activateLoadConfigMenu();
     }
-    else if (strcmp(selectedItem.identifier, "save_config") == 0)
+    else if (strcmp(selectedItem.identifier, MENU_SAVE_CONFIG) == 0)
     {
         performSave();
     }
-    else if (strcmp(selectedItem.identifier, "save_config_as") == 0)
+    else if (strcmp(selectedItem.identifier, MENU_SAVE_CONFIG_AS) == 0)
     {
         // Open save as action
         handler->activateSaveAs();
     }
-    else if (strcmp(selectedItem.identifier, "edit_config") == 0)
+    else if (strcmp(selectedItem.identifier, MENU_EDIT_CONFIG) == 0)
     {
         handler->activateEditConfigMenu();
     }
