@@ -33,10 +33,6 @@ void setup()
     devices.lcd = &lcd;
 
     Serial.begin(115200);
-    while (!Serial && millis() < 3000)
-    {
-    };
-
     Serial.println("Main: === GamePad to Keyboard Starting ===");
     Serial.println("Main: Initializing USB Host...");
 
