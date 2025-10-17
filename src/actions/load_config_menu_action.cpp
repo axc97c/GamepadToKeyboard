@@ -62,11 +62,7 @@ void LoadConfigMenuAction::scanConfigFiles()
                  strcmp(filename + len - 5, ".JSON") == 0))
             {
                 // Store full filename with path (no heap allocation!)
-                // Intentional truncation - filenames longer than 31 chars will be truncated
-                #pragma GCC diagnostic push
-                #pragma GCC diagnostic ignored "-Wformat-truncation"
                 snprintf(configFiles[fileCount], MAX_FILENAME_LEN, "/%s", filename);
-                #pragma GCC diagnostic pop
 
                 Serial.print("LoadConfigMenuAction: Found config file: ");
                 Serial.println(configFiles[fileCount]);
@@ -129,12 +125,9 @@ void LoadConfigMenuAction::sortConfigFiles(int count)
                 // Swap using char array swap (no heap allocation!)
                 // Intentional full buffer copy (already null-terminated strings)
                 char temp[MAX_FILENAME_LEN];
-                #pragma GCC diagnostic push
-                #pragma GCC diagnostic ignored "-Wstringop-truncation"
                 strncpy(temp, configFiles[j], MAX_FILENAME_LEN);
                 strncpy(configFiles[j], configFiles[j + 1], MAX_FILENAME_LEN);
                 strncpy(configFiles[j + 1], temp, MAX_FILENAME_LEN);
-                #pragma GCC diagnostic pop
             }
         }
     }

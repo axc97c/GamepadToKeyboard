@@ -14,6 +14,7 @@ class BindKeyAction;
 class TextInputAction;
 class SaveAsAction;
 class StickConfigMenuAction;
+class StickModeMenuAction;
 struct TextInputActionParams;
 
 class ActionHandler
@@ -39,6 +40,7 @@ private:
     TextInputAction *textInputAction;
     SaveAsAction *saveAsAction;
     StickConfigMenuAction *stickConfigMenuAction;
+    StickModeMenuAction *stickModeMenuAction;
 
     void pushAction(Action *action);
     void replaceCurrentAction(Action *action);
@@ -56,6 +58,7 @@ public:
     void activateTextInput(TextInputActionParams params);
     void activateSaveAs();
     void activateStickConfigMenu(StickConfigActionParams params);
+    void activateStickModeMenu(StickConfigActionParams params);
 
     // Get current action (returns nullptr if none active)
     Action *getCurrentAction() { return currentAction; }

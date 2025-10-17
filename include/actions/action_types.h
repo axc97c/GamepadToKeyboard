@@ -85,10 +85,7 @@ struct JoystickMappingConfig
 
     void setFilename(const char *newName)
     {
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(filename, newName, MAX_FILENAME_LENGTH - 1);
-        #pragma GCC diagnostic pop
         filename[MAX_FILENAME_LENGTH - 1] = '\0';
 
         Utils::trimFilenameToBuffer(filename, displayName, MAX_FILENAME_LENGTH);

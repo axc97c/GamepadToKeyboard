@@ -8,6 +8,7 @@
 #include "actions/text_input_action.h"
 #include "actions/save_as_action.h"
 #include "actions/stick_config_menu_action.h"
+#include "actions/stick_mode_menu_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -26,6 +27,7 @@ ActionHandler::ActionHandler(DeviceManager *dev)
     textInputAction = new TextInputAction(devices, this, {});
     saveAsAction = new SaveAsAction(devices, this);
     stickConfigMenuAction = new StickConfigMenuAction(devices, this, {});
+    stickModeMenuAction = new StickModeMenuAction(devices, this, {});
 }
 
 ActionHandler::~ActionHandler()
@@ -45,6 +47,8 @@ ActionHandler::~ActionHandler()
     delete bindKeyAction;
     delete textInputAction;
     delete saveAsAction;
+    delete stickConfigMenuAction;
+    delete stickModeMenuAction;
 }
 
 void ActionHandler::setup()
@@ -114,6 +118,12 @@ void ActionHandler::activateStickConfigMenu(StickConfigActionParams params)
 {
     stickConfigMenuAction->setStickParams(params);
     pushAction(stickConfigMenuAction);
+}
+
+void ActionHandler::activateStickModeMenu(StickConfigActionParams params)
+{
+    stickModeMenuAction->setStickParams(params);
+    pushAction(stickModeMenuAction);
 }
 
 void ActionHandler::clearAction()

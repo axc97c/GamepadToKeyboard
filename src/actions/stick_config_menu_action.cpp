@@ -43,13 +43,26 @@ void StickConfigMenuAction::buildMenuItems()
     setTitle(nameBuffer);
 
     const char *leftBehaviourName = MappingConfig::stickBehaviorToString(stickConfig->behavior);
-    snprintf(nameBuffer, sizeof(nameBuffer), "Mode > %s", leftBehaviourName);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Mode: %s", leftBehaviourName);
     addItem(nameBuffer, "mode", 1);
+
+    snprintf(nameBuffer, sizeof(nameBuffer), "Sensitivity: %.2f", stickConfig->sensitivity);
+    addItem(nameBuffer, "sensitivity");
+
+    snprintf(nameBuffer, sizeof(nameBuffer), "Deadzone: %d", stickConfig->deadzone);
+    addItem(nameBuffer, "deadzone");
+
+    snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", stickConfig->activationThreshold);
+    addItem(nameBuffer, "threshold");
+
+    addItem("Up > Up", "up");
+    addItem("Down > Down", "down");
+    addItem("Left > Left", "left");
+    addItem("Right > Right", "right");
 }
 
 void StickConfigMenuAction::onConfirm()
 {
-    // Handle confirmation for the main menu
     MenuItem selectedItem = getSelectedItem();
 
     Serial.print("StickConfigMenuAction: Item confirmed: ");
@@ -61,21 +74,39 @@ void StickConfigMenuAction::onConfirm()
     Serial.println(")");
 
     // Handle each menu option using identifier (now char array - use strcmp)
-    // if (strcmp(selectedItem.identifier, "load_config") == 0)
-    // {
-    //     handler->activateLoadConfigMenu({0});
-    // }
-    // else if (strcmp(selectedItem.identifier, "save_config") == 0)
-    // {
-    //     performSave();
-    // }
-    // else if (strcmp(selectedItem.identifier, "save_config_as") == 0)
-    // {
-    //     // Open save as action
-    //     handler->activateSaveAs();
-    // }
-    // else if (strcmp(selectedItem.identifier, "edit_config") == 0)
-    // {
-    //     handler->activateEditConfigMenu({0});
-    // }
+    if (strcmp(selectedItem.identifier, "mode") == 0)
+    {
+        handler->activateStickModeMenu(stickParams);
+    }
+}
+
+void StickConfigMenuAction::onLeft()
+{
+    changeValue(true);
+}
+
+void StickConfigMenuAction::onRight()
+{
+    changeValue(false);
+}
+
+void StickConfigMenuAction::changeValue(bool isDecrease)
+{
+    MenuItem selectedItem = getSelectedItem();
+
+    if (strcmp(selectedItem.identifier, "sensitivity") == 0)
+    {
+        needsRefresh = true;
+        stickConfig->sensitivity += isDecrease ? -0.01 : 0.01;
+    }
+    else if (strcmp(selectedItem.identifier, "deadzone") == 0)
+    {
+        needsRefresh = true;
+        stickConfig->deadzone += isDecrease ? -1 : 1;
+    }
+    else if (strcmp(selectedItem.identifier, "threshold") == 0)
+    {
+        needsRefresh = true;
+        stickConfig->activationThreshold += isDecrease ? -1 : 1;
+    }
 }

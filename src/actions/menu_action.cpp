@@ -91,6 +91,14 @@ void MenuAction::loop()
         moveDown();
         break;
 
+    case INPUT_LEFT:
+        onLeft();
+        break;
+    
+    case INPUT_RIGHT:
+        onRight();
+        break;
+
     case INPUT_CONFIRM:
         // Handle selection confirmation - delegate to derived class
         if (selectedIndex >= 0 && selectedIndex < menuItemCount)
@@ -213,11 +221,7 @@ void MenuAction::setMenu(const char* title, MenuItem items[], int itemCount)
     // Copy title to fixed char array
     if (title != nullptr)
     {
-        // Intentional truncation with proper null termination
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(menuTitle, title, MAX_TITLE_LEN - 1);
-        #pragma GCC diagnostic pop
         menuTitle[MAX_TITLE_LEN - 1] = '\0';
     }
     else
@@ -230,9 +234,7 @@ void MenuAction::setMenu(const char* title, MenuItem items[], int itemCount)
     {
         menuItems[i] = items[i];
     }
-    // Don't reset selectedIndex here - let init() handle it
-    // This allows preservation of selection when rebuilding menus
-
+   
     // Ensure selectedIndex is within bounds of new menu
     if (selectedIndex >= menuItemCount)
     {
@@ -284,11 +286,7 @@ void MenuAction::setTitle(const char* title)
 {
     if (title != nullptr)
     {
-        // Intentional truncation with proper null termination
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wstringop-truncation"
         strncpy(menuTitle, title, MAX_TITLE_LEN - 1);
-        #pragma GCC diagnostic pop
         menuTitle[MAX_TITLE_LEN - 1] = '\0';
     }
     else

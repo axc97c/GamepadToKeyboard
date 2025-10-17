@@ -60,7 +60,6 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
 
 bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &config)
 {
-    // Update the filename in config if provided (intentional truncation)
     if (filename != nullptr && filename[0] != '\0')
     {
         config.setFilename(filename);
