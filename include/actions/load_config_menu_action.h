@@ -14,7 +14,7 @@ private:
     void sortConfigFiles(int count);
 
 public:
-    LoadConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
+    LoadConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr);
 
     // Implement pure virtual methods from MenuAction
     void onInit() override;

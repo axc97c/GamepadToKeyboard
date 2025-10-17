@@ -3,9 +3,8 @@
 #include "actions/run_action.h"
 #include "devices.h"
 
-MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
-    : Action(dev, hdlr),
-      params(p)
+MenuAction::MenuAction(DeviceManager *dev, ActionHandler *hdlr)
+    : Action(dev, hdlr)
 {
     selectedIndex = 0;
     scrollOffset = 0;
@@ -284,13 +283,6 @@ bool MenuAction::checkTimeout()
 {
     unsigned long currentTime = millis();
     return (currentTime - lastInputTime >= TIMEOUT_MS);
-}
-
-void MenuAction::setParams(MenuActionParams p)
-{
-    params = p;
-    Serial.print("MenuAction: setParams() called with menuId: ");
-    Serial.println(params.menuId);
 }
 
 void MenuAction::setTitle(const char* title)

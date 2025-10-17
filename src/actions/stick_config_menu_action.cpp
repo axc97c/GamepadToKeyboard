@@ -6,7 +6,7 @@
 #include "utils.h"
 
 StickConfigMenuAction::StickConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, StickConfigActionParams p)
-    : MenuAction(dev, hdlr, p), needsRefresh(false)
+    : MenuAction(dev, hdlr), needsRefresh(false)
 {
     stickParams = p;
 }
@@ -14,7 +14,6 @@ StickConfigMenuAction::StickConfigMenuAction(DeviceManager *dev, ActionHandler *
 void StickConfigMenuAction::setStickParams(StickConfigActionParams p)
 {
     stickParams = p;
-    MenuAction::setParams(p);
 }
 
 void StickConfigMenuAction::loop()

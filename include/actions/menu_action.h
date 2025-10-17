@@ -83,8 +83,6 @@ struct MenuItem
 class MenuAction : public Action
 {
 protected:
-    MenuActionParams params;
-
     static const int MAX_ITEMS = 32; // Match JoystickMappingConfig::MAX_MAPPINGS
     static const int MAX_TITLE_LEN = 20;
 
@@ -108,7 +106,7 @@ protected:
     bool checkTimeout();
 
 public:
-    MenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
+    MenuAction(DeviceManager *dev, ActionHandler *hdlr);
     virtual ~MenuAction() {}
 
     // Action lifecycle methods
@@ -131,9 +129,6 @@ public:
 
     // Force a menu refresh
     void refresh();
-
-    // For singleton reuse
-    void setParams(MenuActionParams p);
 
     virtual void clear();
     void addItem(const char *name, const char *id, uint32_t data = 0)

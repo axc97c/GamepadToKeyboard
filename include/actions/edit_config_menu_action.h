@@ -12,7 +12,7 @@ private:
     String getButtonKeyPair(int index);
 
 public:
-    EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
+    EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr);
 
     // Override loop to handle refresh after returning from bind key action
     void loop() override;
@@ -20,7 +20,6 @@ public:
     // Implement pure virtual methods from MenuAction
     void onInit() override;
     void onConfirm() override;
-    void onCancel() override;
 };
 
 #endif // EDIT_CONFIG_MENU_ACTION_H

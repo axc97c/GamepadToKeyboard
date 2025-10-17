@@ -11,7 +11,7 @@ private:
 
     void performSave();
 public:
-    MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p);
+    MainMenuAction(DeviceManager *dev, ActionHandler *hdlr);
 
     // Implement pure virtual methods from MenuAction
     void onConfirm() override;

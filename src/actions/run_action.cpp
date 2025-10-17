@@ -99,7 +99,7 @@ void RunAction::loop()
                 bool isPressed = (buttons & (1 << physicalBtn)) != 0;
                 if (isPressed)
                 {
-                    handler->activateMainMenu({0});
+                    handler->activateMainMenu();
                     return;
                 }
                 break;

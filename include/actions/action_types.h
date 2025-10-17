@@ -107,12 +107,7 @@ struct RunActionParams
     char filename[JoystickMappingConfig::MAX_FILENAME_LENGTH];
 };
 
-struct MenuActionParams
-{
-    uint8_t menuId;
-};
-
-struct StickConfigActionParams  : MenuActionParams
+struct StickConfigActionParams
 {
     bool isRight;
 };

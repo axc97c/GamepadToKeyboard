@@ -104,12 +104,6 @@ void BindKeyAction::updateDisplay()
     const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton);
     String shortButtonName = String(buttonName);
 
-    // Remove "BTN_" prefix if present
-    if (shortButtonName.startsWith("BTN_"))
-    {
-        shortButtonName = shortButtonName.substring(4);
-    }
-
     // Line 1: "Bind key for:"
     lcd->setCursor(0, 0);
     lcd->print("Bind key for:");
@@ -153,19 +147,11 @@ void BindKeyAction::applyKeyBinding(int keyCode)
         lcd->setCursor(0, 1);
 
         const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton);
-        String shortButtonName = String(buttonName);
-        if (shortButtonName.startsWith("BTN_"))
-        {
-            shortButtonName = shortButtonName.substring(4);
-        }
 
-        lcd->print(shortButtonName);
+        lcd->print(buttonName);
         lcd->print(" > ");
         lcd->print(KeyboardMapping::keyCodeToString(keyCode));
 
-        delay(1000); // Show confirmation for 1 second
+        delay(1000);
     }
-
-    // Note: We don't save to file here - that would be done separately
-    // The mappingConfig is updated in memory and will be used immediately
 }

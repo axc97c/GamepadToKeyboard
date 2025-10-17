@@ -49,9 +49,9 @@ public:
 
     // Activate a specific action with parameters
     void activateRun(RunActionParams params);
-    void activateMainMenu(MenuActionParams params);
-    void activateLoadConfigMenu(MenuActionParams params);
-    void activateEditConfigMenu(MenuActionParams params);
+    void activateMainMenu();
+    void activateLoadConfigMenu();
+    void activateEditConfigMenu();
     void activateBindKey(BindKeyActionParams params);
     void activateTextInput(TextInputActionParams params);
     void activateSaveAs();

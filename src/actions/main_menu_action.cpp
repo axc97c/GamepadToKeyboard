@@ -5,8 +5,8 @@
 #include "mapping/mapping_config.h"
 #include "utils.h"
 
-MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
-    : MenuAction(dev, hdlr, p)
+MainMenuAction::MainMenuAction(DeviceManager *dev, ActionHandler *hdlr)
+    : MenuAction(dev, hdlr)
 {
     testInputBuffer[0] = '\0';
 
@@ -34,7 +34,7 @@ void MainMenuAction::onConfirm()
     // Handle each menu option using identifier (now char array - use strcmp)
     if (strcmp(selectedItem.identifier, "load_config") == 0)
     {
-        handler->activateLoadConfigMenu({0});
+        handler->activateLoadConfigMenu();
     }
     else if (strcmp(selectedItem.identifier, "save_config") == 0)
     {
@@ -47,7 +47,7 @@ void MainMenuAction::onConfirm()
     }
     else if (strcmp(selectedItem.identifier, "edit_config") == 0)
     {
-        handler->activateEditConfigMenu({0});
+        handler->activateEditConfigMenu();
     }
 }
 

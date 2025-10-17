@@ -4,8 +4,8 @@
 #include "utils.h"
 #include <SD.h>
 
-LoadConfigMenuAction::LoadConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr, MenuActionParams p)
-    : MenuAction(dev, hdlr, p)
+LoadConfigMenuAction::LoadConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr)
+    : MenuAction(dev, hdlr)
 {
     // Set the fixed title in constructor since it never changes
     setTitle("Configs");
