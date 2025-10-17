@@ -31,7 +31,8 @@ private:
     void initializeMappings();
     void initializeDefaultMappings();
     void initializeDefaultStickConfigs();
-
+    void initializeDefaultTriggerConfigs();
+    
     void processButtonMappings();
     void processDPadAxisMappings();
     void processAnalogStick(StickConfig &stick, int xAxis, int yAxis);
@@ -41,6 +42,8 @@ private:
     void processScrollWheel(StickConfig &stick, int yValue);
     void processWASDKeys(StickConfig &stick, int xValue, int yValue);
     void processArrowKeys(StickConfig &stick, int xValue, int yValue);
+
+    void processTriggers(int leftAxis, int rightAxis);
 
     int applyDeadzone(int value, int centerValue, int deadzone);
     const char *getGenericButtonName(uint8_t genericButton);

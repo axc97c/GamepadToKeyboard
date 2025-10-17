@@ -9,6 +9,8 @@
 #include "actions/save_as_action.h"
 #include "actions/stick_config_menu_action.h"
 #include "actions/stick_mode_menu_action.h"
+#include "actions/trigger_config_menu_action.h"
+#include "actions/trigger_mode_menu_action.h"
 #include "devices.h"
 
 ActionHandler::ActionHandler(DeviceManager *dev)
@@ -28,6 +30,8 @@ ActionHandler::ActionHandler(DeviceManager *dev)
     saveAsAction = new SaveAsAction(devices, this);
     stickConfigMenuAction = new StickConfigMenuAction(devices, this, {});
     stickModeMenuAction = new StickModeMenuAction(devices, this, {});
+    triggerConfigMenuAction = new TriggerConfigMenuAction(devices, this);
+    triggerModeMenuAction = new TriggerModeMenuAction(devices, this);
 }
 
 ActionHandler::~ActionHandler()
@@ -48,7 +52,9 @@ ActionHandler::~ActionHandler()
     delete textInputAction;
     delete saveAsAction;
     delete stickConfigMenuAction;
-    delete stickModeMenuAction;
+    delete stickModeMenuAction;   
+    delete triggerConfigMenuAction;
+    delete triggerModeMenuAction;
 }
 
 void ActionHandler::setup()
@@ -124,6 +130,16 @@ void ActionHandler::activateStickModeMenu(StickConfigActionParams params)
 {
     stickModeMenuAction->setStickParams(params);
     pushAction(stickModeMenuAction);
+}
+
+void ActionHandler::activateTriggerConfigMenu()
+{
+    pushAction(triggerConfigMenuAction);
+}
+
+void ActionHandler::activateTriggerModeMenu()
+{
+    pushAction(triggerModeMenuAction);
 }
 
 void ActionHandler::clearAction()

@@ -13,6 +13,18 @@ const MappingConfig::StickBehaviorMapping MappingConfig::stickBehaviorMap[] = {
 
 const int MappingConfig::stickBehaviorMapSize = sizeof(MappingConfig::stickBehaviorMap) / sizeof(MappingConfig::stickBehaviorMap[0]);
 
+const MappingConfig::TriggerBehaviorMapping MappingConfig::triggerBehaviorMap[] = {
+    {TriggerBehavior::DISABLED, "Disabled"},
+    {TriggerBehavior::MOUSE_X, "Mouse X"},
+    {TriggerBehavior::MOUSE_Y, "Mouse Y"},
+    {TriggerBehavior::SCROLL_WHEEL, "Scroll"},
+    {TriggerBehavior::BUTTONS, "Keys"},
+    {TriggerBehavior::JOYSTICK_X, "Joystick X"},
+    {TriggerBehavior::JOYSTICK_Y, "Joystick Y"}
+};
+
+const int MappingConfig::triggerBehaviorMapSize = sizeof(MappingConfig::triggerBehaviorMap) / sizeof(MappingConfig::triggerBehaviorMap[0]);
+
 void MappingConfig::initSD()
 {
     if (!SD.begin(CHIPSELECT_PIN))
@@ -51,6 +63,7 @@ bool MappingConfig::loadConfig(const char *filename, JoystickMappingConfig &conf
     config.setFilename(filename);
     loadMappings(doc, config.mappings, config.numMappings, config.MAX_MAPPINGS);
     loadStickConfig(doc, &config.leftStick, &config.rightStick);
+    loadTriggerConfig(doc, &config.triggers);
 
     // Mark config as unmodified since we just loaded it
     config.modified = false;
@@ -72,6 +85,7 @@ bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &conf
 
     saveMappings(doc, config.mappings, config.numMappings);
     saveStickConfig(doc, &config.leftStick, &config.rightStick);
+    saveTriggerConfig(doc, &config.triggers);
 
     if (SD.exists(targetFile))
     {
@@ -86,18 +100,6 @@ bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &conf
         return false;
     }
 
-    // Write to file
-    if (SD.exists(targetFile))
-    {
-        SD.remove(targetFile);
-    }
-
-    file = SD.open(targetFile, FILE_WRITE);
-    if (!file)
-    {
-        Serial.println("MappingConfig: Failed to save stick config");
-        return false;
-    }
     serializeJsonPretty(doc, file);
     file.close();
 
@@ -109,7 +111,6 @@ bool MappingConfig::saveConfig(const char *filename, JoystickMappingConfig &conf
 
 void MappingConfig::loadMappings(JsonDocument &doc, ButtonMapping *mappings, int &numMappings, int maxMappings)
 {
-
     JsonArray mappingsArray = doc["mappings"].as<JsonArray>();
     numMappings = 0;
 
@@ -173,6 +174,25 @@ void MappingConfig::loadStickConfig(JsonDocument &doc, StickConfig *leftStick, S
     Serial.println("MappingConfig: Stick configuration loaded");
 }
 
+void MappingConfig::loadTriggerConfig(JsonDocument &doc, TriggerConfig *trigger)
+{
+    if (doc["triggers"].is<JsonObject>())
+    {
+        JsonObject jsonObject = doc["triggers"];
+        trigger->behavior = parseTriggerBehavior(jsonObject["behavior"]);
+        trigger->sensitivity = jsonObject["sensitivity"] | 0.15f;
+        trigger->deadzone = jsonObject["deadzone"] | 16;
+        trigger->activationThreshold = jsonObject["activationThreshold"] | 64;
+
+        if (jsonObject["keys"].is<JsonObject>())
+        {
+            JsonObject keys = jsonObject["keys"];
+            trigger->keyLeft = KeyboardMapping::parseKeyCode(keys["left"]);
+            trigger->keyRight = KeyboardMapping::parseKeyCode(keys["right"]);
+        }
+    }
+}
+
 bool MappingConfig::saveMappings(JsonDocument &doc, ButtonMapping *mappings, int numMappings)
 {
     JsonArray mappingsArray = doc["mappings"].to<JsonArray>();
@@ -228,6 +248,27 @@ bool MappingConfig::saveStickConfig(JsonDocument &doc, StickConfig *leftStick, S
     return true;
 }
 
+bool MappingConfig::saveTriggerConfig(JsonDocument &doc, TriggerConfig *trigger)
+{
+    Serial.println("MappingConfig: Trigger configuration saving");
+    
+    JsonObject left = doc["triggers"].to<JsonObject>();
+    left["behavior"] = triggerBehaviorToString(trigger->behavior);
+    left["sensitivity"] = trigger->sensitivity;
+    left["deadzone"] = trigger->deadzone;
+    left["activationThreshold"] = trigger->activationThreshold;
+
+    if (trigger->behavior == TriggerBehavior::BUTTONS)
+    {
+        JsonObject leftKeys = left["keys"].to<JsonObject>();
+        leftKeys["left"] = KeyboardMapping::keyCodeToString(trigger->keyLeft);
+        leftKeys["right"] = KeyboardMapping::keyCodeToString(trigger->keyRight);
+    }
+
+    Serial.println("MappingConfig: Trigger configuration saved");
+    return true;
+}
+
 void MappingConfig::parseStickConfig(StickConfig *stickConfig, ArduinoJson::V742PB22::JsonObject &jsonObject)
 {
     stickConfig->behavior = parseStickBehavior(jsonObject["behavior"]);
@@ -271,4 +312,32 @@ const char *MappingConfig::stickBehaviorToString(StickBehavior behavior)
     }
 
     return "Disabled";
+}
+
+TriggerBehavior MappingConfig::parseTriggerBehavior(const char *behaviorStr)
+{
+    for (int i = 0; i < triggerBehaviorMapSize; i++)
+    {
+        if (strcmp(behaviorStr, triggerBehaviorMap[i].name) == 0)
+        {
+            return triggerBehaviorMap[i].behavior;
+        }
+    }
+
+    Serial.print("MappingConfig: Warning: Unknown trigger behavior: ");
+    Serial.println(behaviorStr);
+    return TriggerBehavior::DISABLED;
+}
+
+const char *MappingConfig::triggerBehaviorToString(TriggerBehavior behavior)
+{
+       for (int i = 0; i < triggerBehaviorMapSize; i++)
+    {
+        if (triggerBehaviorMap[i].behavior == behavior)
+        {
+            return stickBehaviorMap[i].name;
+        }
+    }
+
+    return "Disabled"; 
 }

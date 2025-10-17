@@ -51,6 +51,7 @@ void RunAction::init()
             Serial.println("RunAction: Failed to load button mappings, using defaults");
             initializeDefaultMappings();
             initializeDefaultStickConfigs();
+            initializeDefaultTriggerConfigs();
 
             MappingConfig::saveConfig(params.filename, mappingConfig);
         }
@@ -117,6 +118,8 @@ void RunAction::loop()
         int leftYAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_LEFT_Y);
         int rightXAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_RIGHT_X);
         int rightYAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_RIGHT_Y);
+        int leftTriggerAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_LEFT_TRIGGER);
+        int rightTriggerAxis = JoystickMapping::mapAxisToGeneric(controllerType, GenericController::AXIS_RIGHT_TRIGGER);
 
         if (leftXAxis != -1 && leftYAxis != -1)
         {
@@ -126,6 +129,11 @@ void RunAction::loop()
         if (rightXAxis != -1 && rightYAxis != -1)
         {
             processAnalogStick(mappingConfig.rightStick, rightXAxis, rightYAxis);
+        }
+
+        if (leftTriggerAxis != -1 && rightTriggerAxis != -1)
+        {
+            processTriggers(leftTriggerAxis, rightTriggerAxis);
         }
     }
 }
@@ -422,6 +430,34 @@ void RunAction::processArrowKeys(StickConfig &stick, int xValue, int yValue)
     processButtonEmulation(stick, xValue, yValue);
 }
 
+void RunAction::processTriggers(int leftAxis, int rightAxis)
+{
+    if (mappingConfig.triggers.behavior == TriggerBehavior::DISABLED)
+    {
+        return;
+    }
+
+    JoystickController *joy = devices->getJoystick();
+    int leftValue = joy->getAxis(leftAxis);
+    int rightValue = joy->getAxis(rightAxis);
+
+    // Apply behavior
+    switch (mappingConfig.triggers.behavior)
+    {
+    case TriggerBehavior::BUTTONS:
+        break;
+
+    case TriggerBehavior::MOUSE_X:
+        break;
+
+    case TriggerBehavior::MOUSE_Y:
+        break;
+
+    default:
+        break;
+    }
+}
+
 int RunAction::applyDeadzone(int value, int centerValue, int deadzone)
 {
     int centered = value - centerValue;
@@ -476,8 +512,11 @@ void RunAction::initializeDefaultStickConfigs()
 {
     mappingConfig.rightStick.behavior = StickBehavior::MOUSE_MOVEMENT;
     mappingConfig.leftStick.behavior = StickBehavior::ARROW_KEYS;
+}
 
-    Serial.println("RunAction: Default stick configurations initialized");
+void RunAction::initializeDefaultTriggerConfigs()
+{
+    mappingConfig.triggers.behavior = TriggerBehavior::DISABLED;
 }
 
 const char *RunAction::getGenericButtonName(uint8_t genericButton)
@@ -488,8 +527,6 @@ const char *RunAction::getGenericButtonName(uint8_t genericButton)
 void RunAction::setParams(RunActionParams p)
 {
     params = p;
-    Serial.print("RunAction: setParams() called with filename: ");
-    Serial.println(params.filename);
 }
 
 // Keyboard passthrough event handlers

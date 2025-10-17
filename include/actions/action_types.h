@@ -26,7 +26,21 @@ enum class StickBehavior : uint8_t
     BUTTON_EMULATION, // Acts as 4 buttons (up/down/left/right)
     SCROLL_WHEEL,     // Y axis controls scroll wheel
     WASD_KEYS,        // Emulates WASD keys
-    ARROW_KEYS        // Emulates arrow keys
+    ARROW_KEYS,       // Emulates arrow keys
+    JOYSTICK,         // Both joystick axis
+    JOYSTICK_X,       // Horizontal joystick axis only
+    JOYSTICK_Y        // Vertical joystick axis only
+};
+
+enum class TriggerBehavior : uint8_t
+{
+    DISABLED,
+    MOUSE_X,
+    MOUSE_Y,
+    SCROLL_WHEEL,
+    BUTTONS,
+    JOYSTICK_X,
+    JOYSTICK_Y
 };
 
 // Analog stick identifier
@@ -51,15 +65,27 @@ struct StickConfig
     int deadzone = 16;
     int activationThreshold = 64;
 
-    // For button emulation and custom keys
     int keyUp = KEY_UP;
     int keyDown = KEY_DOWN;
     int keyLeft = KEY_LEFT;
     int keyRight = KEY_RIGHT;
 
-    // State tracking for button emulation
     bool upPressed = false;
     bool downPressed = false;
+    bool leftPressed = false;
+    bool rightPressed = false;
+};
+
+struct TriggerConfig
+{
+    TriggerBehavior behavior = TriggerBehavior::DISABLED;
+    float sensitivity = 0.15f;
+    int deadzone = 16;
+    int activationThreshold = 64;
+
+    int keyLeft = KEY_LEFT;
+    int keyRight = KEY_RIGHT;
+
     bool leftPressed = false;
     bool rightPressed = false;
 };
@@ -76,6 +102,7 @@ struct JoystickMappingConfig
     int numMappings;
     StickConfig leftStick;
     StickConfig rightStick;
+    TriggerConfig triggers;
     bool modified; // Flag to track if config has been changed since loading
 
     JoystickMappingConfig() : numMappings(0), modified(false)

@@ -15,6 +15,8 @@ class TextInputAction;
 class SaveAsAction;
 class StickConfigMenuAction;
 class StickModeMenuAction;
+class TriggerConfigMenuAction;
+class TriggerModeMenuAction;
 struct TextInputActionParams;
 
 class ActionHandler
@@ -41,6 +43,8 @@ private:
     SaveAsAction *saveAsAction;
     StickConfigMenuAction *stickConfigMenuAction;
     StickModeMenuAction *stickModeMenuAction;
+    TriggerConfigMenuAction *triggerConfigMenuAction;
+    TriggerModeMenuAction *triggerModeMenuAction;
 
     void pushAction(Action *action);
     void replaceCurrentAction(Action *action);
@@ -59,6 +63,8 @@ public:
     void activateSaveAs();
     void activateStickConfigMenu(StickConfigActionParams params);
     void activateStickModeMenu(StickConfigActionParams params);
+    void activateTriggerConfigMenu();
+    void activateTriggerModeMenu();
 
     // Get current action (returns nullptr if none active)
     Action *getCurrentAction() { return currentAction; }

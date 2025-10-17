@@ -6,6 +6,10 @@
 #include "devices.h"
 #include "utils.h"
 
+static const char* MENU_LEFT_STICK = "left_stick";
+static const char* MENU_RIGHT_STICK = "right_stick";
+static const char* MENU_TRIGGERS = "triggers";
+
 EditConfigMenuAction::EditConfigMenuAction(DeviceManager *dev, ActionHandler *hdlr)
     : MenuAction(dev, hdlr), needsRefresh(false)
 {
@@ -39,11 +43,14 @@ void EditConfigMenuAction::buildMenuItems()
 
     const char *leftBehaviourName = MappingConfig::stickBehaviorToString(mappingConfig.leftStick.behavior);
     snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftBehaviourName);
-    addItem(nameBuffer, "left_stick", 1);
+    addItem(nameBuffer, MENU_LEFT_STICK, 1);
     const char *rightBehaviourName = MappingConfig::stickBehaviorToString(mappingConfig.rightStick.behavior);
     snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightBehaviourName);
-    addItem(nameBuffer, "right_stick", 1);
-    addItem("Trigger", "triggers", 0);
+    addItem(nameBuffer, MENU_RIGHT_STICK, 1);
+
+    const char *triggerBehaviourName = MappingConfig::triggerBehaviorToString(mappingConfig.triggers.behavior);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Trigger > %s", triggerBehaviourName);
+    addItem(nameBuffer, MENU_TRIGGERS);
 
     int itemCount = min(mappingConfig.numMappings, MAX_ITEMS);
 
@@ -92,15 +99,20 @@ void EditConfigMenuAction::onConfirm()
     int mappingIndex = selectedItem.data;
     needsRefresh = true;
 
-    if (strcmp(selectedItem.identifier, "left_stick") == 0)
+    if (strcmp(selectedItem.identifier, MENU_LEFT_STICK) == 0)
     {
         handler->activateStickConfigMenu({false});
         
         return;
     }
-    else if (strcmp(selectedItem.identifier, "right_stick") == 0)
+    else if (strcmp(selectedItem.identifier, MENU_RIGHT_STICK) == 0)
     {
         handler->activateStickConfigMenu({true});
+        return;
+    }
+    else if (strcmp(selectedItem.identifier, MENU_TRIGGERS) == 0)
+    {
+        handler->activateTriggerConfigMenu();
         return;
     }
 
