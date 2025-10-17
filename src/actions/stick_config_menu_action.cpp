@@ -3,6 +3,7 @@
 #include "actions/text_input_action.h"
 #include "devices.h"
 #include "mapping/mapping_config.h"
+#include "mapping/keyboard_mapping.h"
 #include "utils.h"
 
 namespace {
@@ -66,10 +67,21 @@ void StickConfigMenuAction::buildMenuItems()
     snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", stickConfig->activationThreshold);
     addItem(nameBuffer, STICK_CONFIG_THRESHOLD);
 
-    addItem("Up > Up", STICK_CONFIG_UP);
-    addItem("Down > Down", STICK_CONFIG_DOWN);
-    addItem("Left > Left", STICK_CONFIG_LEFT);
-    addItem("Right > Right", STICK_CONFIG_RIGHT);
+    const char *upKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyUp);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Up > %s", upKeyName);
+    addItem(nameBuffer, STICK_CONFIG_UP);
+
+    const char *downKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyDown);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Down > %s", downKeyName);
+    addItem(nameBuffer, STICK_CONFIG_DOWN);
+
+    const char *leftKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyLeft);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftKeyName);
+    addItem(nameBuffer, STICK_CONFIG_LEFT);
+
+    const char *rightKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyRight);
+    snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightKeyName);
+    addItem(nameBuffer, STICK_CONFIG_RIGHT);
 }
 
 void StickConfigMenuAction::onConfirm()
@@ -88,6 +100,42 @@ void StickConfigMenuAction::onConfirm()
     if (strcmp(selectedItem.identifier, STICK_CONFIG_MODE) == 0)
     {
         handler->activateStickModeMenu(stickParams);
+    }
+    else if (strcmp(selectedItem.identifier, STICK_CONFIG_UP) == 0)
+    {
+        BindKeyActionParams params;
+        params.target = BindKeyTarget::STICK_UP;
+        params.mappingIndex = -1;
+        params.isRightStick = stickParams.isRight;
+        needsRefresh = true;
+        handler->activateBindKey(params);
+    }
+    else if (strcmp(selectedItem.identifier, STICK_CONFIG_DOWN) == 0)
+    {
+        BindKeyActionParams params;
+        params.target = BindKeyTarget::STICK_DOWN;
+        params.mappingIndex = -1;
+        params.isRightStick = stickParams.isRight;
+        needsRefresh = true;
+        handler->activateBindKey(params);
+    }
+    else if (strcmp(selectedItem.identifier, STICK_CONFIG_LEFT) == 0)
+    {
+        BindKeyActionParams params;
+        params.target = BindKeyTarget::STICK_LEFT;
+        params.mappingIndex = -1;
+        params.isRightStick = stickParams.isRight;
+        needsRefresh = true;
+        handler->activateBindKey(params);
+    }
+    else if (strcmp(selectedItem.identifier, STICK_CONFIG_RIGHT) == 0)
+    {
+        BindKeyActionParams params;
+        params.target = BindKeyTarget::STICK_RIGHT;
+        params.mappingIndex = -1;
+        params.isRightStick = stickParams.isRight;
+        needsRefresh = true;
+        handler->activateBindKey(params);
     }
 }
 

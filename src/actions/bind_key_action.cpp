@@ -85,6 +85,8 @@ void BindKeyAction::updateDisplay()
 
     // Get the target name based on what we're binding
     String targetName;
+    const char* stickSide = params.isRightStick ? "Right" : "Left";
+
     if (params.target == BindKeyTarget::BUTTON_MAPPING)
     {
         const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton);
@@ -97,6 +99,22 @@ void BindKeyAction::updateDisplay()
     else if (params.target == BindKeyTarget::TRIGGER_RIGHT)
     {
         targetName = "Right Trigger";
+    }
+    else if (params.target == BindKeyTarget::STICK_UP)
+    {
+        targetName = String(stickSide) + " Stick Up";
+    }
+    else if (params.target == BindKeyTarget::STICK_DOWN)
+    {
+        targetName = String(stickSide) + " Stick Down";
+    }
+    else if (params.target == BindKeyTarget::STICK_LEFT)
+    {
+        targetName = String(stickSide) + " Stick Left";
+    }
+    else if (params.target == BindKeyTarget::STICK_RIGHT)
+    {
+        targetName = String(stickSide) + " Stick Right";
     }
 
     // Line 1: "Bind key for:"
@@ -125,6 +143,8 @@ void BindKeyAction::applyKeyBinding(int keyCode)
     Serial.print(") to ");
 
     String targetName;
+    const char* stickSide = params.isRightStick ? "Right" : "Left";
+    StickConfig* stickConfig = params.isRightStick ? &mappingConfig.rightStick : &mappingConfig.leftStick;
 
     // Update the mapping configuration based on target type
     if (params.target == BindKeyTarget::BUTTON_MAPPING)
@@ -145,6 +165,34 @@ void BindKeyAction::applyKeyBinding(int keyCode)
         Serial.println("Right Trigger");
         targetName = "Right Trigger";
         mappingConfig.triggers.keyRight = keyCode;
+    }
+    else if (params.target == BindKeyTarget::STICK_UP)
+    {
+        Serial.print(stickSide);
+        Serial.println(" Stick Up");
+        targetName = String(stickSide) + " Stick Up";
+        stickConfig->keyUp = keyCode;
+    }
+    else if (params.target == BindKeyTarget::STICK_DOWN)
+    {
+        Serial.print(stickSide);
+        Serial.println(" Stick Down");
+        targetName = String(stickSide) + " Stick Down";
+        stickConfig->keyDown = keyCode;
+    }
+    else if (params.target == BindKeyTarget::STICK_LEFT)
+    {
+        Serial.print(stickSide);
+        Serial.println(" Stick Left");
+        targetName = String(stickSide) + " Stick Left";
+        stickConfig->keyLeft = keyCode;
+    }
+    else if (params.target == BindKeyTarget::STICK_RIGHT)
+    {
+        Serial.print(stickSide);
+        Serial.println(" Stick Right");
+        targetName = String(stickSide) + " Stick Right";
+        stickConfig->keyRight = keyCode;
     }
 
     // Mark config as modified

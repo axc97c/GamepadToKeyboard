@@ -25,7 +25,7 @@ ActionHandler::ActionHandler(DeviceManager *dev)
     mainMenuAction = new MainMenuAction(devices, this);
     loadConfigMenuAction = new LoadConfigMenuAction(devices, this);
     editConfigMenuAction = new EditConfigMenuAction(devices, this);
-    bindKeyAction = new BindKeyAction(devices, this, {BindKeyTarget::BUTTON_MAPPING, 0});
+    bindKeyAction = new BindKeyAction(devices, this, {BindKeyTarget::BUTTON_MAPPING, 0, false});
     textInputAction = new TextInputAction(devices, this, {});
     saveAsAction = new SaveAsAction(devices, this);
     stickConfigMenuAction = new StickConfigMenuAction(devices, this, {});

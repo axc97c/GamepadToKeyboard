@@ -79,6 +79,7 @@ void TriggerConfigMenuAction::onConfirm()
         BindKeyActionParams params;
         params.target = BindKeyTarget::TRIGGER_LEFT;
         params.mappingIndex = -1; // Not used for trigger keys
+        params.isRightStick = false; // Not used for trigger keys
         needsRefresh = true;
         handler->activateBindKey(params);
     }
@@ -87,6 +88,7 @@ void TriggerConfigMenuAction::onConfirm()
         BindKeyActionParams params;
         params.target = BindKeyTarget::TRIGGER_RIGHT;
         params.mappingIndex = -1; // Not used for trigger keys
+        params.isRightStick = false; // Not used for trigger keys
         needsRefresh = true;
         handler->activateBindKey(params);
     }

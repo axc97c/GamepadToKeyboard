@@ -124,6 +124,7 @@ void EditConfigMenuAction::onConfirm()
         BindKeyActionParams params;
         params.target = BindKeyTarget::BUTTON_MAPPING;
         params.mappingIndex = mappingIndex;
+        params.isRightStick = false; // Not used for button mappings
         handler->activateBindKey(params);
         return;
     }
