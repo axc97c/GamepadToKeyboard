@@ -52,14 +52,11 @@ void EditConfigMenuAction::buildMenuItems()
         const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[i].genericButton);
         const char *keyName = KeyboardMapping::keyCodeToString(mappingConfig.mappings[i].keyCode);
 
-        // Build the display string directly into MenuItem char array - NO heap allocation!
         snprintf(nameBuffer, sizeof(nameBuffer), "%s > %s", buttonName, keyName);
 
-        // Build identifier directly into MenuItem char array
         char idBuffer[MenuItem::MAX_ID_LEN];
         snprintf(idBuffer, sizeof(idBuffer), "mapping_%d", i);
 
-        // Populate pre-allocated menuItems array using set() method
         addItem(nameBuffer, idBuffer, i);
     }
 
@@ -77,16 +74,11 @@ String EditConfigMenuAction::getButtonKeyPair(int index)
         return String("Invalid");
     }
 
-    // Get button name (returns const char*, no allocation)
     const char *buttonName = JoystickMapping::getGenericButtonName(mappingConfig.mappings[index].genericButton);
-
-    // Get key name (returns const char*, no allocation)
     const char *keyName = KeyboardMapping::keyCodeToString(mappingConfig.mappings[index].keyCode);
 
-    // Build result string efficiently using a char buffer
     static char resultBuffer[32];
 
-    // Format directly into buffer to avoid String concatenation
     snprintf(resultBuffer, sizeof(resultBuffer), "%s > %s", buttonName, keyName);
 
     return String(resultBuffer);
