@@ -58,30 +58,53 @@ void StickConfigMenuAction::buildMenuItems()
     snprintf(nameBuffer, sizeof(nameBuffer), "Mode: %s", leftBehaviourName);
     addItem(nameBuffer, STICK_CONFIG_MODE, 1);
 
-    snprintf(nameBuffer, sizeof(nameBuffer), "Sensitivity: %.2f", stickConfig->sensitivity);
-    addItem(nameBuffer, STICK_CONFIG_SENSITIVITY);
+    // If disabled, don't show any other options
+    if (stickConfig->behavior == StickBehavior::DISABLED)
+    {
+        return;
+    }
 
-    snprintf(nameBuffer, sizeof(nameBuffer), "Deadzone: %d", stickConfig->deadzone);
-    addItem(nameBuffer, STICK_CONFIG_DEADZONE);
+    // Show sensitivity and deadzone for mouse and scroll modes
+    bool isMouseOrScrollMode = (stickConfig->behavior == StickBehavior::MOUSE_MOVEMENT);
 
-    snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", stickConfig->activationThreshold);
-    addItem(nameBuffer, STICK_CONFIG_THRESHOLD);
+    if (isMouseOrScrollMode)
+    {
+        snprintf(nameBuffer, sizeof(nameBuffer), "Sensitivity: %.2f", stickConfig->sensitivity);
+        addItem(nameBuffer, STICK_CONFIG_SENSITIVITY);
 
-    const char *upKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyUp);
-    snprintf(nameBuffer, sizeof(nameBuffer), "Up > %s", upKeyName);
-    addItem(nameBuffer, STICK_CONFIG_UP);
+        snprintf(nameBuffer, sizeof(nameBuffer), "Deadzone: %d", stickConfig->deadzone);
+        addItem(nameBuffer, STICK_CONFIG_DEADZONE);
+    }
 
-    const char *downKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyDown);
-    snprintf(nameBuffer, sizeof(nameBuffer), "Down > %s", downKeyName);
-    addItem(nameBuffer, STICK_CONFIG_DOWN);
+    // Show threshold and key bindings for button emulation modes
+    bool isButtonMode = (stickConfig->behavior == StickBehavior::BUTTON_EMULATION ||
+                         stickConfig->behavior == StickBehavior::WASD_KEYS ||
+                         stickConfig->behavior == StickBehavior::ARROW_KEYS);
 
-    const char *leftKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyLeft);
-    snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftKeyName);
-    addItem(nameBuffer, STICK_CONFIG_LEFT);
+    if (isButtonMode)
+    {
+        snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", stickConfig->activationThreshold);
+        addItem(nameBuffer, STICK_CONFIG_THRESHOLD);
 
-    const char *rightKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyRight);
-    snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightKeyName);
-    addItem(nameBuffer, STICK_CONFIG_RIGHT);
+        if (stickConfig->behavior == StickBehavior::BUTTON_EMULATION)
+        {
+            const char *upKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyUp);
+            snprintf(nameBuffer, sizeof(nameBuffer), "Up > %s", upKeyName);
+            addItem(nameBuffer, STICK_CONFIG_UP);
+
+            const char *downKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyDown);
+            snprintf(nameBuffer, sizeof(nameBuffer), "Down > %s", downKeyName);
+            addItem(nameBuffer, STICK_CONFIG_DOWN);
+
+            const char *leftKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyLeft);
+            snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftKeyName);
+            addItem(nameBuffer, STICK_CONFIG_LEFT);
+
+            const char *rightKeyName = KeyboardMapping::keyCodeToString(stickConfig->keyRight);
+            snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightKeyName);
+            addItem(nameBuffer, STICK_CONFIG_RIGHT);
+        }
+    }
 }
 
 void StickConfigMenuAction::onConfirm()

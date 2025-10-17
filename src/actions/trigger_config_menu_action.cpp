@@ -48,22 +48,39 @@ void TriggerConfigMenuAction::buildMenuItems()
     snprintf(nameBuffer, sizeof(nameBuffer), "Mode: %s", leftBehaviourName);
     addItem(nameBuffer, TRIGGER_CONFIG_MODE, 1);
 
-    snprintf(nameBuffer, sizeof(nameBuffer), "Sensitivity: %.2f", mappingConfig.triggers.sensitivity);
-    addItem(nameBuffer, TRIGGER_CONFIG_SENSITIVITY);
+    // If disabled, don't show any other options
+    if (mappingConfig.triggers.behavior == TriggerBehavior::DISABLED)
+    {
+        return;
+    }
 
-    snprintf(nameBuffer, sizeof(nameBuffer), "Deadzone: %d", mappingConfig.triggers.deadzone);
-    addItem(nameBuffer, TRIGGER_CONFIG_DEADZONE);
+    // Show sensitivity only for mouse modes
+    bool isMouseMode = (mappingConfig.triggers.behavior == TriggerBehavior::MOUSE_X ||
+                        mappingConfig.triggers.behavior == TriggerBehavior::MOUSE_Y);
 
-    snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", mappingConfig.triggers.activationThreshold);
-    addItem(nameBuffer, TRIGGER_CONFIG_THRESHOLD);
+    if (isMouseMode)
+    {
+        snprintf(nameBuffer, sizeof(nameBuffer), "Sensitivity: %.2f", mappingConfig.triggers.sensitivity);
+        addItem(nameBuffer, TRIGGER_CONFIG_SENSITIVITY);
 
-    const char *leftKeyName = KeyboardMapping::keyCodeToString(mappingConfig.triggers.keyLeft);
-    snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftKeyName);
-    addItem(nameBuffer, TRIGGER_CONFIG_LEFT);
+        snprintf(nameBuffer, sizeof(nameBuffer), "Deadzone: %d", mappingConfig.triggers.deadzone);
+        addItem(nameBuffer, TRIGGER_CONFIG_DEADZONE);
+    }
 
-    const char *rightKeyName = KeyboardMapping::keyCodeToString(mappingConfig.triggers.keyRight);
-    snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightKeyName);
-    addItem(nameBuffer, TRIGGER_CONFIG_RIGHT);
+    // Show threshold and key bindings only for button mode
+    if (mappingConfig.triggers.behavior == TriggerBehavior::BUTTONS)
+    {
+        snprintf(nameBuffer, sizeof(nameBuffer), "Threshold: %d", mappingConfig.triggers.activationThreshold);
+        addItem(nameBuffer, TRIGGER_CONFIG_THRESHOLD);
+
+        const char *leftKeyName = KeyboardMapping::keyCodeToString(mappingConfig.triggers.keyLeft);
+        snprintf(nameBuffer, sizeof(nameBuffer), "Left > %s", leftKeyName);
+        addItem(nameBuffer, TRIGGER_CONFIG_LEFT);
+
+        const char *rightKeyName = KeyboardMapping::keyCodeToString(mappingConfig.triggers.keyRight);
+        snprintf(nameBuffer, sizeof(nameBuffer), "Right > %s", rightKeyName);
+        addItem(nameBuffer, TRIGGER_CONFIG_RIGHT);
+    }
 }
 
 void TriggerConfigMenuAction::onConfirm()
