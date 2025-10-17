@@ -20,8 +20,6 @@ void DeviceManager::setup()
     host->begin();
 
     gamepadInput = new GamepadInput(joystick);
-    gamepadInput->setup();
-
     keyboardInput = new KeyboardInput(keyboard);
     keyboardInput->setup();
 

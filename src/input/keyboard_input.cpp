@@ -1,26 +1,20 @@
 #include "input/keyboard_input.h"
 
-// Static member initialization
 int KeyboardInput::pendingKeyCode = 0;
 unsigned long KeyboardInput::pendingKeyTime = 0;
 
 KeyboardInput::KeyboardInput(KeyboardController *kbd)
     : keyboard(kbd)
 {
+    reset();
 }
 
 void KeyboardInput::setup()
 {
-    reset();
-
-    // Attach callback handlers if keyboard is available
     if (keyboard != nullptr)
     {
         keyboard->attachPress(onKeyPress);
         keyboard->attachRelease(onKeyRelease);
-        Serial.println("KeyboardInput: Callback handlers attached");
-    } else {
-        Serial.println("KeyboardInput: ERROR: not able to attach handlers");
     }
 }
 
@@ -32,19 +26,12 @@ void KeyboardInput::reset()
 
 void KeyboardInput::onKeyPress(int unicode)
 {
-    // Store the key press
     pendingKeyCode = unicode;
     pendingKeyTime = millis();
-
-    Serial.print("KeyboardInput: Key press callback - code: ");
-    Serial.println(unicode);
 }
 
 void KeyboardInput::onKeyRelease(int unicode)
 {
-    // Don't need to do anything on release for now
-    Serial.print("KeyboardInput: Key release callback - code: ");
-    Serial.println(unicode);
 }
 
 int KeyboardInput::getKeyPress()
@@ -54,14 +41,10 @@ int KeyboardInput::getKeyPress()
         return 0;
     }
 
-    // Check if there's a pending key press from the callback
     if (pendingKeyCode != 0)
     {
         int keyCode = pendingKeyCode;
-        pendingKeyCode = 0; // Clear it so it's only returned once
-
-        Serial.print("KeyboardInput: Returning key press: ");
-        Serial.println(keyCode);
+        pendingKeyCode = 0;
 
         return keyCode;
     }

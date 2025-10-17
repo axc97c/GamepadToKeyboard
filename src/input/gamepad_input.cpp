@@ -3,29 +3,7 @@
 GamepadInput::GamepadInput(JoystickController *controller)
 {
     joystick = controller;
-    lastButtons = 0;
-    lastDPadValue = 0xFF;
-
-    // Initialize button state arrays
-    for (int i = 0; i < 32; i++)
-    {
-        buttonPressTime[i] = 0;
-        buttonRepeating[i] = false;
-    }
-}
-
-void GamepadInput::setup()
-{
-    // Don't check controller type here - joystick may not be connected yet
-    // We'll check dynamically in isDPadPressed()
-
-    Serial.println("GamepadInput: Input setup complete");
-}
-
-void GamepadInput::update()
-{
-    // This method can be used for any per-frame updates if needed
-    // Currently, all logic is in getEvent()
+    reset();
 }
 
 void GamepadInput::reset()
@@ -38,8 +16,6 @@ void GamepadInput::reset()
         buttonPressTime[i] = 0;
         buttonRepeating[i] = false;
     }
-
-    Serial.println("GamepadInput: Input state reset");
 }
 
 bool GamepadInput::isButtonPressed(uint8_t genericButton)
@@ -50,15 +26,13 @@ bool GamepadInput::isButtonPressed(uint8_t genericButton)
     uint32_t buttons = joystick->getButtons();
     JoystickController::joytype_t type = joystick->joystickType();
 
-    // Use reverse mapping to get physical button number
     int physicalButton = JoystickMapping::mapGenericToButton(type, genericButton);
 
     if (physicalButton < 0)
     {
-        return false; // Button not supported on this controller
+        return false;
     }
 
-    // Check if the physical button is pressed
     return buttons & (1 << physicalButton);
 }
 
@@ -70,10 +44,8 @@ bool GamepadInput::isDPadPressed(uint8_t dpadButton)
     JoystickController::joytype_t type = joystick->joystickType();
     uint8_t axisNumber;
 
-    // Check if this controller type uses D-pad as axis
     if (JoystickMapping::usesDPadAxis(type, axisNumber))
     {
-        // Read D-pad from axis
         uint64_t axisMask = joystick->axisMask();
         if (axisMask & (1 << axisNumber))
         {
@@ -84,7 +56,6 @@ bool GamepadInput::isDPadPressed(uint8_t dpadButton)
     }
     else
     {
-        // D-pad is buttons, use regular button check
         return isButtonPressed(dpadButton);
     }
 
@@ -108,7 +79,6 @@ GamepadInputEvent GamepadInput::checkButton(uint8_t genericButton, GamepadInputE
 
     if (!pressed)
     {
-        // Button released
         buttonPressTime[genericButton] = 0;
         buttonRepeating[genericButton] = false;
         return INPUT_NONE;
@@ -116,28 +86,25 @@ GamepadInputEvent GamepadInput::checkButton(uint8_t genericButton, GamepadInputE
 
     unsigned long currentTime = millis();
 
-    // First press
     if (buttonPressTime[genericButton] == 0)
     {
         buttonPressTime[genericButton] = currentTime;
-        return event; // Return event immediately on first press
+        return event;
     }
 
     unsigned long heldTime = currentTime - buttonPressTime[genericButton];
 
-    // Check if we should start repeating
     if (!buttonRepeating[genericButton] && heldTime >= repeatDelay)
     {
         buttonRepeating[genericButton] = true;
-        return event; // Return event when repeat starts
+        return event;
     }
 
-    // Handle repeating
     if (buttonRepeating[genericButton])
     {
         unsigned long timeSinceRepeatStart = heldTime - repeatDelay;
         if (timeSinceRepeatStart % repeatInterval < 20)
-        { // Small window to catch repeat
+        {
             return event;
         }
     }
@@ -147,7 +114,6 @@ GamepadInputEvent GamepadInput::checkButton(uint8_t genericButton, GamepadInputE
 
 GamepadInputEvent GamepadInput::checkDPad()
 {
-    // Check all D-pad directions
     GamepadInputEvent result;
 
     result = checkButton(GenericController::BTN_DPAD_UP, INPUT_UP);
@@ -176,14 +142,12 @@ GamepadInputEvent GamepadInput::getEvent()
         return INPUT_NONE;
     }
 
-    // Check D-pad first (for navigation)
     GamepadInputEvent dpadEvent = checkDPad();
     if (dpadEvent != INPUT_NONE)
     {
         return dpadEvent;
     }
 
-    // Check action buttons
     GamepadInputEvent result;
 
     result = checkButton(GenericController::BTN_SOUTH, INPUT_CONFIRM);

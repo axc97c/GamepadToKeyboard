@@ -8,7 +8,7 @@ struct TextInputActionParams
 {
     const char *prompt;     // Text to display as prompt
     char *resultBuffer;     // Buffer to store the result
-    int maxLength;          // Maximum length of input (excluding null terminator)
+    unsigned int maxLength;          // Maximum length of input (excluding null terminator)
 };
 
 class TextInputAction : public Action
@@ -20,7 +20,6 @@ private:
     int cursorPosition;
 
     // Display state
-    bool displayInitialized;
     unsigned long lastBlinkTime;
     bool cursorVisible;
     const unsigned long blinkInterval = 500;

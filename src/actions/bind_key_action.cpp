@@ -5,7 +5,7 @@
 #include "devices.h"
 
 BindKeyAction::BindKeyAction(DeviceManager *dev, ActionHandler *hdlr, BindKeyActionParams p)
-    : Action(dev, hdlr), params(p), displayInitialized(false), lastDisplayUpdate(0)
+    : Action(dev, hdlr), params(p), lastDisplayUpdate(0)
 {
 }
 
@@ -28,7 +28,6 @@ void BindKeyAction::init()
     }
 
     updateDisplay();
-    displayInitialized = true;
 }
 
 void BindKeyAction::loop()

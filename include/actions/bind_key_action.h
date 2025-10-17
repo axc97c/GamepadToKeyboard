@@ -10,7 +10,6 @@ private:
     BindKeyActionParams params;
 
     // Display state
-    bool displayInitialized;
     unsigned long lastDisplayUpdate;
     const unsigned long displayUpdateInterval = 500; // For blinking cursor effect
 

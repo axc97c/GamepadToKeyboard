@@ -4,7 +4,7 @@
 #include "devices.h"
 
 TextInputAction::TextInputAction(DeviceManager *dev, ActionHandler *hdlr, TextInputActionParams p)
-    : Action(dev, hdlr), params(p), cursorPosition(0), displayInitialized(false),
+    : Action(dev, hdlr), params(p), cursorPosition(0),
       lastBlinkTime(0), cursorVisible(true)
 {
 }
@@ -25,7 +25,6 @@ void TextInputAction::init()
     }
 
     updateDisplay();
-    displayInitialized = true;
 }
 
 void TextInputAction::loop()

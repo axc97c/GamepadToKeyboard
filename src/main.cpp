@@ -35,7 +35,7 @@ void setup()
     Serial.begin(115200);
     while (!Serial && millis() < 3000)
     {
-    }; // Probably dont want this long term
+    };
 
     Serial.println("Main: === GamePad to Keyboard Starting ===");
     Serial.println("Main: Initializing USB Host...");
@@ -45,10 +45,7 @@ void setup()
     devices.setup();
     actionHandler.setup();
 
-    // Initialize memory monitoring (reports every 10 seconds by default)
-    MemoryMonitor::init();
-
-    Serial.println("Main: Setup complete. Waiting for USB devices...");
+    //MemoryMonitor::init();
 }
 
 void loop()
@@ -56,6 +53,5 @@ void loop()
     devices.loop();
     actionHandler.loop();
 
-    // Update memory monitor (prints report every 10 seconds)
-    MemoryMonitor::update();
+    //MemoryMonitor::update();
 }

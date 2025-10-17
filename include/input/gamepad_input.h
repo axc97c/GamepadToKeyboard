@@ -46,17 +46,13 @@ private:
 public:
     GamepadInput(JoystickController *controller);
 
-    void setup();
-    void update();
+    void reset();
 
     // Get the current input event (with debouncing and repeat)
     GamepadInputEvent getEvent();
 
     // Check if a specific button is currently held (no debounce)
     bool isHeld(uint8_t genericButton);
-
-    // Reset all button states (useful when switching actions)
-    void reset();
 };
 
 #endif // INPUT_H
