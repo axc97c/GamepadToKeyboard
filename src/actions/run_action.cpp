@@ -485,16 +485,6 @@ const char *RunAction::getGenericButtonName(uint8_t genericButton)
     return JoystickMapping::getGenericButtonName(genericButton);
 }
 
-ActionType RunAction::getType()
-{
-    return ActionType::RUN;
-}
-
-RunActionParams &RunAction::getParams()
-{
-    return params;
-}
-
 void RunAction::setParams(RunActionParams p)
 {
     params = p;

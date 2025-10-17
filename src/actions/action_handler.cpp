@@ -116,15 +116,6 @@ void ActionHandler::activateStickConfigMenu(StickConfigActionParams params)
     pushAction(stickConfigMenuAction);
 }
 
-ActionType ActionHandler::getCurrentActionType()
-{
-    if (currentAction != nullptr)
-    {
-        return currentAction->getType();
-    }
-    return ActionType::NONE;
-}
-
 void ActionHandler::clearAction()
 {
     currentAction = nullptr;

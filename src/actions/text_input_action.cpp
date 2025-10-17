@@ -15,59 +15,38 @@ TextInputAction::~TextInputAction()
 
 void TextInputAction::init()
 {
-    Serial.println("TextInputAction: Initializing text input mode...");
-
     inputText = "";
     cursorPosition = 0;
 
-    // Reset keyboard input state
     KeyboardInput* keyboardInput = devices->getKeyboardInput();
     if (keyboardInput != nullptr)
     {
         keyboardInput->reset();
-        Serial.println("TextInputAction: Keyboard input state reset");
     }
 
-    // Display initial prompt
     updateDisplay();
     displayInitialized = true;
-
-    Serial.print("TextInputAction: Waiting for text input. Max length: ");
-    Serial.println(params.maxLength);
 }
 
 void TextInputAction::loop()
 {
     KeyboardInput* keyboardInput = devices->getKeyboardInput();
 
-    // Check for keyboard input
     if (keyboardInput != nullptr)
     {
         int unicode = keyboardInput->getKeyPress();
         if (unicode != 0)
         {
-            Serial.print("TextInputAction: Received unicode ");
-            Serial.print(unicode);
-            Serial.print(" ('");
-            if (unicode >= 32 && unicode < 127)
-            {
-                Serial.print((char)unicode);
-            }
-            Serial.println("')");
-
             handleKeyPress(unicode);
         }
     }
 
-    // Allow cancel with gamepad button
     GamepadInputEvent event = devices->getGamepadInput()->getEvent();
     if (event == INPUT_CANCEL)
     {
-        Serial.println("TextInputAction: Cancelled by user");
         cancelInput();
     }
 
-    // Update blinking cursor
     unsigned long currentTime = millis();
     if (currentTime - lastBlinkTime >= blinkInterval)
     {
@@ -77,24 +56,13 @@ void TextInputAction::loop()
     }
 }
 
-ActionType TextInputAction::getType()
-{
-    return ActionType::BIND_KEY; // Reuse BIND_KEY type since it's similar input mode
-}
-
 void TextInputAction::setParams(TextInputActionParams p)
 {
     params = p;
-    Serial.print("TextInputAction: setParams() called with prompt: ");
-    Serial.println(params.prompt);
 }
 
 void TextInputAction::handleKeyPress(int unicode)
 {
-    Serial.print("TextInputAction: Handling unicode: ");
-    Serial.println(unicode);
-
-    // Handle special keys (by unicode value)
     if (unicode == 13 || unicode == 10) // Enter/Return
     {
         finishInput();
@@ -102,7 +70,6 @@ void TextInputAction::handleKeyPress(int unicode)
     }
     else if (unicode == 8 || unicode == 127) // Backspace/Delete
     {
-        // Remove last character
         if (inputText.length() > 0)
         {
             inputText.remove(inputText.length() - 1);
@@ -169,17 +136,6 @@ void TextInputAction::handleKeyPress(int unicode)
         inputText += c;
         cursorPosition = inputText.length();
         updateDisplay();
-
-        Serial.print("TextInputAction: Added '");
-        Serial.print(c);
-        Serial.print("', current input: ");
-        Serial.println(inputText);
-    }
-    else
-    {
-        Serial.print("TextInputAction: Invalid/unsupported character (unicode ");
-        Serial.print(unicode);
-        Serial.println(")");
     }
 }
 
@@ -193,11 +149,9 @@ void TextInputAction::updateDisplay()
 
     lcd->clear();
 
-    // Line 0: Prompt
     lcd->setCursor(0, 0);
     lcd->print(params.prompt);
 
-    // Line 1: Current input with blinking cursor
     lcd->setCursor(0, 1);
     lcd->print(inputText);
     if (cursorVisible && inputText.length() < params.maxLength)
@@ -205,7 +159,6 @@ void TextInputAction::updateDisplay()
         lcd->print("_");
     }
 
-    // Line 2: Character count
     lcd->setCursor(0, 2);
     lcd->print(inputText.length());
     lcd->print("/");
@@ -228,28 +181,17 @@ void TextInputAction::finishInput()
 {
     if (inputText.length() == 0)
     {
-        Serial.println("TextInputAction: Empty input, cancelling");
         cancelInput();
         return;
     }
 
-    Serial.print("TextInputAction: Input completed: ");
-    Serial.println(inputText);
-
-    // Copy result to buffer
     inputText.toCharArray(params.resultBuffer, params.maxLength + 1);
 
-    // Pop this action to return to caller
     handler->popAction();
 }
 
 void TextInputAction::cancelInput()
 {
-    Serial.println("TextInputAction: Input cancelled");
-
-    // Set empty result
     params.resultBuffer[0] = '\0';
-
-    // Pop this action
     handler->popAction();
 }

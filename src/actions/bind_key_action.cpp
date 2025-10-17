@@ -15,43 +15,31 @@ BindKeyAction::~BindKeyAction()
 
 void BindKeyAction::init()
 {
-    Serial.println("BindKeyAction: Initializing key binding mode...");
-
-    // Validate mapping index
     if (params.mappingIndex < 0 || params.mappingIndex >= mappingConfig.numMappings)
     {
-        Serial.println("BindKeyAction: Invalid mapping index!");
         handler->popAction();
         return;
     }
 
-    // Reset keyboard input state to clear any pending keys from callbacks
     KeyboardInput* keyboardInput = devices->getKeyboardInput();
     if (keyboardInput != nullptr)
     {
         keyboardInput->reset();
-        Serial.println("BindKeyAction: Keyboard input state reset");
     }
 
-    // Display initial prompt
     updateDisplay();
     displayInitialized = true;
-
-    Serial.print("BindKeyAction: Waiting for key press for button: ");
-    Serial.println(JoystickMapping::getGenericButtonName(mappingConfig.mappings[params.mappingIndex].genericButton));
 }
 
 void BindKeyAction::loop()
 {
     KeyboardInput* keyboardInput = devices->getKeyboardInput();
 
-    // Check for keyboard input
     if (keyboardInput != nullptr)
     {
         int unicode = keyboardInput->getKeyPress();
         if (unicode != 0)
         {
-            // Convert unicode/ASCII to Teensy keycode
             int keyCode = KeyboardMapping::unicodeToKeyCode(unicode);
 
             Serial.print("BindKeyAction: Received unicode ");
@@ -61,10 +49,8 @@ void BindKeyAction::loop()
             Serial.print(", converted to keyCode ");
             Serial.println(keyCode);
 
-            // Key was pressed, apply the binding
             applyKeyBinding(keyCode);
 
-            // Return to previous action (edit config menu)
             handler->popAction();
         }
     }
@@ -73,14 +59,8 @@ void BindKeyAction::loop()
     GamepadInputEvent event = devices->getGamepadInput()->getEvent();
     if (event == INPUT_CANCEL)
     {
-        Serial.println("BindKeyAction: Cancelled by user");
         handler->popAction();
     }
-}
-
-ActionType BindKeyAction::getType()
-{
-    return ActionType::BIND_KEY;
 }
 
 void BindKeyAction::setParams(BindKeyActionParams p)

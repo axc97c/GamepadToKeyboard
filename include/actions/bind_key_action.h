@@ -24,7 +24,6 @@ public:
     // Action lifecycle methods
     void init() override;
     void loop() override;
-    ActionType getType() override;
     void setParams(BindKeyActionParams p);  // For singleton reuse
 };
 

@@ -52,9 +52,7 @@ public:
 
     void init() override;
     void loop() override;
-    ActionType getType() override;
 
-    RunActionParams &getParams();
     void setParams(RunActionParams p);  // For singleton reuse
 };
 

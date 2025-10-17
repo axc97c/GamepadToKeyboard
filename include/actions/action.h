@@ -24,7 +24,6 @@ public:
     // Must be implemented by each action
     virtual void init() = 0;
     virtual void loop() = 0;
-    virtual ActionType getType() = 0;
 };
 
 #endif

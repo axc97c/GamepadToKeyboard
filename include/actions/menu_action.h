@@ -112,7 +112,6 @@ public:
     // Action lifecycle methods
     void init() override;
     void loop() override;
-    ActionType getType() override;
 
     // Pure virtual methods that derived classes must implement
     virtual void onInit() {};

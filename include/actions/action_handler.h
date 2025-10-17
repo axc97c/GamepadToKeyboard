@@ -59,7 +59,6 @@ public:
 
     // Get current action (returns nullptr if none active)
     Action *getCurrentAction() { return currentAction; }
-    ActionType getCurrentActionType();
 
     const char *getLastRunFilename() { return lastRunFilename; }
 

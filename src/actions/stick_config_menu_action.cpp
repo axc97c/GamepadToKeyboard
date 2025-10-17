@@ -18,27 +18,20 @@ void StickConfigMenuAction::setStickParams(StickConfigActionParams p)
 
 void StickConfigMenuAction::loop()
 {
-    // Check if we need to refresh the menu (after returning from bind key action)
     if (needsRefresh)
     {
-        Serial.println("EditConfigMenuAction: Refreshing display after key binding");
         buildMenuItems();
         refresh();
         needsRefresh = false;
-        Serial.println("EditConfigMenuAction: Refresh complete");
     }
 
-    // Call the base class loop to handle normal menu operations
     MenuAction::loop();
 }
 
 void StickConfigMenuAction::onInit()
 {
-
-    Serial.println("StickConfigMenuAction: Setting up");
     stickConfig = stickParams.isRight ? &mappingConfig.rightStick : &mappingConfig.leftStick;
     buildMenuItems();
-    Serial.println("StickConfigMenuAction: Setup complete");
 }
 
 void StickConfigMenuAction::buildMenuItems()

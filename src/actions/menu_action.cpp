@@ -269,11 +269,6 @@ void MenuAction::refresh()
     displayMenu();
 }
 
-ActionType MenuAction::getType()
-{
-    return ActionType::MENU;
-}
-
 void MenuAction::resetTimeout()
 {
     lastInputTime = millis();

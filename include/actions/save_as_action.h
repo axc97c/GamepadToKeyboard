@@ -15,11 +15,9 @@ public:
     SaveAsAction(DeviceManager *dev, ActionHandler *hdlr);
     virtual ~SaveAsAction();
 
-    // Action lifecycle methods
     void init() override;
     void loop() override;
-    ActionType getType() override;
-    void reset();  // For singleton reuse
+    void reset();
 
 private:
     void performSave();

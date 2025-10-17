@@ -37,7 +37,6 @@ public:
     // Action lifecycle methods
     void init() override;
     void loop() override;
-    ActionType getType() override;
     void setParams(TextInputActionParams p);  // For singleton reuse
 };
 
