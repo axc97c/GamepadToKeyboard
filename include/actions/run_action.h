@@ -16,6 +16,7 @@ private:
     // Mouse/scroll update timing
     unsigned long lastStickUpdate;
     unsigned long stickUpdateInterval;
+    unsigned long lastTriggerUpdate;
     unsigned long backlightOnTime;
     static const unsigned long BACKLIGHT_TIMEOUT_MS = 15000;
 

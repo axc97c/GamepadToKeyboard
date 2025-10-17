@@ -510,11 +510,11 @@ void RunAction::processTriggerButtons(int leftValue, int rightValue)
 void RunAction::processTriggerMouseX(int leftValue, int rightValue)
 {
     unsigned long currentTime = millis();
-    if (currentTime - lastStickUpdate < stickUpdateInterval)
+    if (currentTime - lastTriggerUpdate < stickUpdateInterval)
     {
         return;
     }
-    lastStickUpdate = currentTime;
+    lastTriggerUpdate = currentTime;
 
     // Apply deadzone - triggers are 0-255, treat 0 as rest position
     int adjustedLeft = (leftValue > mappingConfig.triggers.deadzone) ? leftValue : 0;
@@ -526,6 +526,7 @@ void RunAction::processTriggerMouseX(int leftValue, int rightValue)
     if (netMovement != 0)
     {
         int mouseX = (int)(netMovement * mappingConfig.triggers.sensitivity);
+
         Mouse.move(mouseX, 0, 0);
     }
 }
@@ -533,11 +534,11 @@ void RunAction::processTriggerMouseX(int leftValue, int rightValue)
 void RunAction::processTriggerMouseY(int leftValue, int rightValue)
 {
     unsigned long currentTime = millis();
-    if (currentTime - lastStickUpdate < stickUpdateInterval)
+    if (currentTime - lastTriggerUpdate < stickUpdateInterval)
     {
         return;
     }
-    lastStickUpdate = currentTime;
+    lastTriggerUpdate = currentTime;
 
     // Apply deadzone - triggers are 0-255, treat 0 as rest position
     int adjustedLeft = (leftValue > mappingConfig.triggers.deadzone) ? leftValue : 0;
@@ -549,6 +550,7 @@ void RunAction::processTriggerMouseY(int leftValue, int rightValue)
     if (netMovement != 0)
     {
         int mouseY = (int)(netMovement * mappingConfig.triggers.sensitivity);
+
         Mouse.move(0, mouseY, 0);
     }
 }
