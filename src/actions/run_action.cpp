@@ -437,24 +437,145 @@ void RunAction::processTriggers(int leftAxis, int rightAxis)
         return;
     }
 
-    //JoystickController *joy = devices->getJoystick();
-    //int leftValue = joy->getAxis(leftAxis);
-    //int rightValue = joy->getAxis(rightAxis);
+    JoystickController *joy = devices->getJoystick();
+    int leftValue = joy->getAxis(leftAxis);
+    int rightValue = joy->getAxis(rightAxis);
 
     // Apply behavior
     switch (mappingConfig.triggers.behavior)
     {
     case TriggerBehavior::BUTTONS:
+        processTriggerButtons(leftValue, rightValue);
         break;
 
     case TriggerBehavior::MOUSE_X:
+        processTriggerMouseX(leftValue, rightValue);
         break;
 
     case TriggerBehavior::MOUSE_Y:
+        processTriggerMouseY(leftValue, rightValue);
+        break;
+
+    case TriggerBehavior::SCROLL_WHEEL:
+        processTriggerScroll(leftValue, rightValue);
+        break;
+
+    case TriggerBehavior::JOYSTICK_X:
+    case TriggerBehavior::JOYSTICK_Y:
+        // Joystick modes pass raw axis data - no processing needed here
         break;
 
     default:
         break;
+    }
+}
+
+void RunAction::processTriggerButtons(int leftValue, int rightValue)
+{
+    // Triggers are 0-255, check against threshold
+    bool shouldBeLeftPressed = (leftValue > mappingConfig.triggers.activationThreshold);
+    bool shouldBeRightPressed = (rightValue > mappingConfig.triggers.activationThreshold);
+
+    // Left trigger
+    if (shouldBeLeftPressed && !mappingConfig.triggers.leftPressed)
+    {
+        Keyboard.press(mappingConfig.triggers.keyLeft);
+        mappingConfig.triggers.leftPressed = true;
+        Serial.print("RunAction: Left Trigger pressed -> Key ");
+        Serial.println(mappingConfig.triggers.keyLeft);
+    }
+    else if (!shouldBeLeftPressed && mappingConfig.triggers.leftPressed)
+    {
+        Keyboard.release(mappingConfig.triggers.keyLeft);
+        mappingConfig.triggers.leftPressed = false;
+        Serial.println("RunAction: Left Trigger released");
+    }
+
+    // Right trigger
+    if (shouldBeRightPressed && !mappingConfig.triggers.rightPressed)
+    {
+        Keyboard.press(mappingConfig.triggers.keyRight);
+        mappingConfig.triggers.rightPressed = true;
+        Serial.print("RunAction: Right Trigger pressed -> Key ");
+        Serial.println(mappingConfig.triggers.keyRight);
+    }
+    else if (!shouldBeRightPressed && mappingConfig.triggers.rightPressed)
+    {
+        Keyboard.release(mappingConfig.triggers.keyRight);
+        mappingConfig.triggers.rightPressed = false;
+        Serial.println("RunAction: Right Trigger released");
+    }
+}
+
+void RunAction::processTriggerMouseX(int leftValue, int rightValue)
+{
+    unsigned long currentTime = millis();
+    if (currentTime - lastStickUpdate < stickUpdateInterval)
+    {
+        return;
+    }
+    lastStickUpdate = currentTime;
+
+    // Apply deadzone - triggers are 0-255, treat 0 as rest position
+    int adjustedLeft = (leftValue > mappingConfig.triggers.deadzone) ? leftValue : 0;
+    int adjustedRight = (rightValue > mappingConfig.triggers.deadzone) ? rightValue : 0;
+
+    // Calculate net movement (right trigger moves right, left trigger moves left)
+    int netMovement = adjustedRight - adjustedLeft;
+
+    if (netMovement != 0)
+    {
+        int mouseX = (int)(netMovement * mappingConfig.triggers.sensitivity);
+        Mouse.move(mouseX, 0, 0);
+    }
+}
+
+void RunAction::processTriggerMouseY(int leftValue, int rightValue)
+{
+    unsigned long currentTime = millis();
+    if (currentTime - lastStickUpdate < stickUpdateInterval)
+    {
+        return;
+    }
+    lastStickUpdate = currentTime;
+
+    // Apply deadzone - triggers are 0-255, treat 0 as rest position
+    int adjustedLeft = (leftValue > mappingConfig.triggers.deadzone) ? leftValue : 0;
+    int adjustedRight = (rightValue > mappingConfig.triggers.deadzone) ? rightValue : 0;
+
+    // Calculate net movement (right trigger moves down, left trigger moves up)
+    int netMovement = adjustedRight - adjustedLeft;
+
+    if (netMovement != 0)
+    {
+        int mouseY = (int)(netMovement * mappingConfig.triggers.sensitivity);
+        Mouse.move(0, mouseY, 0);
+    }
+}
+
+void RunAction::processTriggerScroll(int leftValue, int rightValue)
+{
+    unsigned long currentTime = millis();
+    if (currentTime - lastStickUpdate < stickUpdateInterval)
+    {
+        return;
+    }
+    lastStickUpdate = currentTime;
+
+    // Apply deadzone - triggers are 0-255, treatd 0 as rest position
+    int adjustedLeft = (leftValue > mappingConfig.triggers.deadzone) ? leftValue : 0;
+    int adjustedRight = (rightValue > mappingConfig.triggers.deadzone) ? rightValue : 0;
+
+    // Calculate net movement (right trigger scrolls down, left trigger scrolls up)
+    int netMovement = adjustedRight - adjustedLeft;
+
+    if (netMovement != 0)
+    {
+        int scroll = (int)(netMovement * mappingConfig.triggers.sensitivity * 0.1f);
+        if (scroll != 0)
+        {
+            Mouse.move(0, 0, -scroll); // Negative for natural scrolling
+        }
     }
 }
 
@@ -483,8 +604,6 @@ void RunAction::initializeDefaultMappings()
     // Shoulder buttons
     mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_L1, 'q', false};
     mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_R1, 'e', false};
-    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_L2, 'i', false};
-    mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_R2, 'k', false};
 
     // Center buttons
     mappingConfig.mappings[mappingConfig.numMappings++] = {GenericController::BTN_START, 'r', false};

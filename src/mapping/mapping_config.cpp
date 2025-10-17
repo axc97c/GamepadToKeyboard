@@ -331,13 +331,13 @@ TriggerBehavior MappingConfig::parseTriggerBehavior(const char *behaviorStr)
 
 const char *MappingConfig::triggerBehaviorToString(TriggerBehavior behavior)
 {
-       for (int i = 0; i < triggerBehaviorMapSize; i++)
+    for (int i = 0; i < triggerBehaviorMapSize; i++)
     {
         if (triggerBehaviorMap[i].behavior == behavior)
         {
-            return stickBehaviorMap[i].name;
+            return triggerBehaviorMap[i].name;
         }
     }
 
-    return "Disabled"; 
+    return "Disabled";
 }

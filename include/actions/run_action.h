@@ -44,6 +44,10 @@ private:
     void processArrowKeys(StickConfig &stick, int xValue, int yValue);
 
     void processTriggers(int leftAxis, int rightAxis);
+    void processTriggerButtons(int leftValue, int rightValue);
+    void processTriggerMouseX(int leftValue, int rightValue);
+    void processTriggerMouseY(int leftValue, int rightValue);
+    void processTriggerScroll(int leftValue, int rightValue);
 
     int applyDeadzone(int value, int centerValue, int deadzone);
     const char *getGenericButtonName(uint8_t genericButton);
