@@ -558,11 +558,11 @@ void RunAction::processTriggerMouseY(int leftValue, int rightValue)
 void RunAction::processTriggerScroll(int leftValue, int rightValue)
 {
     unsigned long currentTime = millis();
-    if (currentTime - lastStickUpdate < stickUpdateInterval)
+    if (currentTime - lastTriggerUpdate < stickUpdateInterval)
     {
         return;
     }
-    lastStickUpdate = currentTime;
+    lastTriggerUpdate = currentTime;
 
     // Apply deadzone - triggers are 0-255, treatd 0 as rest position
     int adjustedLeft = (leftValue > mappingConfig.triggers.deadzone) ? leftValue : 0;
@@ -637,7 +637,9 @@ void RunAction::initializeDefaultStickConfigs()
 
 void RunAction::initializeDefaultTriggerConfigs()
 {
-    mappingConfig.triggers.behavior = TriggerBehavior::DISABLED;
+    mappingConfig.triggers.behavior = TriggerBehavior::BUTTONS;
+    mappingConfig.triggers.keyLeft = KEY_LEFT;
+    mappingConfig.triggers.keyRight = KEY_RIGHT;
 }
 
 const char *RunAction::getGenericButtonName(uint8_t genericButton)
